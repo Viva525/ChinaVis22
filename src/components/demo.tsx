@@ -1,12 +1,8 @@
-import React from 'react';
+import React from "react";
 
 //React FC 写法 推荐写这种
 const demo: React.FC<{}> = () => {
-
-    return (
-        <div style={{width:'100%', height:'100%'}}>
-            demo
-       </div>);
+  return <div style={{ width: "100%", height: "100%" }}>demo111</div>;
 };
 
 //React Component 写法
@@ -24,4 +20,4 @@ const demo: React.FC<{}> = () => {
 //     }
 // }
 
-export default demo
+export default demo;
