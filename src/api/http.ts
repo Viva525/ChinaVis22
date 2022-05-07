@@ -3,7 +3,7 @@
  */
  import axios from 'axios'
  //开发本地代理
- axios.defaults.baseURL = 'http://127.0.0.1:7002' 
+ axios.defaults.baseURL = 'http://127.0.0.1:7001' 
  //设置头部
  axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
  //设置响应超时时间

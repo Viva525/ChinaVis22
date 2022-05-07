@@ -1,10 +1,10 @@
 import './App.css';
-import Demo from './components/demo'
+import Network from './components/network'
 
 function App() {
   return (
     <div className="App">
-      <Demo data={1}/>
+      <Network/>
     </div>
   );
 }
