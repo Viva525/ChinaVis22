@@ -15,7 +15,7 @@ const Network: React.FC<{}>= () => {
   });
 
   const getData = () => {
-    let data = getNetWorkByCommunity(2007622);
+    let data = getNetWorkByCommunity(1834615);
     return new Promise((resolve, reject) => {
       resolve(data);
     });
@@ -31,7 +31,9 @@ const Network: React.FC<{}>= () => {
         myGraph(container.current ).graphData(dataset)
         .backgroundColor('#101020')
         .nodeRelSize(6)
-        .nodeAutoColorBy('group')
+        //@ts-ignore
+        // .nodeColor((node)=>node.color)
+        .nodeAutoColorBy("weight")
         .linkColor(() => 'rgba(255,255,255,0.2)')
         .onNodeClick(node=>{
           console.log(node);
@@ -41,7 +43,7 @@ const Network: React.FC<{}>= () => {
     });
   }, []);
 
-  return (<div style={{ width: "100%", height: "100%" }}>
+  return (<div>
     <div ref={NetworkState.container} style={{ width: "100vw", height: "100vh" }}></div>
   </div>)
 };
