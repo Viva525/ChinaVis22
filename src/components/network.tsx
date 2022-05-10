@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { getNetWorkByCommunity } from "../api/networkApi";
-import ForceGraph from "force-graph";
+import ForceGraph, { GraphData } from "force-graph";
 import ForceGraph3D from "3d-force-graph";
 
 type NetworkState = {
@@ -14,13 +14,15 @@ const Network: React.FC<{}> = () => {
   });
 
   const getData = () => {
-    let data = getNetWorkByCommunity(1834615);
+    let data = getNetWorkByCommunity(1937735);
     return new Promise((resolve, reject) => {
       resolve(data);
     });
   };
 
+  const linkColor = ["rgba(0,0,0,0.2)", "rgba(255,255,255,0.5)"];
   useEffect(() => {
+    console.log(1);
     getData().then((dataset) => {
       console.log(dataset);
       const { container } = NetworkState;
@@ -28,14 +30,17 @@ const Network: React.FC<{}> = () => {
       if (container.current != null) {
         //@ts-ignore
         myGraph(container.current)
-          //@ts-ignore
           .graphData(dataset)
-          .backgroundColor("#101020")
+          // .backgroundColor('#101020')
+          .backgroundColor("rgba(255,255,255,0.5)")
+          .width(1300)
+          .height(800)
           .nodeRelSize(6)
+          // .zoom(1)
           //@ts-ignore
           // .nodeColor((node)=>node.color)
           .nodeAutoColorBy("weight")
-          .linkColor(() => "rgba(255,255,255,0.2)")
+          .linkColor(() => linkColor[0])
           .onNodeClick((node) => {
             console.log(node);
           });
@@ -44,12 +49,10 @@ const Network: React.FC<{}> = () => {
   }, []);
 
   return (
-    <div>
-      <div
-        ref={NetworkState.container}
-        style={{ width: "100vw", height: "100vh" }}
-      ></div>
-    </div>
+    <div
+      ref={NetworkState.container}
+      style={{ width: "100%", height: "100%" }}
+    ></div>
   );
 };
 

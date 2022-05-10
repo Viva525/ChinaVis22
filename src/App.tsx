@@ -1,10 +1,10 @@
 import './App.css';
-import Network from './components/network'
+import MyLayout from './components/mylayout';
 
 function App() {
   return (
     <div className="App">
-      <Network/>
+      <MyLayout/>
     </div>
   );
 }
