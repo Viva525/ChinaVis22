@@ -9,7 +9,7 @@ import type {
 } from "./types";
 
 const ControlBar: React.FC<ControlBarProps> = (props) => {
-  const { tagFilter, setTagFilter } = props;
+  const { filterNode, setFilterNode, tagFilter, setTagFilter } = props;
   const { IP, Cert, Domain, current } = tagFilter;
   const [ControlBarState, setControlBarState] = useState<ControlBarState>({
     isLoading: false,
@@ -39,6 +39,8 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
         mode='multiple'
         allowClear
         placeholder='filter node'
+        //@ts-ignore
+        value={filterNode}
         onChange={handleChange}
         style={{ width: "100%", marginTop: "8px" }}
       >

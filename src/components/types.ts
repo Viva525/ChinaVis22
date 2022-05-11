@@ -9,6 +9,8 @@ export type ControlBarState = {
 };
 
 export type ControlBarProps = {
+  filterNode: ControlState["filterNode"];
+  setFilterNode: SetState<ControlState["filterNode"]>;
   tagFilter: TagFilterState;
   setTagFilter: SetState<TagFilterState>;
 };
