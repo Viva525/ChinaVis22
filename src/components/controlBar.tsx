@@ -1,12 +1,7 @@
 import { Select, Segmented } from "antd";
 import Search from "antd/lib/input/Search";
 import React, { useState } from "react";
-import type {
-  ControlBarProps,
-  NodeType,
-  Node,
-  Tag,
-} from "./types";
+import type { ControlBarProps, NodeType, Node, Tag } from "./types";
 
 const ControlBar: React.FC<ControlBarProps> = (props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
