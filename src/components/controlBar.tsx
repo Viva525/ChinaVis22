@@ -8,7 +8,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
   const [node, setNode] = useState<Node>(["IP", "Cert", "Domain"]);
   const [tag, setTag] = useState<Tag>(["Id", "Name", "Community"]);
   const { searchParams } = props;
-  const { filterNode } = props;
+  const { filterNode, setFilterNode } = props;
   const { tagFilter, setTagFilter } = props;
   const { current } = tagFilter;
 
@@ -17,8 +17,8 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
     setIsLoading(true);
   };
 
-  const handleChange = (nodes: string) => {
-    console.log(`${nodes}`);
+  const handleChange = (nodes: Node) => {
+    setFilterNode(nodes);
   };
 
   return (
@@ -39,7 +39,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
         onChange={handleChange}
         style={{ width: "100%", marginTop: "8px" }}
       >
-        {filterNode.map((item) => (
+        {node.map((item) => (
           <Select.Option key={item} value={item}>
             {item}
           </Select.Option>
