@@ -1,6 +1,7 @@
 import { Select, Segmented } from "antd";
 import Search from "antd/lib/input/Search";
 import React, { useState } from "react";
+import type { SetState, TagFilterState, NodeType } from "./types";
 
 type ControlBarState = {
   isLoading: boolean;
@@ -10,14 +11,22 @@ type ControlBarState = {
   >;
 };
 
-const ControlBar: React.FC<{}> = () => {
+type ControlBarProps = {
+  tagFilter: TagFilterState;
+  setTagFilter: SetState<TagFilterState>;
+};
+
+const ControlBar: React.FC<ControlBarProps> = (props) => {
+  const { tagFilter, setTagFilter } = props;
+  const { IP, Cert, Domain, current } = tagFilter;
   const [ControlBarState, setControlBarState] = useState<ControlBarState>({
     isLoading: false,
     nodeType: ["IP", "Cert", "Domain"],
     tagOption: ["id", "name", "community"],
   });
 
-  const getResult = () => {
+  const getResult = (value: string) => {
+    console.log(value);
     setControlBarState((prevstate) => ({ ...prevstate, isLoading: true }));
   };
 
@@ -50,11 +59,22 @@ const ControlBar: React.FC<{}> = () => {
       <Segmented
         options={["IP", "Cert", "Domain"]}
         block
+        onChange={(value) => {
+          setTagFilter((prevState) => ({
+            ...prevState,
+            current: value as NodeType,
+          }));
+        }}
+        value={current}
         style={{ marginTop: "8px" }}
       ></Segmented>
       <Segmented
         options={ControlBarState.tagOption}
         block
+        onChange={(value) => {
+          setTagFilter((prevState) => ({ ...prevState, [current]: value }));
+        }}
+        value={tagFilter[current]}
         style={{ marginTop: "8px" }}
       ></Segmented>
     </div>

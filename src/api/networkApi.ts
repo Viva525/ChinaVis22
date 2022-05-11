@@ -9,3 +9,9 @@ export const getNetWorkByCommunity = (communityId: number) => {
         communityId: communityId
     });
 }
+
+export const getGraphByParams = (params: string) => {
+    return post('getNetworkByParams',{
+        searchParams: params
+    })
+}
