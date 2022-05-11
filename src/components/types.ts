@@ -1,26 +1,26 @@
 import type { Dispatch, SetStateAction } from "react";
 
-export type ControlBarState = {
-    isLoading: boolean;
-    nodeType: string[];
-    tagOption: Array<
-      string | { label: string; value: string; disabled: boolean }
-    >;
-  };
-  
-  export type ControlBarProps = {
-    tagFilter: TagFilterState;
-    setTagFilter: SetState<TagFilterState>;
-  };
-  
 export type SetState<T> = Dispatch<SetStateAction<T>>;
 
-export type ControlState = {
-  params: string;
+export type NodeType = "IP" | "Cert" | "Domain";
+export type TagType = "Id" | "Name" | "Community";
+
+export type Node = NodeType[];
+export type Tag = TagType[];
+
+export type ControlBarProps = {
+  searchParams: string;
+  setSearchParams: SetState<string>;
   filterNode: NodeType[];
+  setFilterNode: SetState<NodeType[]>;
+  tagFilter: TagFilterState;
+  setTagFilter: SetState<TagFilterState>;
 };
 
-export type NodeType = "IP" | "Cert" | "Domain";
+export type ControlState = {
+  searchParams: string;
+  filterNode: NodeType[];
+};
 
 export type TagFilterState = {
   IP: string;
