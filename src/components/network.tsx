@@ -20,18 +20,13 @@ const Network: React.FC<{}> = (props) => {
     });
   };
 
-
-  // useEffect(() => {
-  //   console.log("received ip from control bar, value: ", ip);
-  // }, [ip]);
-
   const linkColor = ["rgba(0,0,0,0.2)", "rgba(255,255,255,0.5)"];
   useEffect(() => {
     console.log(1);
     getData().then((dataset) => {
       console.log(dataset);
       const { container } = NetworkState;
-      const myGraph = ForceGraph();
+      const myGraph = ForceGraph3D();
       if (container.current != null) {
         //@ts-ignore
         myGraph(container.current)
