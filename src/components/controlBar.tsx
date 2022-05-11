@@ -2,7 +2,7 @@ import { Select, Segmented } from "antd";
 import Search from "antd/lib/input/Search";
 import React, { useState } from "react";
 
-type searchBarState = {
+type ControlBarState = {
   isLoading: boolean;
   nodeType: string[];
   tagOption: Array<
@@ -10,15 +10,15 @@ type searchBarState = {
   >;
 };
 
-const SearchBar: React.FC<{}> = () => {
-  const [searchBarState, setSearchBarState] = useState<searchBarState>({
+const ControlBar: React.FC<{}> = () => {
+  const [ControlBarState, setControlBarState] = useState<ControlBarState>({
     isLoading: false,
     nodeType: ["IP", "Cert", "Domain"],
     tagOption: ["id", "name", "community"],
   });
 
   const getResult = () => {
-    setSearchBarState((prevstate) => ({ ...prevstate, isLoading: true }));
+    setControlBarState((prevstate) => ({ ...prevstate, isLoading: true }));
   };
 
   const handleChange = (nodes: string) => {
@@ -31,7 +31,7 @@ const SearchBar: React.FC<{}> = () => {
         placeholder='input node or link want to search'
         style={{ width: "100%" }}
         enterButton='Search'
-        loading={searchBarState.isLoading}
+        loading={ControlBarState.isLoading}
         onSearch={getResult}
       />
       <Select
@@ -41,7 +41,7 @@ const SearchBar: React.FC<{}> = () => {
         onChange={handleChange}
         style={{ width: "100%", marginTop: "8px" }}
       >
-        {searchBarState.nodeType?.map((item) => (
+        {ControlBarState.nodeType?.map((item) => (
           <Select.Option key={item} value={item}>
             {item}
           </Select.Option>
@@ -53,7 +53,7 @@ const SearchBar: React.FC<{}> = () => {
         style={{ marginTop: "8px" }}
       ></Segmented>
       <Segmented
-        options={searchBarState.tagOption}
+        options={ControlBarState.tagOption}
         block
         style={{ marginTop: "8px" }}
       ></Segmented>
@@ -61,4 +61,4 @@ const SearchBar: React.FC<{}> = () => {
   );
 };
 
-export default SearchBar;
+export default ControlBar;
