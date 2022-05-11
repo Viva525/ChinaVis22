@@ -29,8 +29,7 @@ const Network: React.FC<{}> = () => {
       const myGraph = ForceGraph3D();
       if (container.current != null) {
         //@ts-ignore
-        myGraph(container.current)
-          .graphData(dataset)
+        myGraph(container.current).graphData(dataset)
           // .backgroundColor('#101020')
           .backgroundColor("rgba(255,255,255,0.5)")
           .width(1300)
