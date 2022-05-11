@@ -12,7 +12,7 @@ const MyLayout: React.FC<{}> = () => {
     IP: "id",
     Cert: "id",
     Domain: "id",
-		current: "IP"
+    current: "IP",
   });
 
   return (
@@ -21,7 +21,15 @@ const MyLayout: React.FC<{}> = () => {
         <Row style={{ height: "65vh", overflow: "hidden" }}>
           <Col span={6} style={{ height: "100%" }}>
             <Row style={{ height: "25%" }}>
-              <Box title='CONTROL BAR' component={<ControlBar tagFilter={tagFilterState} setTagFilter={setTagFilterState} />} />
+              <Box
+                title='CONTROL BAR'
+                component={
+                  <ControlBar
+                    tagFilter={tagFilterState}
+                    setTagFilter={setTagFilterState}
+                  />
+                }
+              />
             </Row>
             <Row style={{ height: "75%" }}>
               <Box title='COMMUNITY INFORMATION' />
