@@ -8,17 +8,22 @@ type NetworkState = {
 };
 
 //React FC 写法 推荐写这种
-const Network: React.FC<{}> = () => {
+const Network: React.FC<{}> = (props) => {
   const [NetworkState, setNetworkState] = useState<NetworkState>({
     container: React.createRef(),
   });
 
   const getData = () => {
-    let data = getNetWorkByCommunity(1954152);
+    let data = getNetWorkByCommunity(1910103);
     return new Promise((resolve, reject) => {
       resolve(data);
     });
   };
+
+
+  // useEffect(() => {
+  //   console.log("received ip from control bar, value: ", ip);
+  // }, [ip]);
 
   const linkColor = ["rgba(0,0,0,0.2)", "rgba(255,255,255,0.5)"];
   useEffect(() => {
