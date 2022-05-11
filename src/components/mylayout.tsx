@@ -9,9 +9,9 @@ import type { ControlState, TagFilterState } from "./types";
 
 const MyLayout: React.FC<{}> = () => {
 
-  const [searchParams, setSearchParams] = useState<ControlState["searchParams"]>("");
+  const [searchParamsState, setSearchParamsState] = useState<ControlState["searchParams"]>("");
 
-  const [filterNode, setFilterNode] = useState<ControlState["filterNode"]>([
+  const [filterNodeState, setFilterNodeState] = useState<ControlState["filterNode"]>([
     "IP",
     "Cert",
     "Domain",
@@ -34,10 +34,10 @@ const MyLayout: React.FC<{}> = () => {
                 title='CONTROL BAR'
                 component={
                   <ControlBar
-                    searchParams={searchParams}
-                    setSearchParams={setSearchParams}
-                    filterNode={filterNode}
-                    setFilterNode={setFilterNode}
+                    searchParams={searchParamsState}
+                    setSearchParams={setSearchParamsState}
+                    filterNode={filterNodeState}
+                    setFilterNode={setFilterNodeState}
                     tagFilter={tagFilterState}
                     setTagFilter={setTagFilterState}
                   />
@@ -49,7 +49,7 @@ const MyLayout: React.FC<{}> = () => {
             </Row>
           </Col>
           <Col span={12} style={{ height: "100%" }}>
-            <Box title='NETWORK ASSETS GRAPH' component={<Network />} />
+            <Box title='NETWORK ASSETS GRAPH' component={<Network searchParams={searchParamsState} filterNode={filterNodeState} tagFilter={tagFilterState} />} />
           </Col>
           <Col span={6} style={{ height: "100%" }}>
             <Box title='COMMUNITY LIST' />

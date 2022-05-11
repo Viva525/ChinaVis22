@@ -12,14 +12,14 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [node, setNode] = useState<Node>(["IP","Cert","Domain"]);
   const [tag, setTag] = useState<Tag>(["Id","Name","Community"]);
-  const { searchParams } = props;
+  const { searchParams, setSearchParams } = props;
   const { filterNode } = props;
   const { tagFilter, setTagFilter } = props;
   const { current } = tagFilter;
 
   const getResult = (value: string) => {
-    console.log(value);
     setIsLoading(true);
+    setSearchParams(value);
   };
 
   const handleChange = (nodes: string) => {

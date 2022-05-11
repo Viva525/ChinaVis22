@@ -2,20 +2,12 @@ import type { Dispatch, SetStateAction } from "react";
 
 export type SetState<T> = Dispatch<SetStateAction<T>>;
 
+/////////////////////////////Control Bar Type
 export type NodeType = "IP" | "Cert" | "Domain";
 export type TagType = "Id" | "Name" | "Community";
 
 export type Node = NodeType[];
 export type Tag = TagType[];
-
-export type ControlBarProps = {
-  searchParams: string;
-  setSearchParams: SetState<string>;
-  filterNode: NodeType[];
-  setFilterNode: SetState<NodeType[]>;
-  tagFilter: TagFilterState;
-  setTagFilter: SetState<TagFilterState>;
-};
 
 export type ControlState = {
   searchParams: string;
@@ -28,3 +20,19 @@ export type TagFilterState = {
   Domain: string;
   current: NodeType;
 };
+
+export type ControlBarProps = {
+  searchParams: string;
+  setSearchParams: SetState<string>;
+  filterNode: NodeType[];
+  setFilterNode: SetState<NodeType[]>;
+  tagFilter: TagFilterState;
+  setTagFilter: SetState<TagFilterState>;
+};
+
+/////////////////////////////Network Type
+export type NetworkProps = {
+  searchParams: string,
+  filterNode: NodeType[];
+  tagFilter: TagFilterState
+}
