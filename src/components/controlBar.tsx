@@ -1,7 +1,10 @@
 import { Select, Segmented } from "antd";
 import Search from "antd/lib/input/Search";
 import React, { useState } from "react";
+<<<<<<< HEAD
 import type { SetState, TagFilterState, NodeType } from "./types";
+=======
+>>>>>>> e6d1b9e2049ec1236198e106e8173cec631adcc4
 
 type ControlBarState = {
   isLoading: boolean;
@@ -11,6 +14,7 @@ type ControlBarState = {
   >;
 };
 
+<<<<<<< HEAD
 type ControlBarProps = {
   tagFilter: TagFilterState;
   setTagFilter: SetState<TagFilterState>;
@@ -27,6 +31,16 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
 
   const getResult = (value: string) => {
     console.log(value);
+=======
+const ControlBar: React.FC<{}> = () => {
+  const [ControlBarState, setControlBarState] = useState<ControlBarState>({
+    isLoading: false,
+    nodeType: ["IP", "Cert", "Domain"],
+    tagOption: ["id", "name", "community"],
+  });
+
+  const getResult = () => {
+>>>>>>> e6d1b9e2049ec1236198e106e8173cec631adcc4
     setControlBarState((prevstate) => ({ ...prevstate, isLoading: true }));
   };
 
@@ -59,6 +73,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
       <Segmented
         options={["IP", "Cert", "Domain"]}
         block
+<<<<<<< HEAD
         onChange={(value) => {
           setTagFilter((prevState) => ({
             ...prevState,
@@ -66,15 +81,20 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
           }));
         }}
         value={current}
+=======
+>>>>>>> e6d1b9e2049ec1236198e106e8173cec631adcc4
         style={{ marginTop: "8px" }}
       ></Segmented>
       <Segmented
         options={ControlBarState.tagOption}
         block
+<<<<<<< HEAD
         onChange={(value) => {
           setTagFilter((prevState) => ({ ...prevState, [current]: value }));
         }}
         value={tagFilter[current]}
+=======
+>>>>>>> e6d1b9e2049ec1236198e106e8173cec631adcc4
         style={{ marginTop: "8px" }}
       ></Segmented>
     </div>
