@@ -14,7 +14,7 @@ const Network: React.FC<{}> = () => {
   });
 
   const getData = () => {
-    let data = getNetWorkByCommunity(1937735);
+    let data = getNetWorkByCommunity(1954152);
     return new Promise((resolve, reject) => {
       resolve(data);
     });
@@ -26,10 +26,11 @@ const Network: React.FC<{}> = () => {
     getData().then((dataset) => {
       console.log(dataset);
       const { container } = NetworkState;
-      const myGraph = ForceGraph3D();
+      const myGraph = ForceGraph();
       if (container.current != null) {
         //@ts-ignore
         myGraph(container.current)
+          //@ts-ignore
           .graphData(dataset)
           // .backgroundColor('#101020')
           .backgroundColor("rgba(255,255,255,0.5)")
