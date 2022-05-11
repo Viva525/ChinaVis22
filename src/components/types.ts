@@ -1,18 +1,18 @@
 import type { Dispatch, SetStateAction } from "react";
 
 export type ControlBarState = {
-  isLoading: boolean;
-  nodeType: string[];
-  tagOption: Array<
-    string | { label: string; value: string; disabled: boolean }
-  >;
-};
-
-export type ControlBarProps = {
-  tagFilter: TagFilterState;
-  setTagFilter: SetState<TagFilterState>;
-};
-
+    isLoading: boolean;
+    nodeType: string[];
+    tagOption: Array<
+      string | { label: string; value: string; disabled: boolean }
+    >;
+  };
+  
+  export type ControlBarProps = {
+    tagFilter: TagFilterState;
+    setTagFilter: SetState<TagFilterState>;
+  };
+  
 export type SetState<T> = Dispatch<SetStateAction<T>>;
 
 export type ControlState = {
