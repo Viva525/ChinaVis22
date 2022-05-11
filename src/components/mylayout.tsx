@@ -8,14 +8,19 @@ import ControlBar from "./controlBar";
 import type { ControlState, TagFilterState } from "./types";
 
 const MyLayout: React.FC<{}> = () => {
-  const [filterNodeState, setFilterNodeState] = useState<
-    ControlState["filterNode"]
-  >(["IP", "Cert", "Domain"]);
+  const [searchParams, setSearchParams] =
+    useState<ControlState["searchParams"]>("");
+
+  const [filterNode, setFilterNode] = useState<ControlState["filterNode"]>([
+    "IP",
+    "Cert",
+    "Domain",
+  ]);
 
   const [tagFilterState, setTagFilterState] = useState<TagFilterState>({
-    IP: "id",
-    Cert: "id",
-    Domain: "id",
+    IP: "Id",
+    Cert: "Id",
+    Domain: "Id",
     current: "IP",
   });
 
@@ -29,8 +34,10 @@ const MyLayout: React.FC<{}> = () => {
                 title='CONTROL BAR'
                 component={
                   <ControlBar
-                    filterNode={filterNodeState}
-                    setFilterNode={setFilterNodeState}
+                    searchParams={searchParams}
+                    setSearchParams={setSearchParams}
+                    filterNode={filterNode}
+                    setFilterNode={setFilterNode}
                     tagFilter={tagFilterState}
                     setTagFilter={setTagFilterState}
                   />

@@ -1,25 +1,20 @@
 import { Select, Segmented } from "antd";
 import Search from "antd/lib/input/Search";
 import React, { useState } from "react";
-import type {
-  ControlBarState,
-  ControlBarProps,
-  TagFilterState,
-  NodeType,
-} from "./types";
+import type { ControlBarProps, NodeType, Node, Tag } from "./types";
 
 const ControlBar: React.FC<ControlBarProps> = (props) => {
-  const { filterNode, setFilterNode, tagFilter, setTagFilter } = props;
-  const { IP, Cert, Domain, current } = tagFilter;
-  const [ControlBarState, setControlBarState] = useState<ControlBarState>({
-    isLoading: false,
-    nodeType: ["IP", "Cert", "Domain"],
-    tagOption: ["id", "name", "community"],
-  });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [node, setNode] = useState<Node>(["IP", "Cert", "Domain"]);
+  const [tag, setTag] = useState<Tag>(["Id", "Name", "Community"]);
+  const { searchParams } = props;
+  const { filterNode } = props;
+  const { tagFilter, setTagFilter } = props;
+  const { current } = tagFilter;
 
   const getResult = (value: string) => {
     console.log(value);
-    setControlBarState((prevstate) => ({ ...prevstate, isLoading: true }));
+    setIsLoading(true);
   };
 
   const handleChange = (nodes: string) => {
@@ -32,7 +27,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
         placeholder='input node or link want to search'
         style={{ width: "100%" }}
         enterButton='Search'
-        loading={ControlBarState.isLoading}
+        loading={isLoading}
         onSearch={getResult}
       />
       <Select
@@ -40,18 +35,18 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
         allowClear
         placeholder='filter node'
         //@ts-ignore
-        value={filterNode}
+        defaultValue={filterNode}
         onChange={handleChange}
         style={{ width: "100%", marginTop: "8px" }}
       >
-        {ControlBarState.nodeType?.map((item) => (
+        {filterNode.map((item) => (
           <Select.Option key={item} value={item}>
             {item}
           </Select.Option>
         ))}
       </Select>
       <Segmented
-        options={["IP", "Cert", "Domain"]}
+        options={node}
         block
         onChange={(value) => {
           setTagFilter((prevState) => ({
@@ -63,7 +58,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
         style={{ marginTop: "8px" }}
       ></Segmented>
       <Segmented
-        options={ControlBarState.tagOption}
+        options={tag}
         block
         onChange={(value) => {
           setTagFilter((prevState) => ({ ...prevState, [current]: value }));
