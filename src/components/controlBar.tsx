@@ -1,20 +1,12 @@
 import { Select, Segmented } from "antd";
 import Search from "antd/lib/input/Search";
 import React, { useState } from "react";
-import type { SetState, TagFilterState, NodeType } from "./types";
-
-type ControlBarState = {
-  isLoading: boolean;
-  nodeType: string[];
-  tagOption: Array<
-    string | { label: string; value: string; disabled: boolean }
-  >;
-};
-
-type ControlBarProps = {
-  tagFilter: TagFilterState;
-  setTagFilter: SetState<TagFilterState>;
-};
+import type {
+  ControlBarState,
+  ControlBarProps,
+  TagFilterState,
+  NodeType,
+} from "./types";
 
 const ControlBar: React.FC<ControlBarProps> = (props) => {
   const { tagFilter, setTagFilter } = props;
