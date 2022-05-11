@@ -2,22 +2,22 @@ import { Select, Segmented } from 'antd';
 import Search from 'antd/lib/input/Search';
 import React, { useState } from 'react';
 
-type searchBarState = {
+type ControlBarState = {
     isLoading: boolean,
     nodeType: string[],
     tagOption: Array<string | { label: string, value: string, disabled: boolean }>
 }
 
-const SearchBar: React.FC<{}> = () => {
+const ControlBar: React.FC<{}> = () => {
 
-    const [searchBarState, setSearchBarState] = useState<searchBarState>({
+    const [ControlBarState, setControlBarState] = useState<ControlBarState>({
         isLoading: false,
         nodeType: ['IP', 'Cert', 'Domain'],
         tagOption: ['id', 'name', 'community']
     });
 
     const getResult = () => {
-        setSearchBarState(prevstate => ({ ...prevstate, isLoading: true }));
+        setControlBarState(prevstate => ({ ...prevstate, isLoading: true }));
     }
 
     const handleChange = (nodes: string) => {
@@ -27,10 +27,10 @@ const SearchBar: React.FC<{}> = () => {
 
     return (
         <div style={{ width: '100%', height: '100%' }}>
-            <Search placeholder='input node or link want to search' style={{ width: "100%" }} enterButton="Search" loading={searchBarState.isLoading} onSearch={getResult} />
+            <Search placeholder='input node or link want to search' style={{ width: "100%" }} enterButton="Search" loading={ControlBarState.isLoading} onSearch={getResult} />
             <Select mode='multiple' allowClear placeholder='filter node' onChange={handleChange} style={{ width: "100%", marginTop: "8px" }}>
                 {
-                    searchBarState.nodeType?.map(item => (
+                    ControlBarState.nodeType?.map(item => (
                         <Select.Option key={item} value={item}>
                             {item}
                         </Select.Option>
@@ -38,8 +38,8 @@ const SearchBar: React.FC<{}> = () => {
                 }
             </Select>
             <Segmented options={['IP', 'Cert', 'Domain']} block style={{ marginTop: '8px' }}></Segmented>
-            <Segmented options={searchBarState.tagOption} block style={{ marginTop: '8px' }}></Segmented>
+            <Segmented options={ControlBarState.tagOption} block style={{ marginTop: '8px' }}></Segmented>
         </div>);
 };
 
-export default SearchBar
+export default ControlBar
