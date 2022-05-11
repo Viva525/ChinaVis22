@@ -4,6 +4,7 @@ import { Col, Layout, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import Box from './box';
 import Network from './network';
+import SearchBar from './searchBar';
 
 const MyLayout: React.FC<{}> = () => {
     return (
@@ -11,15 +12,27 @@ const MyLayout: React.FC<{}> = () => {
             <Layout>
                 <Row style={{height:"65vh", overflow:"hidden"}}>
                     <Col span={6} style={{height:"100%"}}>
-                        <Row style={{height:"20%"}}><Box title='SEARCH BAR'/></Row>
-                        <Row style={{height:"80%"}}><Box title='COMMUNITY INFORMATION'/></Row>
+                        <Row style={{height:"25%"}}>
+                            <Box title='CONTROL BAR' component={<SearchBar/>}/>
+                        </Row>
+                        <Row style={{height:"75%"}}>
+                            <Box title='COMMUNITY INFORMATION'/>
+                        </Row>
                     </Col>
-                    <Col span={12} style={{height:"100%"}}><Box title='NETWORK ASSETS GRAPH' component={<Network/>}/></Col>
-                    <Col span={6} style={{height:"100%"}}><Box title='COMMUNITY LIST'/></Col>
+                    <Col span={12} style={{height:"100%"}}>
+                        <Box title='NETWORK ASSETS GRAPH'/>
+                    </Col>
+                    <Col span={6} style={{height:"100%"}}>
+                        <Box title='COMMUNITY LIST'/>
+                    </Col>
                 </Row>
                 <Row style={{height:"35vh",overflow:"hidden"}}>
-                    <Col span={12}><Box title='CORE ASSETS &amp; KEY PATH'/></Col>
-                    <Col span={12}><Box title='UNKNOWN'/></Col>
+                    <Col span={12}>
+                        <Box title='CORE ASSETS &amp; KEY PATH'/>
+                    </Col>
+                    <Col span={12}>
+                        <Box title='UNKNOWN'/>
+                    </Col>
                 </Row>
             </Layout>
         </div>);
