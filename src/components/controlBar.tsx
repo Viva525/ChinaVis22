@@ -1,14 +1,14 @@
-import { Select, Segmented } from "antd";
-import Search from "antd/lib/input/Search";
-import React, { useState } from "react";
-import type { ControlBarProps, NodeType, Node, Tag } from "./types";
+import { Select, Segmented } from 'antd';
+import Search from 'antd/lib/input/Search';
+import React, { useState } from 'react';
+import type { ControlBarProps, NodeType, Node, Tag } from './types';
 
 const ControlBar: React.FC<ControlBarProps> = (props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [node, setNode] = useState<Node>(["IP","Cert","Domain"]);
-  const [tag, setTag] = useState<Tag>(["Id","Name","Community"]);
+  const [node, setNode] = useState<Node>(['IP', 'Cert', 'Domain']);
+  const [tag, setTag] = useState<Tag>(['Id', 'Name', 'Community']);
   const { searchParams, setSearchParams } = props;
-  const { filterNode, setFilterNode} = props;
+  const { filterNode, setFilterNode } = props;
   const { tagFilter, setTagFilter } = props;
   const { current } = tagFilter;
 
@@ -22,10 +22,10 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
   };
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <div style={{ width: '100%', height: '100%' }}>
       <Search
         placeholder='input node or link want to search'
-        style={{ width: "100%" }}
+        style={{ width: '100%' }}
         enterButton='Search'
         loading={isLoading}
         onSearch={getResult}
@@ -37,8 +37,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
         //@ts-ignore
         defaultValue={filterNode}
         onChange={handleChange}
-        style={{ width: "100%", marginTop: "8px" }}
-      >
+        style={{ width: '100%', marginTop: '8px' }}>
         {node.map((item) => (
           <Select.Option key={item} value={item}>
             {item}
@@ -55,8 +54,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
           }));
         }}
         value={current}
-        style={{ marginTop: "8px" }}
-      ></Segmented>
+        style={{ marginTop: '8px' }}></Segmented>
       <Segmented
         options={tag}
         block
@@ -64,11 +62,9 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
           setTagFilter((prevState) => ({ ...prevState, [current]: value }));
         }}
         value={tagFilter[current]}
-        style={{ marginTop: "8px" }}
-      ></Segmented>
+        style={{ marginTop: '8px' }}></Segmented>
     </div>
   );
 };
 
 export default ControlBar;
-
