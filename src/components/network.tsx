@@ -2,6 +2,7 @@ import React, { Component, useEffect, useState } from 'react';
 import {
   getFilterNetworkByParams,
   getNetWorkByCommunity,
+  getNetWorkByParams,
 } from '../api/networkApi';
 import ForceGraph, { GraphData } from 'force-graph';
 import ForceGraph3D from '3d-force-graph';
@@ -26,6 +27,11 @@ const Network: React.FC<NetworkProps> = (props) => {
   };
 
   useEffect(() => {
+    console.log(`params change to ${searchParams}`);
+    let data = getData(getNetWorkByParams, searchParams);
+  }, [searchParams]);
+
+  useEffect(() => {
     let data = getData(getFilterNetworkByParams, searchParams, filterNode);
     //调用绘图重载数据
     //。。。
@@ -47,12 +53,14 @@ const Network: React.FC<NetworkProps> = (props) => {
           .width(1300)
           .height(800)
           .nodeRelSize(6)
+          //@ts-ignore
+          .nodeLabel((node) => node.properties.name)
           // .zoom(1)
           //@ts-ignore
           // .nodeColor((node)=>node.color)
           .nodeAutoColorBy('weight')
           .linkColor(() => linkColor[0])
-          .onNodeClick((node) => {
+          .onNodeClick((node: any) => {
             console.log(node);
           });
       }

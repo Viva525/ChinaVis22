@@ -20,3 +20,13 @@ export const getFilterNetworkByParams = (
     filterNode,
   });
 };
+/**
+ * 根据搜索参数查找子图
+ * @param params
+ * @returns
+ */
+export const getNetWorkByParams = (params: string) => {
+  return post('getNetworkByParams', {
+    searchParams: params,
+  });
+};
