@@ -5,47 +5,54 @@ import {
   getNetWorkByParams,
 } from '../api/networkApi';
 import ForceGraph, { GraphData } from 'force-graph';
-import ForceGraph3D from '3d-force-graph';
-import type { NetworkProps } from './types';
-
-type NetworkState = {
-  container: any;
-};
+import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
+import type { DataState, NetworkProps } from './types';
 
 //React FC 写法 推荐写这种
 const Network: React.FC<NetworkProps> = (props) => {
-  const { searchParams, filterNode, tagFilter } = props;
-  const [NetworkState, setNetworkState] = useState<NetworkState>({
-    container: React.createRef(),
-  });
+  const container:React.RefObject<HTMLDivElement> = React.createRef();
+  const graph: ForceGraph3DInstance = ForceGraph3D();
 
-  const getData = (func: Function, ...params: any) => {
-    let data = func(params);
+  const { searchParams, filterNode, tagFilter } = props;
+  const [dataState, setDataState]=useState<DataState>({
+    nodes:[],
+    links:[]
+  });
+  
+  const getData = (func: Function, params: any) => {
+    let data = func(...params);
     return new Promise((resolve, reject) => {
       resolve(data);
     });
   };
 
   useEffect(() => {
-    console.log(`params change to ${searchParams}`);
-    let data = getData(getNetWorkByParams, searchParams);
+    getData(getNetWorkByParams, [searchParams]).then((data: any)=>{
+      if(data.nodes){
+        setDataState(data);
+      }else{
+        console.log(data);
+      }
+    });
   }, [searchParams]);
 
+  useEffect(()=>{
+    console.log(dataState);
+    //@ts-ignore
+    graph.graphData(dataState);
+  }, [dataState]);
+
   useEffect(() => {
-    let data = getData(getFilterNetworkByParams, searchParams, filterNode);
+    let data = getData(getFilterNetworkByParams, [searchParams, filterNode]);
     //调用绘图重载数据
     //。。。
   }, [filterNode]);
 
   const linkColor = ['rgba(0,0,0,0.2)', 'rgba(255,255,255,0.5)'];
   useEffect(() => {
-    getData(getNetWorkByCommunity, 1910103).then((dataset) => {
-      console.log(dataset);
-      const { container } = NetworkState;
-      const myGraph = ForceGraph3D();
+    getData(getNetWorkByCommunity, [1910103]).then((dataset) => {
       if (container.current != null) {
-        //@ts-ignore
-        myGraph(container.current)
+        graph(container.current)
           //@ts-ignore
           .graphData(dataset)
           // .backgroundColor('#101020')
@@ -67,11 +74,9 @@ const Network: React.FC<NetworkProps> = (props) => {
     });
   }, []);
 
-  useEffect(() => {});
-
   return (
     <div
-      ref={NetworkState.container}
+      ref={container}
       style={{ width: '100%', height: '100%' }}></div>
   );
 };

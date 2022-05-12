@@ -32,7 +32,12 @@ export type ControlBarProps = {
 
 /////////////////////////////Network Type
 export type NetworkProps = {
-  searchParams: string,
+  searchParams: string;
   filterNode: NodeType[];
-  tagFilter: TagFilterState
+  tagFilter: TagFilterState;
+}
+
+export type DataState = {
+  nodes: any[];
+  links: any[];
 }
