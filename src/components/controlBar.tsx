@@ -13,7 +13,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
   const { current } = tagFilter;
 
   const getResult = (value: string) => {
-    setIsLoading(true);
+    // setIsLoading(true);
     setSearchParams(value);
   };
 

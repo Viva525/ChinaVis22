@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from "react";
-import { getNetWorkByCommunity } from "../api/networkApi";
+import { getNetWorkByCommunity, getNetWorkByParams } from "../api/networkApi";
 import ForceGraph, { GraphData } from "force-graph";
 import ForceGraph3D from "3d-force-graph";
 import type {NetworkProps} from "./types"
@@ -14,6 +14,12 @@ const Network: React.FC<NetworkProps> = (props) => {
   const [NetworkState, setNetworkState] = useState<NetworkState>({
     container: React.createRef(),
   });
+
+  useEffect(()=>{
+    console.log(`params change to ${searchParams}`);
+    let data = getNetWorkByParams(searchParams);
+    console.log(data);
+  },[searchParams]);
 
   const getData = () => {
     let data = getNetWorkByCommunity(1910103);

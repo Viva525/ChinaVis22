@@ -10,7 +10,12 @@ export const getNetWorkByCommunity = (communityId: number) => {
     });
 }
 
-export const getGraphByParams = (params: string) => {
+/**
+ * 根据搜索参数查找子图
+ * @param params 
+ * @returns 
+ */
+export const getNetWorkByParams = (params: string) => {
     return post('getNetworkByParams',{
         searchParams: params
     })
