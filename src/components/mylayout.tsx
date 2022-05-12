@@ -52,15 +52,15 @@ const MyLayout: React.FC<{}> = () => {
             <Box title='NETWORK ASSETS GRAPH' component={<Network searchParams={searchParamsState} filterNode={filterNodeState} tagFilter={tagFilterState} />} />
           </Col>
           <Col span={6} style={{ height: "100%" }}>
-            <Box title='COMMUNITY LIST' />
+            <Box title='COMMUNITY &amp; NODE LIST' />
           </Col>
         </Row>
         <Row style={{ height: "35vh", overflow: "hidden" }}>
           <Col span={12}>
-            <Box title='CORE ASSETS &amp; KEY PATH' />
+            <Box title='NODE MATRIX' />
           </Col>
           <Col span={12}>
-            <Box title='UNKNOWN' />
+            <Box title='CORE ASSETS &amp; KEY PATH' />
           </Col>
         </Row>
       </Layout>

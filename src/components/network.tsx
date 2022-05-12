@@ -38,12 +38,14 @@ const Network: React.FC<NetworkProps> = (props) => {
           .width(1300)
           .height(800)
           .nodeRelSize(6)
+          //@ts-ignore
+          .nodeLabel((node)=>node.properties.name)
           // .zoom(1)
           //@ts-ignore
           // .nodeColor((node)=>node.color)
           .nodeAutoColorBy("weight")
           .linkColor(() => linkColor[0])
-          .onNodeClick((node) => {
+          .onNodeClick((node: any) => {
             console.log(node);
           });
       }
