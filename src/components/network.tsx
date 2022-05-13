@@ -43,6 +43,7 @@ const Network: React.FC<NetworkProps> = (props) => {
   }, [searchParams]);
 
   useEffect(() => {
+    // Draw Graph Function
     if (didMountState) {
       console.log(dataState);
       //@ts-ignore
@@ -90,34 +91,17 @@ const Network: React.FC<NetworkProps> = (props) => {
           filterNode.includes(dist[item.type][1])
         );
       });
-      setDataState(data);
+      // setDataState(data);
     }
   }, [filterNode]);
 
   useEffect(() => {
     getData(getNetWorkByCommunity, [1910103]).then((dataset: any) => {
       if (container.current != null) {
-        graph(container.current)
-          //@ts-ignore
-          .graphData(dataset)
-          // .backgroundColor('#101020')
-          .backgroundColor('rgba(255,255,255,0.5)')
-          .width(1300)
-          .height(800)
-          .nodeRelSize(6)
-          //@ts-ignore
-          .nodeLabel((node) => node.properties.name)
-          // .zoom(1)
-          //@ts-ignore
-          // .nodeColor((node)=>node.color)
-          .nodeAutoColorBy('weight')
-          .linkColor(() => linkColor[0])
-          .onNodeClick((node: any) => {
-            console.log(node);
-          });
-
-        setDataState(dataset);
         setDidMountState(true);
+        graph.graphData(dataset)
+        setDataState(dataset);
+        
       }
       return dataset;
     });
