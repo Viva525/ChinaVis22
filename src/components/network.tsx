@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   // getFilterNetworkByParams,
   getNetWorkByCommunity,
@@ -7,7 +7,6 @@ import {
 import ForceGraph, { GraphData } from 'force-graph';
 import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
 import type { DataState, NetworkProps } from './types';
-import { resolve } from 'node:path/win32';
 
 //React FC 写法 推荐写这种
 const Network: React.FC<NetworkProps> = (props) => {
@@ -94,25 +93,13 @@ const Network: React.FC<NetworkProps> = (props) => {
           );
         })
         .refresh();
-      // data.nodes = dataState.nodes.filter((item: any) => {
-      //   return filterNode.includes(item.group);
-      // });
-      // data.links = dataState.links.filter((item: any) => {
-      //   return (
-      //     //@ts-ignore
-      //     filterNode.includes(dist[item.type][0]) &&
-      //     //@ts-ignore
-      //     filterNode.includes(dist[item.type][1])
-      //   );
-      // });
-      // setDataState(data);
     }
   }, [filterNode]);
 
   useEffect(() => {
-    const {current, communities} = currentGragh
+    const {current, communities} = currentGragh;
     if(current === 'searchStr'){
-
+        // do nothing wait data change
     }else if(current === 'communities'){
       getData(getNetWorkByCommunity, communities).then((dataset: any) => {
         if (container.current != null) {
@@ -121,7 +108,7 @@ const Network: React.FC<NetworkProps> = (props) => {
         }
       });
     }else{
-
+      // all communities connected graph
     }
 
   }, []);
