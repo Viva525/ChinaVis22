@@ -80,17 +80,30 @@ const Network: React.FC<NetworkProps> = (props) => {
         r_cert_chain: ['Cert', 'Cert'],
         r_dns_a: ['IP', 'Domain'],
       };
-      data.nodes = dataState.nodes.filter((item: any) => {
-        return filterNode.includes(item.group);
-      });
-      data.links = dataState.links.filter((item: any) => {
-        return (
-          //@ts-ignore
-          filterNode.includes(dist[item.type][0]) &&
-          //@ts-ignore
-          filterNode.includes(dist[item.type][1])
-        );
-      });
+      //@ts-ignore
+      graph(container.current)
+        .nodeVisibility((node: any) => {
+          return filterNode.includes(node.group);
+        })
+        .linkVisibility((link: any) => {
+          return (
+            //@ts-ignore
+            filterNode.includes(dist[link.type][0]) &&
+            //@ts-ignore
+            filterNode.includes(dist[link.type][1])
+          );
+        });
+      // data.nodes = dataState.nodes.filter((item: any) => {
+      //   return filterNode.includes(item.group);
+      // });
+      // data.links = dataState.links.filter((item: any) => {
+      //   return (
+      //     //@ts-ignore
+      //     filterNode.includes(dist[item.type][0]) &&
+      //     //@ts-ignore
+      //     filterNode.includes(dist[item.type][1])
+      //   );
+      // });
       // setDataState(data);
     }
   }, [filterNode]);
@@ -99,9 +112,8 @@ const Network: React.FC<NetworkProps> = (props) => {
     getData(getNetWorkByCommunity, [1910103]).then((dataset: any) => {
       if (container.current != null) {
         setDidMountState(true);
-        graph.graphData(dataset)
+        graph.graphData(dataset);
         setDataState(dataset);
-        
       }
       return dataset;
     });
