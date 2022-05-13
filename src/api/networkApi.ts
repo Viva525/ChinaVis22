@@ -11,15 +11,15 @@ export const getNetWorkByCommunity = (communityId: number) => {
   });
 };
 
-export const getFilterNetworkByParams = (
-  searchParams: string,
-  filterNode: NodeType[]
-) => {
-  return post('getFilterNetworkByParams', {
-    searchParams,
-    filterNode,
-  });
-};
+// export const getFilterNetworkByParams = (
+//   searchParams: string,
+//   filterNode: NodeType[]
+// ) => {
+//   return post('getFilterNetworkByParams', {
+//     searchParams,
+//     filterNode,
+//   });
+// };
 /**
  * 根据搜索参数查找子图
  * @param params
