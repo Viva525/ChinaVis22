@@ -1,6 +1,6 @@
 import React, { Component, useEffect, useRef, useState } from 'react';
 import {
-  // getFilterNetworkByParams,
+  getFilterNetworkByCommunities,
   getNetWorkByCommunity,
   getNetWorkByParams,
 } from '../api/networkApi';
@@ -70,30 +70,33 @@ const Network: React.FC<NetworkProps> = (props) => {
 
   useEffect(() => {
     if (didMountState) {
-      // let data = getData(getFilterNetworkByParams, [searchParams, filterNode]);
-      let data: { nodes: any; links: any } = { nodes: [], links: [] };
-      const dist = {
-        r_cname: ['Domain', 'Domain'],
-        r_subdomain: ['Domain', 'Domain'],
-        r_request_jump: ['Domain', 'Domain'],
-        r_cert: ['Cert', 'Domain'],
-        r_cert_chain: ['Cert', 'Cert'],
-        r_dns_a: ['IP', 'Domain'],
-      };
+      let data = getData(getFilterNetworkByCommunities, [
+        filterNode,
+        currentGragh.communities,
+      ]);
+      // let data: { nodes: any; links: any } = { nodes: [], links: [] };
+      // const dist = {
+      //   r_cname: ['Domain', 'Domain'],
+      //   r_subdomain: ['Domain', 'Domain'],
+      //   r_request_jump: ['Domain', 'Domain'],
+      //   r_cert: ['Cert', 'Domain'],
+      //   r_cert_chain: ['Cert', 'Cert'],
+      //   r_dns_a: ['IP', 'Domain'],
+      // };
       //@ts-ignore
-      graph(container.current)
-        .nodeVisibility((node: any) => {
-          return filterNode.includes(node.group);
-        })
-        .linkVisibility((link: any) => {
-          return (
-            //@ts-ignore
-            filterNode.includes(dist[link.type][0]) &&
-            //@ts-ignore
-            filterNode.includes(dist[link.type][1])
-          );
-        })
-        .refresh();
+      // graph(container.current)
+      //   .nodeVisibility((node: any) => {
+      //     return filterNode.includes(node.group);
+      //   })
+      //   .linkVisibility((link: any) => {
+      //     return (
+      //       //@ts-ignore
+      //       filterNode.includes(dist[link.type][0]) &&
+      //       //@ts-ignore
+      //       filterNode.includes(dist[link.type][1])
+      //     );
+      //   })
+      //   .refresh();
       // data.nodes = dataState.nodes.filter((item: any) => {
       //   return filterNode.includes(item.group);
       // });
@@ -110,20 +113,17 @@ const Network: React.FC<NetworkProps> = (props) => {
   }, [filterNode]);
 
   useEffect(() => {
-    const {current, communities} = currentGragh
-    if(current === 'searchStr'){
-
-    }else if(current === 'communities'){
+    const { current, communities } = currentGragh;
+    if (current === 'searchStr') {
+    } else if (current === 'communities') {
       getData(getNetWorkByCommunity, communities).then((dataset: any) => {
         if (container.current != null) {
           setDidMountState(true);
           setDataState(dataset);
         }
       });
-    }else{
-
+    } else {
     }
-
   }, []);
 
   return <div ref={container} style={{ width: '100%', height: '100%' }}></div>;

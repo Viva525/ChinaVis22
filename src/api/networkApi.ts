@@ -10,16 +10,21 @@ export const getNetWorkByCommunity = (communityId: number) => {
     communityId: communityId,
   });
 };
-
-// export const getFilterNetworkByParams = (
-//   searchParams: string,
-//   filterNode: NodeType[]
-// ) => {
-//   return post('getFilterNetworkByParams', {
-//     searchParams,
-//     filterNode,
-//   });
-// };
+/**
+ * 根据filter框内的选项结合当前社区id查询子图
+ * @param searchParams
+ * @param filterNode
+ * @returns
+ */
+export const getFilterNetworkByCommunities = (
+  filterNode: NodeType[],
+  communities: number[]
+) => {
+  return post('getFilterNetworkByCommunities', {
+    filterNode,
+    communities,
+  });
+};
 /**
  * 根据搜索参数查找子图
  * @param params
