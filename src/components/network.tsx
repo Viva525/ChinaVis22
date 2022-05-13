@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   getFilterNetworkByCommunities,
   getNetWorkByCommunity,
@@ -7,7 +7,6 @@ import {
 import ForceGraph, { GraphData } from 'force-graph';
 import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
 import type { DataState, NetworkProps } from './types';
-import { resolve } from 'node:path/win32';
 
 //React FC 写法 推荐写这种
 const Network: React.FC<NetworkProps> = (props) => {
@@ -115,6 +114,7 @@ const Network: React.FC<NetworkProps> = (props) => {
   useEffect(() => {
     const { current, communities } = currentGragh;
     if (current === 'searchStr') {
+      // do nothing wait data change
     } else if (current === 'communities') {
       getData(getNetWorkByCommunity, communities).then((dataset: any) => {
         if (container.current != null) {
@@ -123,6 +123,7 @@ const Network: React.FC<NetworkProps> = (props) => {
         }
       });
     } else {
+      // all communities connected graph
     }
   }, []);
 
