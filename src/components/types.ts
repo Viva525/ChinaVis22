@@ -9,6 +9,7 @@ export type TagType = "Id" | "Name" | "Community";
 export type Node = NodeType[];
 export type Tag = TagType[];
 
+
 export type ControlState = {
   searchParams: string;
   filterNode: NodeType[];
@@ -31,7 +32,13 @@ export type ControlBarProps = {
 };
 
 /////////////////////////////Network Type
+export type CurrentNetworkState = {
+  current: 'allCommunity' | 'searchStr' | 'communities';
+  communities?: number[];
+}
+
 export type NetworkProps = {
+  currentGragh: CurrentNetworkState;
   searchParams: string;
   filterNode: NodeType[];
   tagFilter: TagFilterState;

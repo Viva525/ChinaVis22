@@ -12,12 +12,13 @@ import { resolve } from 'node:path/win32';
 //React FC 写法 推荐写这种
 const Network: React.FC<NetworkProps> = (props) => {
   const container: React.RefObject<HTMLDivElement> = React.createRef();
+  //@ts-ignore
   const graph: ForceGraph3DInstance = ForceGraph3D();
   const linkColor = ['rgba(0,0,0,0.2)', 'rgba(255,255,255,0.5)'];
 
   const [didMountState, setDidMountState] = useState(false);
 
-  const { searchParams, filterNode, tagFilter } = props;
+  const { currentGragh, searchParams, filterNode, tagFilter } = props;
   const [dataState, setDataState] = useState<DataState>({
     nodes: [],
     links: [],
@@ -48,7 +49,6 @@ const Network: React.FC<NetworkProps> = (props) => {
       console.log(dataState);
       //@ts-ignore
       graph(container.current)
-        //@ts-ignore
         .graphData(dataState)
         // .backgroundColor('#101020')
         .backgroundColor('rgba(255,255,255,0.5)')
@@ -92,7 +92,8 @@ const Network: React.FC<NetworkProps> = (props) => {
             //@ts-ignore
             filterNode.includes(dist[link.type][1])
           );
-        });
+        })
+        .refresh();
       // data.nodes = dataState.nodes.filter((item: any) => {
       //   return filterNode.includes(item.group);
       // });
@@ -109,14 +110,20 @@ const Network: React.FC<NetworkProps> = (props) => {
   }, [filterNode]);
 
   useEffect(() => {
-    getData(getNetWorkByCommunity, [1910103]).then((dataset: any) => {
-      if (container.current != null) {
-        setDidMountState(true);
-        graph.graphData(dataset);
-        setDataState(dataset);
-      }
-      return dataset;
-    });
+    const {current, communities} = currentGragh
+    if(current === 'searchStr'){
+
+    }else if(current === 'communities'){
+      getData(getNetWorkByCommunity, communities).then((dataset: any) => {
+        if (container.current != null) {
+          setDidMountState(true);
+          setDataState(dataset);
+        }
+      });
+    }else{
+
+    }
+
   }, []);
 
   return <div ref={container} style={{ width: '100%', height: '100%' }}></div>;
