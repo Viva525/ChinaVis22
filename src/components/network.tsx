@@ -69,19 +69,31 @@ const Network: React.FC<NetworkProps> = (props) => {
 
   useEffect(() => {
     if (didMountState) {
-      let data = getData(getFilterNetworkByCommunities, [
-        filterNode,
-        currentGragh.communities,
-      ]);
-      // let data: { nodes: any; links: any } = { nodes: [], links: [] };
-      // const dist = {
-      //   r_cname: ['Domain', 'Domain'],
-      //   r_subdomain: ['Domain', 'Domain'],
-      //   r_request_jump: ['Domain', 'Domain'],
-      //   r_cert: ['Cert', 'Domain'],
-      //   r_cert_chain: ['Cert', 'Cert'],
-      //   r_dns_a: ['IP', 'Domain'],
-      // };
+      getData(getFilterNetworkByCommunities, [currentGragh.communities]).then(
+        (data: any) => {
+          const dist = {
+            r_cname: ['Domain', 'Domain'],
+            r_subdomain: ['Domain', 'Domain'],
+            r_request_jump: ['Domain', 'Domain'],
+            r_cert: ['Cert', 'Domain'],
+            r_cert_chain: ['Cert', 'Cert'],
+            r_dns_a: ['IP', 'Domain'],
+          };
+          data.nodes = dataState.nodes.filter((item: any) => {
+            return filterNode.includes(item.group);
+          });
+          data.links = dataState.links.filter((item: any) => {
+            return (
+              //@ts-ignore
+              filterNode.includes(dist[item.type][0]) &&
+              //@ts-ignore
+              filterNode.includes(dist[item.type][1])
+            );
+          });
+          setDataState(data);
+        }
+      );
+
       //@ts-ignore
       // graph(container.current)
       //   .nodeVisibility((node: any) => {
@@ -96,18 +108,6 @@ const Network: React.FC<NetworkProps> = (props) => {
       //     );
       //   })
       //   .refresh();
-      // data.nodes = dataState.nodes.filter((item: any) => {
-      //   return filterNode.includes(item.group);
-      // });
-      // data.links = dataState.links.filter((item: any) => {
-      //   return (
-      //     //@ts-ignore
-      //     filterNode.includes(dist[item.type][0]) &&
-      //     //@ts-ignore
-      //     filterNode.includes(dist[item.type][1])
-      //   );
-      // });
-      // setDataState(data);
     }
   }, [filterNode]);
 

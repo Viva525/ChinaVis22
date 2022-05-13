@@ -1,4 +1,4 @@
-import { NodeType } from '../components/types';
+import { Node } from '../components/types';
 import { post } from './http';
 
 /**
@@ -16,12 +16,8 @@ export const getNetWorkByCommunity = (communityId: number) => {
  * @param filterNode
  * @returns
  */
-export const getFilterNetworkByCommunities = (
-  filterNode: NodeType[],
-  communities: number[]
-) => {
+export const getFilterNetworkByCommunities = (communities: number[]) => {
   return post('getFilterNetworkByCommunities', {
-    filterNode,
     communities,
   });
 };
