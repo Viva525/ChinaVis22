@@ -79,45 +79,40 @@ const Network: React.FC<NetworkProps> = (props) => {
         r_cert_chain: ['Cert', 'Cert'],
         r_dns_a: ['IP', 'Domain'],
       };
-      data.nodes = dataState.nodes.filter((item: any) => {
-        return filterNode.includes(item.group);
-      });
-      data.links = dataState.links.filter((item: any) => {
-        return (
-          //@ts-ignore
-          filterNode.includes(dist[item.type][0]) &&
-          //@ts-ignore
-          filterNode.includes(dist[item.type][1])
-        );
-      });
-      setDataState(data);
+      //@ts-ignore
+      graph(container.current)
+        .nodeVisibility((node: any) => {
+          return filterNode.includes(node.group);
+        })
+        .linkVisibility((link: any) => {
+          return (
+            //@ts-ignore
+            filterNode.includes(dist[link.type][0]) &&
+            //@ts-ignore
+            filterNode.includes(dist[link.type][1])
+          );
+        });
+      // data.nodes = dataState.nodes.filter((item: any) => {
+      //   return filterNode.includes(item.group);
+      // });
+      // data.links = dataState.links.filter((item: any) => {
+      //   return (
+      //     //@ts-ignore
+      //     filterNode.includes(dist[item.type][0]) &&
+      //     //@ts-ignore
+      //     filterNode.includes(dist[item.type][1])
+      //   );
+      // });
+      // setDataState(data);
     }
   }, [filterNode]);
 
   useEffect(() => {
     getData(getNetWorkByCommunity, [1910103]).then((dataset: any) => {
       if (container.current != null) {
-        graph(container.current)
-          //@ts-ignore
-          .graphData(dataset)
-          // .backgroundColor('#101020')
-          .backgroundColor('rgba(255,255,255,0.5)')
-          .width(1300)
-          .height(800)
-          .nodeRelSize(6)
-          //@ts-ignore
-          .nodeLabel((node) => node.properties.name)
-          // .zoom(1)
-          //@ts-ignore
-          // .nodeColor((node)=>node.color)
-          .nodeAutoColorBy('weight')
-          .linkColor(() => linkColor[0])
-          .onNodeClick((node: any) => {
-            console.log(node);
-          });
-
-        setDataState(dataset);
         setDidMountState(true);
+        graph.graphData(dataset);
+        setDataState(dataset);
       }
       return dataset;
     });
