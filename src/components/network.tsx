@@ -92,23 +92,16 @@ const Network: React.FC<NetworkProps> = (props) => {
           setDataState(data);
         }
       );
-
-      //@ts-ignore
-      // graph(container.current)
-      //   .nodeVisibility((node: any) => {
-      //     return filterNode.includes(node.group);
-      //   })
-      //   .linkVisibility((link: any) => {
-      //     return (
-      //       //@ts-ignore
-      //       filterNode.includes(dist[link.type][0]) &&
-      //       //@ts-ignore
-      //       filterNode.includes(dist[link.type][1])
-      //     );
-      //   })
-      //   .refresh();
     }
   }, [filterNode]);
+
+  useEffect(()=>{
+    if(didMountState){
+      //@ts-ignore
+      graph(container.current).backgroundColor('#101020');
+      console.log(tagFilter);
+    }
+  },[tagFilter]);
 
   useEffect(() => {
     const { current, communities } = currentGragh;
