@@ -45,7 +45,6 @@ const Network: React.FC<NetworkProps> = (props) => {
   useEffect(() => {
     // Draw Graph Function
     if (didMountState) {
-      console.log(dataState);
       //@ts-ignore
       graph(container.current)
         .graphData(dataState)
@@ -79,10 +78,10 @@ const Network: React.FC<NetworkProps> = (props) => {
             r_cert_chain: ['Cert', 'Cert'],
             r_dns_a: ['IP', 'Domain'],
           };
-          data.nodes = dataState.nodes.filter((item: any) => {
+          data.nodes = data.nodes.filter((item: any) => {
             return filterNode.includes(item.group);
           });
-          data.links = dataState.links.filter((item: any) => {
+          data.links = data.links.filter((item: any) => {
             return (
               //@ts-ignore
               filterNode.includes(dist[item.type][0]) &&
