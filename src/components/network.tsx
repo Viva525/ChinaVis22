@@ -12,7 +12,7 @@ import type { DataState, NetworkProps } from './types';
 const Network: React.FC<NetworkProps> = (props) => {
   const container: React.RefObject<HTMLDivElement> = React.createRef();
   //@ts-ignore
-  const graph: ForceGraph3DInstance = ForceGraph3D();
+  const graph: ForceGraph3DInstance = ForceGraph();
   const linkColor = ['rgba(0,0,0,0.2)', 'rgba(255,255,255,0.5)'];
 
   const [didMountState, setDidMountState] = useState(false);
