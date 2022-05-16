@@ -7,12 +7,14 @@ import {
 import ForceGraph, { GraphData } from 'force-graph';
 import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
 import type { DataState, NetworkProps } from './types';
+import { thresholdFreedmanDiaconis } from 'd3';
+import * as THREE from 'three';
 
 //React FC 写法 推荐写这种
 const Network: React.FC<NetworkProps> = (props) => {
   const container: React.RefObject<HTMLDivElement> = React.createRef();
   //@ts-ignore
-  const graph: ForceGraph3DInstance = ForceGraph();
+  const graph: ForceGraph3DInstance = ForceGraph3D();
   const linkColor = ['rgba(0,0,0,0.2)', 'rgba(255,255,255,0.5)'];
 
   const [didMountState, setDidMountState] = useState(false);
@@ -30,6 +32,73 @@ const Network: React.FC<NetworkProps> = (props) => {
     });
   };
 
+  function updateHighlight() {
+    // trigger update of highlighted objects in scene
+    graph
+      .nodeColor(graph.nodeColor())
+      .linkWidth(graph.linkWidth())
+      .linkDirectionalParticles(graph.linkDirectionalParticles());
+  }
+
+  const drawGraph = () => {
+    //@ts-ignore
+    graph(container.current)
+      .graphData(dataState)
+      // .backgroundColor('#101020')
+      .backgroundColor('rgba(255,255,255,0.5)')
+      .width(1300)
+      .height(800)
+      .nodeRelSize(6)
+
+      //@ts-ignore
+      .nodeLabel((node) => node.properties.name)
+      // .zoom(1)
+      //@ts-ignore
+      // .nodeColor((node)=>node.color)
+      .nodeAutoColorBy('weight')
+      .linkColor(() => linkColor[0])
+
+      .linkDirectionalParticles(1)
+      .linkDirectionalParticleWidth(4)
+      .nodeThreeObject((node: any) => {
+        let shape = null;
+        let geometry: any = null;
+        let material = new THREE.MeshLambertMaterial({
+          color: node.color || Math.round(Math.random() * Math.pow(2, 24)),
+          transparent: true,
+          opacity: 0.75,
+        });
+        switch (node.group) {
+          case 'Domain':
+            geometry = new THREE.TetrahedronGeometry((node.weight + 1) * 5);
+            break;
+          case 'Cert':
+            geometry = new THREE.SphereGeometry(8);
+            break;
+          case 'IP':
+            geometry = new THREE.OctahedronGeometry(8);
+            break;
+          default:
+        }
+        shape = new THREE.Mesh(geometry, material);
+        return shape;
+      })
+
+      .showNavInfo(false)
+      .onNodeClick((node: any) => {
+        console.log(node);
+      })
+      .onNodeDragEnd((node: any) => {
+        node.fx = node.x;
+        node.fy = node.y;
+        node.fz = node.z;
+      });
+    //@ts-ignore
+    graph(container.current)
+      .d3Force('link')
+      .distance((link: any) => link.weight * 20);
+  };
+
   useEffect(() => {
     if (didMountState) {
       getData(getNetWorkByParams, [searchParams]).then((data: any) => {
@@ -45,24 +114,7 @@ const Network: React.FC<NetworkProps> = (props) => {
   useEffect(() => {
     // Draw Graph Function
     if (didMountState) {
-      //@ts-ignore
-      graph(container.current)
-        .graphData(dataState)
-        // .backgroundColor('#101020')
-        .backgroundColor('rgba(255,255,255,0.5)')
-        .width(1300)
-        .height(800)
-        .nodeRelSize(6)
-        //@ts-ignore
-        .nodeLabel((node) => node.properties.name)
-        // .zoom(1)
-        //@ts-ignore
-        // .nodeColor((node)=>node.color)
-        .nodeAutoColorBy('weight')
-        .linkColor(() => linkColor[0])
-        .onNodeClick((node: any) => {
-          console.log(node);
-        });
+      drawGraph();
     }
   }, [dataState.nodes, dataState.links]);
 
@@ -95,13 +147,13 @@ const Network: React.FC<NetworkProps> = (props) => {
     }
   }, [filterNode]);
 
-  useEffect(()=>{
-    if(didMountState){
+  useEffect(() => {
+    if (didMountState) {
       //@ts-ignore
       graph(container.current).backgroundColor('#101020');
       console.log(tagFilter);
     }
-  },[tagFilter]);
+  }, [tagFilter]);
 
   useEffect(() => {
     const { current, communities } = currentGragh;
