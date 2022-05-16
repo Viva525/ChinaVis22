@@ -5,6 +5,8 @@ import React, { useEffect, useState } from 'react';
 import Box from './box';
 import Network from './network';
 import ControlBar from './controlBar';
+import CommunityAndNodeList from './communityAndNodeList';
+
 import type {
   ControlState,
   CurrentNetworkState,
@@ -26,9 +28,9 @@ const MyLayout: React.FC<{}> = () => {
   >(['IP', 'Cert', 'Domain']);
 
   const [tagFilterState, setTagFilterState] = useState<TagFilterState>({
-    IP: 'Id',
-    Cert: 'Id',
-    Domain: 'Id',
+    IP: 'id',
+    Cert: 'id',
+    Domain: 'id',
     current: 'IP',
   });
 
@@ -70,7 +72,7 @@ const MyLayout: React.FC<{}> = () => {
             />
           </Col>
           <Col span={6} style={{ height: '100%' }}>
-            <Box title='COMMUNITY &amp; NODE LIST' />
+            <Box title='COMMUNITY &amp; NODE LIST' component={<CommunityAndNodeList/>}/>
           </Col>
         </Row>
         <Row style={{ height: '35vh', overflow: 'hidden' }}>

@@ -10,15 +10,13 @@ import type { DataState, NetworkProps } from './types';
 import { thresholdFreedmanDiaconis } from 'd3';
 import * as THREE from 'three';
 
+let graph: ForceGraph3DInstance|null = null;
+
 //React FC 写法 推荐写这种
 const Network: React.FC<NetworkProps> = (props) => {
-  const container: React.RefObject<HTMLDivElement> = React.createRef();
-  //@ts-ignore
-  const graph: ForceGraph3DInstance = ForceGraph3D();
+  const container = React.useRef();
   const linkColor = ['rgba(0,0,0,0.2)', 'rgba(255,255,255,0.5)'];
-
   const [didMountState, setDidMountState] = useState(false);
-
   const { currentGragh, searchParams, filterNode, tagFilter } = props;
   const [dataState, setDataState] = useState<DataState>({
     nodes: [],
@@ -32,72 +30,123 @@ const Network: React.FC<NetworkProps> = (props) => {
     });
   };
 
-  function updateHighlight() {
-    // trigger update of highlighted objects in scene
-    graph
-      .nodeColor(graph.nodeColor())
-      .linkWidth(graph.linkWidth())
-      .linkDirectionalParticles(graph.linkDirectionalParticles());
-  }
-
-  const drawGraph = () => {
-    //@ts-ignore
-    graph(container.current)
-      .graphData(dataState)
-      // .backgroundColor('#101020')
-      .backgroundColor('rgba(255,255,255,0.5)')
-      .width(1300)
-      .height(800)
-      .nodeRelSize(6)
-
-      //@ts-ignore
-      .nodeLabel((node) => node.properties.name)
-      // .zoom(1)
-      //@ts-ignore
-      // .nodeColor((node)=>node.color)
-      .nodeAutoColorBy('weight')
-      .linkColor(() => linkColor[0])
-
-      .linkDirectionalParticles(1)
-      .linkDirectionalParticleWidth(4)
-      .nodeThreeObject((node: any) => {
-        let shape = null;
-        let geometry: any = null;
-        let material = new THREE.MeshLambertMaterial({
-          color: node.color || Math.round(Math.random() * Math.pow(2, 24)),
-          transparent: true,
-          opacity: 0.75,
+  const initGraph = () => {
+    graph?.graphData({nodes:[],links:[]})
+    .backgroundColor('rgba(255,255,255,0.5)')
+        .width(1300)
+        .height(800)
+        .nodeRelSize(6)
+        .onNodeClick((node: any) => {
+          console.log(node);
+        })
+        .nodeLabel((node: any) => {
+          const { IP, Cert, Domain } = tagFilter;
+          switch (node.group) {
+            case 'IP':
+              return node.properties[IP];
+            case 'Cert':
+              return node.properties[Cert];
+            case 'Domain':
+              return node.properties[Domain];
+          }
+        })
+        .nodeAutoColorBy('weight')
+        .linkColor(() => linkColor[0])
+        .linkDirectionalParticles(1)
+        .linkDirectionalParticleWidth(4)
+        .nodeThreeObject((node: any) => {
+          let shape = null;
+          let geometry: any = null;
+          let material = new THREE.MeshLambertMaterial({
+            color: node.color || Math.round(Math.random() * Math.pow(2, 24)),
+            transparent: true,
+            opacity: 0.75,
+          });
+          switch (node.group) {
+            case 'Domain':
+              geometry = new THREE.TetrahedronGeometry((node.weight + 1) * 5);
+              break;
+            case 'Cert':
+              geometry = new THREE.SphereGeometry(8);
+              break;
+            case 'IP':
+              geometry = new THREE.OctahedronGeometry(8);
+              break;
+            default:
+          }
+          shape = new THREE.Mesh(geometry, material);
+          return shape;
+        })
+        .showNavInfo(false)
+        .onNodeDragEnd((node: any) => {
+          node.fx = node.x;
+          node.fy = node.y;
+          node.fz = node.z;
         });
-        switch (node.group) {
-          case 'Domain':
-            geometry = new THREE.TetrahedronGeometry((node.weight + 1) * 5);
-            break;
-          case 'Cert':
-            geometry = new THREE.SphereGeometry(8);
-            break;
-          case 'IP':
-            geometry = new THREE.OctahedronGeometry(8);
-            break;
-          default:
-        }
-        shape = new THREE.Mesh(geometry, material);
-        return shape;
-      })
+        //@ts-ignore
+        graph.d3Force('link').distance((link: any) => link.weight * 20);
+  }
+  
 
-      .showNavInfo(false)
-      .onNodeClick((node: any) => {
-        console.log(node);
-      })
-      .onNodeDragEnd((node: any) => {
-        node.fx = node.x;
-        node.fy = node.y;
-        node.fz = node.z;
-      });
-    //@ts-ignore
-    graph(container.current)
-      .d3Force('link')
-      .distance((link: any) => link.weight * 20);
-  };
+  // const drawGraph = () => {
+  //   if (didMountState) {
+  //     //@ts-ignore
+  //     graph.graphData(dataState)
+  //       .backgroundColor('rgba(255,255,255,0.5)')
+  //       .width(1300)
+  //       .height(800)
+  //       .nodeRelSize(6)
+  //       .nodeLabel((node: any) => {
+  //         const { IP, Cert, Domain } = tagFilter;
+  //         switch (node.group) {
+  //           case 'IP':
+  //             return node.properties[IP];
+  //           case 'Cert':
+  //             return node.properties[Cert];
+  //           case 'Domain':
+  //             return node.properties[Domain];
+  //         }
+  //       })
+  //       .nodeAutoColorBy('weight')
+  //       .linkColor(() => linkColor[0])
+  //       .linkDirectionalParticles(1)
+  //       .linkDirectionalParticleWidth(4)
+  //       .nodeThreeObject((node: any) => {
+  //         let shape = null;
+  //         let geometry: any = null;
+  //         let material = new THREE.MeshLambertMaterial({
+  //           color: node.color || Math.round(Math.random() * Math.pow(2, 24)),
+  //           transparent: true,
+  //           opacity: 0.75,
+  //         });
+  //         switch (node.group) {
+  //           case 'Domain':
+  //             geometry = new THREE.TetrahedronGeometry((node.weight + 1) * 5);
+  //             break;
+  //           case 'Cert':
+  //             geometry = new THREE.SphereGeometry(8);
+  //             break;
+  //           case 'IP':
+  //             geometry = new THREE.OctahedronGeometry(8);
+  //             break;
+  //           default:
+  //         }
+  //         shape = new THREE.Mesh(geometry, material);
+  //         return shape;
+  //       })
+  //       .showNavInfo(false)
+  //       .onNodeClick((node: any) => {
+  //         console.log(node);
+  //       })
+  //       .onNodeDragEnd((node: any) => {
+  //         node.fx = node.x;
+  //         node.fy = node.y;
+  //         node.fz = node.z;
+  //       });
+  //       //@ts-ignore
+  //       graph.d3Force('link').distance((link: any) => link.weight * 20);
+  //   }
+  // };
 
   useEffect(() => {
     if (didMountState) {
@@ -112,9 +161,8 @@ const Network: React.FC<NetworkProps> = (props) => {
   }, [searchParams]);
 
   useEffect(() => {
-    // Draw Graph Function
     if (didMountState) {
-      drawGraph();
+      graph?.graphData(dataState);
     }
   }, [dataState.nodes, dataState.links]);
 
@@ -150,28 +198,40 @@ const Network: React.FC<NetworkProps> = (props) => {
   useEffect(() => {
     if (didMountState) {
       //@ts-ignore
-      graph(container.current).backgroundColor('#101020');
-      console.log(tagFilter);
+      graph.nodeLabel((node: any) => {
+        const { IP, Cert, Domain } = tagFilter;
+        switch (node.group) {
+          case 'IP':
+            return node.properties[IP];
+          case 'Cert':
+            return node.properties[Cert];
+          case 'Domain':
+            return node.properties[Domain];
+        }
+      })
     }
-  }, [tagFilter]);
+  }, [tagFilter.IP, tagFilter.Cert, tagFilter.Domain]);
 
   useEffect(() => {
+    //@ts-ignore
+    graph = ForceGraph3D()(container.current);
+    initGraph();
     const { current, communities } = currentGragh;
     if (current === 'searchStr') {
       // do nothing wait data change
     } else if (current === 'communities') {
       getData(getNetWorkByCommunity, communities).then((dataset: any) => {
-        if (container.current != null) {
-          setDidMountState(true);
-          setDataState(dataset);
-        }
+        setDidMountState(true);
+        setDataState(dataset);
       });
     } else {
       // all communities connected graph
     }
   }, []);
-
-  return <div ref={container} style={{ width: '100%', height: '100%' }}></div>;
+  //@ts-ignore
+  
+  
+  return <div ref={container} id="network" style={{ width: '100%', height: '100%' }}></div>;
 };
 
 export default Network;

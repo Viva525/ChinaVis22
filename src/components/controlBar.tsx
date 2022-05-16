@@ -6,7 +6,7 @@ import type { ControlBarProps, NodeType, Node, Tag } from './types';
 const ControlBar: React.FC<ControlBarProps> = (props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [node, setNode] = useState<Node>(['IP', 'Cert', 'Domain']);
-  const [tag, setTag] = useState<Tag>(['Id', 'Name', 'Community']);
+  const [tag, setTag] = useState<Tag>(['id', 'name', 'community']);
   const { searchParams, setSearchParams } = props;
   const { filterNode, setFilterNode } = props;
   const { tagFilter, setTagFilter } = props;

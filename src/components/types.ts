@@ -4,7 +4,7 @@ export type SetState<T> = Dispatch<SetStateAction<T>>;
 
 /////////////////////////////Control Bar Type
 export type NodeType = "IP" | "Cert" | "Domain";
-export type TagType = "Id" | "Name" | "Community";
+export type TagType = "id" | "name" | "community";
 
 export type Node = NodeType[];
 export type Tag = TagType[];
