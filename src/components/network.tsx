@@ -34,7 +34,9 @@ const Network: React.FC<NetworkProps> = (props) => {
   };
 
   const initGraph = () => {
-    graph?.jsonUrl('./11.json');
+    graph?.jsonUrl(
+      'https://raw.githubusercontent.com/religiones/ChinaVis22/master/public/allCommunity.json'
+    );
     // ?.graphData({ nodes: [], links: [] })
     // .backgroundColor('rgba(255,255,255,0.5)')
     // .width(1300)
