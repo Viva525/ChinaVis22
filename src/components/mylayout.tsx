@@ -13,6 +13,10 @@ import type {
   TagFilterState,
 } from './types';
 
+/**
+ * 装所有box组件的布局
+ * @returns
+ */
 const MyLayout: React.FC<{}> = () => {
   const [currentGraphState, setCurrentGraphState] =
     useState<CurrentNetworkState>({
@@ -72,7 +76,10 @@ const MyLayout: React.FC<{}> = () => {
             />
           </Col>
           <Col span={6} style={{ height: '100%' }}>
-            <Box title='COMMUNITY &amp; NODE LIST' component={<CommunityAndNodeList/>}/>
+            <Box
+              title='COMMUNITY &amp; NODE LIST'
+              component={<CommunityAndNodeList />}
+            />
           </Col>
         </Row>
         <Row style={{ height: '35vh', overflow: 'hidden' }}>

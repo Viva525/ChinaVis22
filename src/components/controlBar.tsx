@@ -3,6 +3,12 @@ import Search from 'antd/lib/input/Search';
 import React, { useState } from 'react';
 import type { ControlBarProps, NodeType, Node, Tag } from './types';
 
+/**
+ * 系统左上角的控制面板
+ * 搜索框语法：xxxxxx / xxxxxx>xxxxxx / Domain?email:xxxx / 1231245
+ * @param props
+ * @returns
+ */
 const ControlBar: React.FC<ControlBarProps> = (props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [node, setNode] = useState<Node>(['IP', 'Cert', 'Domain']);

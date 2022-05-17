@@ -1,18 +1,22 @@
-import React, { ReactElement } from "react";
-import "./css/box.css";
+import React, { ReactElement } from 'react';
+import './css/box.css';
 
 type BoxProps = {
   component?: ReactElement<any, any>;
   title: string;
 };
-
+/**
+ * 包装每个组件，统一样式
+ * @param props
+ * @returns
+ */
 const Box: React.FC<BoxProps> = (props) => {
   return (
-    <div style={{ width: "100%", height: "100%" }} className="boxWrapper">
-      <div style={{ height: "30px" }} className="boxTitle">
+    <div style={{ width: '100%', height: '100%' }} className='boxWrapper'>
+      <div style={{ height: '30px' }} className='boxTitle'>
         {props.title}
       </div>
-      <div className="boxContent">{props.component}</div>
+      <div className='boxContent'>{props.component}</div>
     </div>
   );
 };
