@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  getAllCommunities,
   getFilterNetworkByCommunities,
   getNetWorkByCommunity,
   getNetWorkByParams,
@@ -33,61 +34,61 @@ const Network: React.FC<NetworkProps> = (props) => {
   };
 
   const initGraph = () => {
-    graph
-      ?.graphData({ nodes: [], links: [] })
-      .backgroundColor('rgba(255,255,255,0.5)')
-      .width(1300)
-      .height(800)
-      .nodeRelSize(6)
-      .onNodeClick((node: any) => {
-        console.log(node);
-      })
-      .nodeLabel((node: any) => {
-        const { IP, Cert, Domain } = tagFilter;
-        switch (node.group) {
-          case 'IP':
-            return node.properties[IP];
-          case 'Cert':
-            return node.properties[Cert];
-          case 'Domain':
-            return node.properties[Domain];
-        }
-      })
-      .nodeAutoColorBy('weight')
-      .linkColor(() => linkColor[0])
-      .linkDirectionalParticles(1)
-      .linkDirectionalParticleWidth(4)
-      .nodeThreeObject((node: any) => {
-        let shape = null;
-        let geometry: any = null;
-        let material = new THREE.MeshLambertMaterial({
-          color: node.color || Math.round(Math.random() * Math.pow(2, 24)),
-          transparent: true,
-          opacity: 0.75,
-        });
-        switch (node.group) {
-          case 'Domain':
-            geometry = new THREE.TetrahedronGeometry((node.weight + 1) * 5);
-            break;
-          case 'Cert':
-            geometry = new THREE.SphereGeometry(8);
-            break;
-          case 'IP':
-            geometry = new THREE.OctahedronGeometry(8);
-            break;
-          default:
-        }
-        shape = new THREE.Mesh(geometry, material);
-        return shape;
-      })
-      .showNavInfo(false)
-      .onNodeDragEnd((node: any) => {
-        node.fx = node.x;
-        node.fy = node.y;
-        node.fz = node.z;
-      });
+    graph?.jsonUrl('./11.json');
+    // ?.graphData({ nodes: [], links: [] })
+    // .backgroundColor('rgba(255,255,255,0.5)')
+    // .width(1300)
+    // .height(800)
+    // .nodeRelSize(6)
+    // .onNodeClick((node: any) => {
+    //   console.log(node);
+    // })
+    // .nodeLabel((node: any) => {
+    //   const { IP, Cert, Domain } = tagFilter;
+    //   switch (node.group) {
+    //     case 'IP':
+    //       return node.properties[IP];
+    //     case 'Cert':
+    //       return node.properties[Cert];
+    //     case 'Domain':
+    //       return node.properties[Domain];
+    //   }
+    // })
+    // .nodeAutoColorBy('weight')
+    // .linkColor(() => linkColor[0])
+    // .linkDirectionalParticles(1)
+    // .linkDirectionalParticleWidth(4)
+    // .nodeThreeObject((node: any) => {
+    //   let shape = null;
+    //   let geometry: any = null;
+    //   let material = new THREE.MeshLambertMaterial({
+    //     color: node.color || Math.round(Math.random() * Math.pow(2, 24)),
+    //     transparent: true,
+    //     opacity: 0.75,
+    //   });
+    //   switch (node.group) {
+    //     case 'Domain':
+    //       geometry = new THREE.TetrahedronGeometry((node.weight + 1) * 5);
+    //       break;
+    //     case 'Cert':
+    //       geometry = new THREE.SphereGeometry(8);
+    //       break;
+    //     case 'IP':
+    //       geometry = new THREE.OctahedronGeometry(8);
+    //       break;
+    //     default:
+    //   }
+    //   shape = new THREE.Mesh(geometry, material);
+    //   return shape;
+    // })
+    // .showNavInfo(false);
+    // .onNodeDragEnd((node: any) => {
+    //   node.fx = node.x;
+    //   node.fy = node.y;
+    //   node.fz = node.z;
+    // });
     //@ts-ignore
-    graph.d3Force('link').distance((link: any) => link.weight * 20);
+    // graph.d3Force('link').distance((link: any) => link.weight * 20);
   };
 
   // const drawGraph = () => {
@@ -218,17 +219,21 @@ const Network: React.FC<NetworkProps> = (props) => {
     //@ts-ignore
     graph = ForceGraph3D()(container.current);
     initGraph();
-    const { current, communities } = currentGragh;
-    if (current === 'searchStr') {
-      // do nothing wait data change
-    } else if (current === 'communities') {
-      getData(getNetWorkByCommunity, communities).then((dataset: any) => {
-        setDidMountState(true);
-        setDataState(dataset);
-      });
-    } else {
-      // all communities connected graph
-    }
+    // const { current, communities } = currentGragh;
+    // if (current === 'searchStr') {
+    //   // do nothing wait data change
+    // } else if (current === 'communities') {
+    //   getData(getNetWorkByCommunity, communities).then((dataset: any) => {
+    //     setDidMountState(true);
+    //     setDataState(dataset);
+    //   });
+    // } else {
+    //   // all communities connected graph
+    //   getData(getAllCommunities, []).then((dataset: any) => {
+    //     setDidMountState(true);
+    //     // setDataState(dataset);
+    //   });
+    // }
   }, []);
 
   return (

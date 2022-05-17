@@ -2,6 +2,13 @@ import { Node } from '../components/types';
 import { post } from './http';
 
 /**
+ * 返回社区概览数据
+ * @returns
+ */
+export const getAllCommunities = () => {
+  return post('getAllCommunities', {});
+};
+/**
  * 根据显示节点数量展示网络
  * @param nodeNum 显示节点数量
  */

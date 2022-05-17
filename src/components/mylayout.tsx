@@ -20,7 +20,7 @@ import type {
 const MyLayout: React.FC<{}> = () => {
   const [currentGraphState, setCurrentGraphState] =
     useState<CurrentNetworkState>({
-      current: 'communities',
+      current: 'allCommunity',
       communities: [1910103],
     });
 
