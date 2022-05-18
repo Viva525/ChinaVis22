@@ -221,21 +221,21 @@ const Network: React.FC<NetworkProps> = (props) => {
     //@ts-ignore
     graph = ForceGraph3D()(container.current);
     initGraph();
-    // const { current, communities } = currentGragh;
-    // if (current === 'searchStr') {
-    //   // do nothing wait data change
-    // } else if (current === 'communities') {
-    //   getData(getNetWorkByCommunity, communities).then((dataset: any) => {
-    //     setDidMountState(true);
-    //     setDataState(dataset);
-    //   });
-    // } else {
-    //   // all communities connected graph
-    //   getData(getAllCommunities, []).then((dataset: any) => {
-    //     setDidMountState(true);
-    //     // setDataState(dataset);
-    //   });
-    // }
+    const { current, communities } = currentGragh;
+    if (current === 'searchStr') {
+      // do nothing wait data change
+    } else if (current === 'communities') {
+      getData(getNetWorkByCommunity, communities).then((dataset: any) => {
+        setDidMountState(true);
+        setDataState(dataset);
+      });
+    } else {
+      // all communities connected graph
+      getData(getAllCommunities, []).then((dataset: any) => {
+        setDidMountState(true);
+        // setDataState(dataset);
+      });
+    }
   }, []);
 
   return (
