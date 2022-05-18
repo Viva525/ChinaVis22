@@ -1,14 +1,13 @@
-import type { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from 'react';
 
 export type SetState<T> = Dispatch<SetStateAction<T>>;
 
 /////////////////////////////Control Bar Type
-export type NodeType = "IP" | "Cert" | "Domain";
-export type TagType = "id" | "name" | "community";
+export type NodeType = 'IP' | 'Cert' | 'Domain';
+export type TagType = 'id' | 'name' | 'community';
 
 export type Node = NodeType[];
 export type Tag = TagType[];
-
 
 export type ControlState = {
   searchParams: string;
@@ -29,22 +28,25 @@ export type ControlBarProps = {
   setFilterNode: SetState<NodeType[]>;
   tagFilter: TagFilterState;
   setTagFilter: SetState<TagFilterState>;
+  currentGraph: CurrentNetworkState;
+  setCurrentGraph: SetState<CurrentNetworkState>;
 };
 
 /////////////////////////////Network Type
 export type CurrentNetworkState = {
   current: 'allCommunity' | 'searchStr' | 'communities';
   communities?: number[];
-}
+};
 
 export type NetworkProps = {
   currentGragh: CurrentNetworkState;
+  setCurrentGraph: SetState<CurrentNetworkState>;
   searchParams: string;
   filterNode: NodeType[];
   tagFilter: TagFilterState;
-}
+};
 
 export type DataState = {
   nodes: any[];
   links: any[];
-}
+};

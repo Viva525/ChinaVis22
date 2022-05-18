@@ -54,6 +54,8 @@ const MyLayout: React.FC<{}> = () => {
                     setFilterNode={setFilterNodeState}
                     tagFilter={tagFilterState}
                     setTagFilter={setTagFilterState}
+                    currentGraph={currentGraphState}
+                    setCurrentGraph={setCurrentGraphState}
                   />
                 }
               />
@@ -68,6 +70,7 @@ const MyLayout: React.FC<{}> = () => {
               component={
                 <Network
                   currentGragh={currentGraphState}
+                  setCurrentGraph={setCurrentGraphState}
                   searchParams={searchParamsState}
                   filterNode={filterNodeState}
                   tagFilter={tagFilterState}

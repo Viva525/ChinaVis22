@@ -16,6 +16,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
   const { searchParams, setSearchParams } = props;
   const { filterNode, setFilterNode } = props;
   const { tagFilter, setTagFilter } = props;
+  const { currentGraph, setCurrentGraph } = props;
   const { current } = tagFilter;
 
   const getResult = (value: string) => {
