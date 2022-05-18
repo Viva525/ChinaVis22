@@ -10,8 +10,10 @@ import CommunityAndNodeList from './communityAndNodeList';
 import type {
   ControlState,
   CurrentNetworkState,
+  DataState,
   TagFilterState,
 } from './types';
+import CommunitiesInfo from './communitiesInfo';
 
 /**
  * 装所有box组件的布局
@@ -22,6 +24,11 @@ const MyLayout: React.FC<{}> = () => {
     useState<CurrentNetworkState>({
       current: 'allCommunity',
       communities: [1910103],
+    });
+
+    const [dataState, setDataState] = useState<DataState>({
+      nodes: [],
+      links: [],
     });
 
   const [searchParamsState, setSearchParamsState] =
@@ -61,7 +68,7 @@ const MyLayout: React.FC<{}> = () => {
               />
             </Row>
             <Row style={{ height: '75%' }}>
-              <Box title='COMMUNITY INFORMATION' />
+              <Box title='COMMUNITY INFORMATION' component={<CommunitiesInfo/>}/>
             </Row>
           </Col>
           <Col span={12} style={{ height: '100%' }}>
@@ -74,15 +81,14 @@ const MyLayout: React.FC<{}> = () => {
                   searchParams={searchParamsState}
                   filterNode={filterNodeState}
                   tagFilter={tagFilterState}
+                  data={dataState}
+                  setData={setDataState}
                 />
               }
             />
           </Col>
           <Col span={6} style={{ height: '100%' }}>
-            <Box
-              title='COMMUNITY &amp; NODE LIST'
-              component={<CommunityAndNodeList />}
-            />
+          <Box title='CORE ASSETS &amp; KEY PATH' />
           </Col>
         </Row>
         <Row style={{ height: '35vh', overflow: 'hidden' }}>
@@ -90,7 +96,10 @@ const MyLayout: React.FC<{}> = () => {
             <Box title='NODE MATRIX' />
           </Col>
           <Col span={12}>
-            <Box title='CORE ASSETS &amp; KEY PATH' />
+            <Box
+              title='COMMUNITY &amp; NODE LIST'
+              component={<CommunityAndNodeList data={dataState}/>}
+            />
           </Col>
         </Row>
       </Layout>
