@@ -1,4 +1,4 @@
-import React, { LegacyRef, useEffect } from 'react';
+import React, { LegacyRef, useEffect, useState } from 'react';
 import {
   asLineUp,
   buildCategoricalColumn,
@@ -12,6 +12,7 @@ import { DataState } from './types';
 type CommunityAndNodeListProps = {
   data: DataState;
 };
+let lineUp: any = null;
 
 const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
   const container: LegacyRef<HTMLDivElement> | undefined = React.createRef();
@@ -27,6 +28,7 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
     'other',
   ];
   const { data } = props;
+  const [didMountState, setDidMountState] = useState(false);
 
   useEffect(() => {
     //本地数据
@@ -43,47 +45,88 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
         buildNumberColumn('wrong_list', [0, NaN]).asArray(category)
       );
     });
-    const lineup = dataBuilder
+    lineUp = dataBuilder
       .deriveColors()
       .buildTaggle(container.current as HTMLElement);
+    setDidMountState(true);
   }, []);
 
   useEffect(() => {
-    let array = [];
-    for (let i = 0; i < data.nodes.length; i++) {
-      let temp: any = {};
-      switch (data.nodes[i].group) {
-        case 'Domain':
-          temp.id = data.nodes[i].properties.id;
-          temp.name = data.nodes[i].properties.name;
-          temp.community = data.nodes[i].properties.community;
-          temp.email =
-            data.nodes[i].properties.email_id != undefined
-              ? data.nodes[i].properties.email_id
-              : undefined;
-          temp.phone =
-            data.nodes[i].properties.phone_id != undefined
-              ? data.nodes[i].properties.phone_id
-              : undefined;
-          temp.register =
-            data.nodes[i].properties.register_id != undefined
-              ? data.nodes[i].properties.register_id
-              : undefined;
-          temp.wrongList = [
-            data.nodes[i].properties.porn,
-            data.nodes[i].properties.gambling,
-            data.nodes[i].properties.fraud,
-            data.nodes[i].properties.drug,
-            data.nodes[i].properties.gun,
-            data.nodes[i].properties.hacker,
-            data.nodes[i].properties.trading,
-            data.nodes[i].properties.pay,
-            data.nodes[i].properties.other,
-          ];
-          break;
-        case 'Cert':
-          
+    if (didMountState) {
+      let array = [];
+      for (let i = 0; i < data.nodes.length; i++) {
+        let temp: any = {};
+        temp.id = data.nodes[i].properties.id;
+        temp.name = data.nodes[i].properties.name;
+        temp.community = data.nodes[i].properties.community;
+        switch (data.nodes[i].group) {
+          case 'Domain':
+            temp.email =
+              data.nodes[i].properties.email_id != undefined
+                ? data.nodes[i].properties.email_id
+                : undefined;
+            temp.phone =
+              data.nodes[i].properties.phone_id != undefined
+                ? data.nodes[i].properties.phone_id
+                : undefined;
+            temp.register =
+              data.nodes[i].properties.register_id != undefined
+                ? data.nodes[i].properties.register_id
+                : undefined;
+            temp.wrong_list = [
+              data.nodes[i].properties.porn == 'True' ? 2 : 1,
+              data.nodes[i].properties.gambling == 'True' ? 2 : 1,
+              data.nodes[i].properties.fraud == 'True' ? 2 : 1,
+              data.nodes[i].properties.drug == 'True' ? 2 : 1,
+              data.nodes[i].properties.gun == 'True' ? 2 : 1,
+              data.nodes[i].properties.hacker == 'True' ? 2 : 1,
+              data.nodes[i].properties.trading == 'True' ? 2 : 1,
+              data.nodes[i].properties.pay == 'True' ? 2 : 1,
+              data.nodes[i].properties.other == 'True' ? 2 : 1,
+            ];
+            break;
+          case 'IP':
+            temp.asn =
+              data.nodes[i].properties.asn_id != undefined
+                ? data.nodes[i].properties.asn_id
+                : undefined;
+            temp.ipc =
+              data.nodes[i].properties.ipc_id != undefined
+                ? data.nodes[i].properties.ipc_id
+                : undefined;
+            break;
+        }
+        array.push(temp);
       }
+      console.log(array);
+      let nodeDataBuilder = builder(array)
+        .column(buildStringColumn('id'))
+        .column(buildStringColumn('name'))
+        .column(buildStringColumn('community'))
+        .column(buildStringColumn('email'))
+        .column(buildStringColumn('phone'))
+        .column(buildStringColumn('register'))
+        .column(buildStringColumn('asn'))
+        .column(buildStringColumn('ipc'));
+
+      category.forEach((item) => {
+        nodeDataBuilder = nodeDataBuilder.column(
+          buildNumberColumn('wrong_list', [0, 2]).asArray(category)
+        );
+      });
+      lineUp.destroy();
+      lineUp = nodeDataBuilder
+        .deriveColors()
+        .buildTaggle(container.current as HTMLElement);
+      document.oncontextmenu = function (e) {
+        //点击右键后要执行的代码
+        if (e.button == 2) {
+          //@ts-ignore
+          console.log(e.target.innerHTML);
+        }
+        //.......
+        return false; //阻止浏览器的默认弹窗行为
+      };
     }
   }, [data.nodes, data.links]);
 

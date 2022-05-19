@@ -107,7 +107,7 @@ const Network: React.FC<NetworkProps> = (props) => {
   const initGraph = () => {
     graph
       ?.jsonUrl(
-        'https://raw.githubusercontent.com/religiones/ChinaVis22/master/public/allCommunity.json'
+        'https://raw.githubusercontent.com/religiones/ChinaVis22/master/src/assets/allCommunity.json'
       )
       .backgroundColor('rgba(0,0,0,1)')
       .width(1270)
