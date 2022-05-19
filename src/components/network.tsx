@@ -246,11 +246,23 @@ const Network: React.FC<NetworkProps> = (props) => {
   }, []);
 
   return (
-    <div
-      //@ts-ignore
-      ref={container}
-      id='network'
-      style={{ width: '100%', height: '100%' }}></div>
+    <>
+      <div
+        //@ts-ignore
+        ref={container}
+        id='network'
+        style={{ width: '100%', height: '100%' }}></div>
+      <div
+        style={{
+          height: '8%',
+          width: '97.5%',
+          background: 'rgba(0,0,0,0.5)',
+          position: 'absolute',
+          right: 18,
+          top: 45,
+          zIndex: 999,
+        }}></div>
+    </>
   );
 };
 

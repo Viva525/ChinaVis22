@@ -67,7 +67,10 @@ const MyLayout: React.FC<{}> = () => {
                 }
               />
             </Row>
-            <Row style={{ height: '75%' }}>
+            <Row style={{ height: '25%' }}>
+              <Box title='Neighbour Heatmap' />
+            </Row>
+            <Row style={{ height: '50%' }}>
               <Box
                 title='COMMUNITY INFORMATION'
                 component={<CommunitiesInfo />}
