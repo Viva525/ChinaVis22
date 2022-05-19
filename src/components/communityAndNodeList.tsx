@@ -7,10 +7,11 @@ import {
   buildStringColumn,
 } from 'lineupjs';
 import 'lineupjs/build/LineUpJS.css';
-import { DataState } from './types';
+import { CurrentNetworkState, DataState, SetState } from './types';
 
 type CommunityAndNodeListProps = {
   data: DataState;
+  setCurrentGraph: SetState<CurrentNetworkState>;
 };
 let lineUp: any = null;
 
@@ -27,27 +28,47 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
     'pay',
     'other',
   ];
-  const { data } = props;
+  const { data, setCurrentGraph } = props;
   const [didMountState, setDidMountState] = useState(false);
+
+  document.oncontextmenu = function (e: any) {
+    //点击右键后要执行的代码
+    if (e.button == 2) {
+      if (e.target !== null) {
+        navigator.clipboard.writeText(e.target.textContent);
+      }
+    }
+    //.......
+    return false; //阻止浏览器的默认弹窗行为
+  };
 
   useEffect(() => {
     //本地数据
     const data = require('../assets/lineUp.json');
     let dataBuilder = builder(data)
-      .column(buildStringColumn('id'))
-      .column(buildStringColumn('key'))
-      .column(buildNumberColumn('node_num', [0, NaN]))
-      .column(buildNumberColumn('wrong_num', [0, NaN]))
-      .column(buildStringColumn('neighbour'));
-
+      .column(buildStringColumn('id').width(80))
+      .column(buildNumberColumn('node_num', [0, NaN]).width(100))
+      .column(buildNumberColumn('wrong_num', [0, NaN]).width(100));
     category.forEach((item) => {
       dataBuilder = dataBuilder.column(
         buildNumberColumn('wrong_list', [0, NaN]).asArray(category)
       );
     });
+    dataBuilder
+      .column(buildStringColumn('key').width(100))
+
+      .column(buildStringColumn('neighbour').width(100));
+
     lineUp = dataBuilder
       .deriveColors()
       .buildTaggle(container.current as HTMLElement);
+
+    lineUp.on('selectionChanged', (id: any) => {
+      setCurrentGraph({
+        current: 'communities',
+        communities: [lineUp._data._data[id].id],
+      });
+    });
     setDidMountState(true);
   }, []);
 
@@ -74,15 +95,15 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
                 ? data.nodes[i].properties.register_id
                 : undefined;
             temp.wrong_list = [
-              data.nodes[i].properties.porn == 'True' ? 2 : 1,
-              data.nodes[i].properties.gambling == 'True' ? 2 : 1,
-              data.nodes[i].properties.fraud == 'True' ? 2 : 1,
-              data.nodes[i].properties.drug == 'True' ? 2 : 1,
-              data.nodes[i].properties.gun == 'True' ? 2 : 1,
-              data.nodes[i].properties.hacker == 'True' ? 2 : 1,
-              data.nodes[i].properties.trading == 'True' ? 2 : 1,
-              data.nodes[i].properties.pay == 'True' ? 2 : 1,
-              data.nodes[i].properties.other == 'True' ? 2 : 1,
+              data.nodes[i].properties.porn == 'True' ? 1 : 0,
+              data.nodes[i].properties.gambling == 'True' ? 1 : 0,
+              data.nodes[i].properties.fraud == 'True' ? 1 : 0,
+              data.nodes[i].properties.drug == 'True' ? 1 : 0,
+              data.nodes[i].properties.gun == 'True' ? 1 : 0,
+              data.nodes[i].properties.hacker == 'True' ? 1 : 0,
+              data.nodes[i].properties.trading == 'True' ? 1 : 0,
+              data.nodes[i].properties.pay == 'True' ? 1 : 0,
+              data.nodes[i].properties.other == 'True' ? 1 : 0,
             ];
             break;
           case 'IP':
@@ -99,34 +120,27 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
         array.push(temp);
       }
       console.log(array);
-      let nodeDataBuilder = builder(array)
-        .column(buildStringColumn('id'))
-        .column(buildStringColumn('name'))
-        .column(buildStringColumn('community'))
-        .column(buildStringColumn('email'))
-        .column(buildStringColumn('phone'))
-        .column(buildStringColumn('register'))
-        .column(buildStringColumn('asn'))
-        .column(buildStringColumn('ipc'));
+      let nodeDataBuilder = builder(array);
 
       category.forEach((item) => {
         nodeDataBuilder = nodeDataBuilder.column(
-          buildNumberColumn('wrong_list', [0, 2]).asArray(category)
+          buildNumberColumn('wrong_list', [-1, 4]).asArray(category)
         );
       });
+      nodeDataBuilder
+        .column(buildStringColumn('id').width(100))
+        .column(buildStringColumn('name').width(100))
+        .column(buildStringColumn('community').width(80))
+        .column(buildStringColumn('email').width(100))
+        .column(buildStringColumn('phone').width(100))
+        .column(buildStringColumn('register').width(100))
+        .column(buildStringColumn('asn').width(100))
+        .column(buildStringColumn('ipc').width(100));
+
       lineUp.destroy();
       lineUp = nodeDataBuilder
         .deriveColors()
         .buildTaggle(container.current as HTMLElement);
-      document.oncontextmenu = function (e) {
-        //点击右键后要执行的代码
-        if (e.button == 2) {
-          //@ts-ignore
-          console.log(e.target.innerHTML);
-        }
-        //.......
-        return false; //阻止浏览器的默认弹窗行为
-      };
     }
   }, [data.nodes, data.links]);
 

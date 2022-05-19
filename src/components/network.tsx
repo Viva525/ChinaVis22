@@ -5,7 +5,7 @@ import {
   getNetWorkByCommunity,
   getNetWorkByParams,
 } from '../api/networkApi';
-import ForceGraph, { GraphData } from 'force-graph';
+import ForceGraph, { ForceGraphInstance, GraphData } from 'force-graph';
 import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
 import type { DataState, NetworkProps } from './types';
 import * as THREE from 'three';
@@ -13,16 +13,22 @@ import * as THREE from 'three';
 /**
  * 主图组件
  */
-let graph: ForceGraph3DInstance | null = null;
+let graph: any = null;
 
 //React FC 写法 推荐写这种
 const Network: React.FC<NetworkProps> = (props) => {
   const container = React.useRef();
   const linkColor = ['rgba(0,0,0,0.1)', 'rgba(255,255,255,0.1)'];
   const [didMountState, setDidMountState] = useState(false);
-  const { currentGragh, setCurrentGraph, searchParams, filterNode, tagFilter, data, setData} =
-    props;
-
+  const {
+    currentGragh,
+    setCurrentGraph,
+    searchParams,
+    filterNode,
+    tagFilter,
+    data,
+    setData,
+  } = props;
 
   const getData = (func: Function, params: any) => {
     let data = func(...params);
@@ -32,18 +38,11 @@ const Network: React.FC<NetworkProps> = (props) => {
   };
 
   const drawGraph = () => {
-    graph?.graphData({ nodes: [], links: [] })
-      .backgroundColor('rgba(255,255,255,0.5)')
-      .width(1270)
-      .height(800)
-      // .nodeAutoColorBy('weight')
-      .nodeColor((node:any)=>{
-        if(!node.properties.email_id || !node.properties.phone_id || !node.properties.register_id){
-          return '#ff0000'
-        }else{
-          return '#000'
-        }
-      })
+    graph
+      ?.graphData({ nodes: [], links: [] })
+      .backgroundColor('#CFD8DC')
+      .width(1240)
+      .height(790)
       .onNodeClick((node: any) => {
         console.log(node);
       })
@@ -60,41 +59,45 @@ const Network: React.FC<NetworkProps> = (props) => {
       })
       .linkColor(() => linkColor[0])
       .linkDirectionalParticles(1)
-      .linkDirectionalParticleWidth(4)
+      .linkDirectionalParticleWidth(2)
       .nodeThreeObject((node: any) => {
         let shape = null;
         let geometry: any = null;
         let color;
-        if(node.properties.email_id!==undefined ){
-          color= '#ff0000'
-        }else if( node.properties.phone_id!==undefined ){
-          color='#00ff00'
-        }else if(node.properties.register_id!==undefined){
-          color='#0000ff'
-        }
-        else{
-          color= '#000'
-        }
-        let material = new THREE.MeshLambertMaterial({
-          color: color,
-          transparent: true,
-          opacity: 0.75,
-        });
+
+        // if (node.properties.email_id !== undefined) {
+        //   color = '#ff0000';
+        // } else if (node.properties.phone_id !== undefined) {
+        //   color = '#00ff00';
+        // } else if (node.properties.register_id !== undefined) {
+        //   color = '#0000ff';
+        // }
+
         switch (node.group) {
           case 'Domain':
-            geometry = new THREE.TetrahedronGeometry((node.weight + 1) * 5);
+            color = '#dcd6c5';
+            geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
             break;
           case 'Cert':
-            geometry = new THREE.SphereGeometry(8);
+            color = '#e87e5c';
+            geometry = new THREE.SphereGeometry(10);
             break;
           case 'IP':
-            geometry = new THREE.OctahedronGeometry(8);
+            color = '#335a71';
+            geometry = new THREE.SphereGeometry(10);
             break;
           default:
         }
+
+        let material = new THREE.MeshToonMaterial({
+          color: color,
+          transparent: true,
+          opacity: 0.8,
+        });
         shape = new THREE.Mesh(geometry, material);
         return shape;
       })
+
       .showNavInfo(false)
       .onNodeDragEnd((node: any) => {
         node.fx = node.x;
@@ -109,21 +112,20 @@ const Network: React.FC<NetworkProps> = (props) => {
       ?.jsonUrl(
         'https://raw.githubusercontent.com/religiones/ChinaVis22/master/src/assets/allCommunity.json'
       )
-      .backgroundColor('rgba(0,0,0,1)')
-      .width(1270)
-      .height(800)
+      .backgroundColor('#CFD8DC')
+      .width(1240)
+      .height(790)
       .nodeLabel((node: any) => {
         return node.id;
       })
-      .linkColor(() => linkColor[1])
+      .linkColor(() => linkColor[0])
       .nodeThreeObject((node: any) => {
         let shape = null;
         let geometry: any = null;
-        let material = new THREE.MeshLambertMaterial({
-          color: '#fff',
-          // node.color || Math.round(Math.random() * Math.pow(2, 24)),
-          transparent: true,
-          opacity: 0.75,
+        let material = new THREE.MeshToonMaterial({
+          color: '#173728',
+          // transparent: true,
+          // opacity: 0.75,
         });
         let r = 0;
         if (node.neighbour.length > 10) {
@@ -138,12 +140,13 @@ const Network: React.FC<NetworkProps> = (props) => {
       .showNavInfo(false);
 
     //@ts-ignore
-    // graph.d3Force('link').distance((link: any) => 50);
+    graph.d3Force('link').distance((link: any) => 50);
   };
 
   useEffect(() => {
     if (didMountState) {
       getData(getNetWorkByParams, [searchParams]).then((dataset: any) => {
+        console.log(dataset);
         if (dataset.data.nodes) {
           if (dataset.type === 'communities') {
             const arr: any = searchParams.split(',').map((item) => {
@@ -153,9 +156,9 @@ const Network: React.FC<NetworkProps> = (props) => {
               current: 'searchStr',
               communities: arr,
             });
-          }else{
+          } else {
             setCurrentGraph({
-              current: 'searchStr'
+              current: 'searchStr',
             });
           }
           setData(dataset.data);
@@ -222,9 +225,9 @@ const Network: React.FC<NetworkProps> = (props) => {
         drawGraph();
       } else if (currentGragh.current === 'communities') {
         drawGraph();
-        getData(getNetWorkByCommunity, currentGragh.communities).then(
+        getData(getFilterNetworkByCommunities, [currentGragh.communities]).then(
           (dataset: any) => {
-            setData(dataset.data);
+            setData(dataset);
           }
         );
       } else {
@@ -238,12 +241,8 @@ const Network: React.FC<NetworkProps> = (props) => {
     //@ts-ignore
     graph = ForceGraph3D()(container.current);
     // all communities connected graph
-    // initGraph();
+    initGraph();
     setDidMountState(true);
-    getData(getAllCommunities, []).then((dataset: any) => {
-      setDidMountState(true);
-      // setDataState(dataset.data);
-    });
   }, []);
 
   return (

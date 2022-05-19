@@ -26,10 +26,10 @@ const MyLayout: React.FC<{}> = () => {
       communities: [1910103],
     });
 
-    const [dataState, setDataState] = useState<DataState>({
-      nodes: [],
-      links: [],
-    });
+  const [dataState, setDataState] = useState<DataState>({
+    nodes: [],
+    links: [],
+  });
 
   const [searchParamsState, setSearchParamsState] =
     useState<ControlState['searchParams']>('');
@@ -49,7 +49,7 @@ const MyLayout: React.FC<{}> = () => {
     <div style={{ width: '100%', height: '100vh' }}>
       <Layout>
         <Row style={{ height: '65vh', overflow: 'hidden' }}>
-          <Col span={6} style={{ height: '100%' }}>
+          <Col span={4} style={{ height: '100%' }}>
             <Row style={{ height: '25%' }}>
               <Box
                 title='CONTROL BAR'
@@ -68,7 +68,10 @@ const MyLayout: React.FC<{}> = () => {
               />
             </Row>
             <Row style={{ height: '75%' }}>
-              <Box title='COMMUNITY INFORMATION' component={<CommunitiesInfo/>}/>
+              <Box
+                title='COMMUNITY INFORMATION'
+                component={<CommunitiesInfo />}
+              />
             </Row>
           </Col>
           <Col span={12} style={{ height: '100%' }}>
@@ -87,8 +90,16 @@ const MyLayout: React.FC<{}> = () => {
               }
             />
           </Col>
-          <Col span={6} style={{ height: '100%' }}>
-          <Box title='CORE ASSETS &amp; KEY PATH' />
+          <Col span={8} style={{ height: '100%' }}>
+            <Box
+              title='COMMUNITY &amp; NODE LIST'
+              component={
+                <CommunityAndNodeList
+                  setCurrentGraph={setCurrentGraphState}
+                  data={dataState}
+                />
+              }
+            />
           </Col>
         </Row>
         <Row style={{ height: '35vh', overflow: 'hidden' }}>
@@ -96,10 +107,7 @@ const MyLayout: React.FC<{}> = () => {
             <Box title='NODE MATRIX' />
           </Col>
           <Col span={12}>
-            <Box
-              title='COMMUNITY &amp; NODE LIST'
-              component={<CommunityAndNodeList data={dataState}/>}
-            />
+            <Box title='CORE ASSETS &amp; KEY PATH' />
           </Col>
         </Row>
       </Layout>
