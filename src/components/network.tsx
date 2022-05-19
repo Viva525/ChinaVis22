@@ -279,12 +279,12 @@ const Network: React.FC<NetworkProps> = (props) => {
     //@ts-ignore
     graph = ForceGraph3D()(container.current);
     // all communities connected graph
-    initGraph();
+    // initGraph();
     setDidMountState(true);
-    // getData(getAllCommunities, []).then((dataset: any) => {
-    // setDidMountState(true);
-    // setDataState(dataset.data);
-    // });
+    getData(getAllCommunities, []).then((dataset: any) => {
+      setDidMountState(true);
+      // setDataState(dataset.data);
+    });
   }, []);
 
   return (
