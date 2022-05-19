@@ -41,6 +41,8 @@ export type CurrentNetworkState = {
 export type NetworkProps = {
   currentGragh: CurrentNetworkState;
   setCurrentGraph: SetState<CurrentNetworkState>;
+  data: DataState;
+  setData:SetState<DataState>;
   searchParams: string;
   filterNode: NodeType[];
   tagFilter: TagFilterState;

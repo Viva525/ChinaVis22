@@ -8,8 +8,8 @@ import {
 import ForceGraph, { GraphData } from 'force-graph';
 import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
 import type { DataState, NetworkProps } from './types';
-import { thresholdFreedmanDiaconis } from 'd3';
 import * as THREE from 'three';
+
 /**
  * 主图组件
  */
@@ -20,12 +20,9 @@ const Network: React.FC<NetworkProps> = (props) => {
   const container = React.useRef();
   const linkColor = ['rgba(0,0,0,0.1)', 'rgba(255,255,255,0.1)'];
   const [didMountState, setDidMountState] = useState(false);
-  const { currentGragh, setCurrentGraph, searchParams, filterNode, tagFilter } =
+  const { currentGragh, setCurrentGraph, searchParams, filterNode, tagFilter, data, setData} =
     props;
-  const [dataState, setDataState] = useState<DataState>({
-    nodes: [],
-    links: [],
-  });
+
 
   const getData = (func: Function, params: any) => {
     let data = func(...params);
@@ -35,12 +32,18 @@ const Network: React.FC<NetworkProps> = (props) => {
   };
 
   const drawGraph = () => {
-    graph
-      ?.graphData({ nodes: [], links: [] })
+    graph?.graphData({ nodes: [], links: [] })
       .backgroundColor('rgba(255,255,255,0.5)')
-      .width(1300)
+      .width(1270)
       .height(800)
-      .nodeAutoColorBy('weight')
+      // .nodeAutoColorBy('weight')
+      .nodeColor((node:any)=>{
+        if(!node.properties.email_id || !node.properties.phone_id || !node.properties.register_id){
+          return '#ff0000'
+        }else{
+          return '#000'
+        }
+      })
       .onNodeClick((node: any) => {
         console.log(node);
       })
@@ -61,8 +64,19 @@ const Network: React.FC<NetworkProps> = (props) => {
       .nodeThreeObject((node: any) => {
         let shape = null;
         let geometry: any = null;
+        let color;
+        if(node.properties.email_id!==undefined ){
+          color= '#ff0000'
+        }else if( node.properties.phone_id!==undefined ){
+          color='#00ff00'
+        }else if(node.properties.register_id!==undefined){
+          color='#0000ff'
+        }
+        else{
+          color= '#000'
+        }
         let material = new THREE.MeshLambertMaterial({
-          color: node.color || Math.round(Math.random() * Math.pow(2, 24)),
+          color: color,
           transparent: true,
           opacity: 0.75,
         });
@@ -93,20 +107,20 @@ const Network: React.FC<NetworkProps> = (props) => {
   const initGraph = () => {
     graph
       ?.jsonUrl(
-        'https://raw.githubusercontent.com/religiones/ChinaVis22/master/public/allCommunity.json'
+        'https://raw.githubusercontent.com/religiones/ChinaVis22/master/src/assets/allCommunity.json'
       )
-      .backgroundColor('rgba(255,255,255,0.5)')
-      .width(1300)
+      .backgroundColor('rgba(0,0,0,1)')
+      .width(1270)
       .height(800)
       .nodeLabel((node: any) => {
         return node.id;
       })
-      .linkColor(() => linkColor[0])
+      .linkColor(() => linkColor[1])
       .nodeThreeObject((node: any) => {
         let shape = null;
         let geometry: any = null;
         let material = new THREE.MeshLambertMaterial({
-          color: '#832',
+          color: '#fff',
           // node.color || Math.round(Math.random() * Math.pow(2, 24)),
           transparent: true,
           opacity: 0.75,
@@ -122,69 +136,10 @@ const Network: React.FC<NetworkProps> = (props) => {
         return shape;
       })
       .showNavInfo(false);
+
     //@ts-ignore
     // graph.d3Force('link').distance((link: any) => 50);
   };
-
-  // const drawGraph = () => {
-  //   if (didMountState) {
-  //     //@ts-ignore
-  //     graph.graphData(dataState)
-  //       .backgroundColor('rgba(255,255,255,0.5)')
-  //       .width(1300)
-  //       .height(800)
-  //       .nodeRelSize(6)
-  //       .nodeLabel((node: any) => {
-  //         const { IP, Cert, Domain } = tagFilter;
-  //         switch (node.group) {
-  //           case 'IP':
-  //             return node.properties[IP];
-  //           case 'Cert':
-  //             return node.properties[Cert];
-  //           case 'Domain':
-  //             return node.properties[Domain];
-  //         }
-  //       })
-  //       .nodeAutoColorBy('weight')
-  //       .linkColor(() => linkColor[0])
-  //       .linkDirectionalParticles(1)
-  //       .linkDirectionalParticleWidth(4)
-  //       .nodeThreeObject((node: any) => {
-  //         let shape = null;
-  //         let geometry: any = null;
-  //         let material = new THREE.MeshLambertMaterial({
-  //           color: node.color || Math.round(Math.random() * Math.pow(2, 24)),
-  //           transparent: true,
-  //           opacity: 0.75,
-  //         });
-  //         switch (node.group) {
-  //           case 'Domain':
-  //             geometry = new THREE.TetrahedronGeometry((node.weight + 1) * 5);
-  //             break;
-  //           case 'Cert':
-  //             geometry = new THREE.SphereGeometry(8);
-  //             break;
-  //           case 'IP':
-  //             geometry = new THREE.OctahedronGeometry(8);
-  //             break;
-  //           default:
-  //         }
-  //         shape = new THREE.Mesh(geometry, material);
-  //         return shape;
-  //       })
-  //       .showNavInfo(false)
-  //       .onNodeClick((node: any) => {
-  //         console.log(node);
-  //       })
-  //       .onNodeDragEnd((node: any) => {
-  //         node.fx = node.x;
-  //         node.fy = node.y;
-  //         node.fz = node.z;
-  //       });
-  //       //@ts-ignore
-  //       graph.d3Force('link').distance((link: any) => link.weight * 20);
-  //   }
-  // };
 
   useEffect(() => {
     if (didMountState) {
@@ -198,8 +153,12 @@ const Network: React.FC<NetworkProps> = (props) => {
               current: 'searchStr',
               communities: arr,
             });
+          }else{
+            setCurrentGraph({
+              current: 'searchStr'
+            });
           }
-          setDataState(dataset.data);
+          setData(dataset.data);
         } else {
           console.log(dataset);
         }
@@ -209,9 +168,9 @@ const Network: React.FC<NetworkProps> = (props) => {
 
   useEffect(() => {
     if (didMountState) {
-      graph?.graphData(dataState);
+      graph?.graphData(data);
     }
-  }, [dataState.nodes, dataState.links]);
+  }, [data.nodes, data.links]);
 
   useEffect(() => {
     if (didMountState) {
@@ -223,11 +182,11 @@ const Network: React.FC<NetworkProps> = (props) => {
         r_cert_chain: ['Cert', 'Cert'],
         r_dns_a: ['IP', 'Domain'],
       };
-      const data: any = { nodes: [], links: [] };
-      data.nodes = dataState.nodes.filter((item: any) => {
+      const dataset: any = { nodes: [], links: [] };
+      dataset.nodes = data.nodes.filter((item: any) => {
         return filterNode.includes(item.group);
       });
-      data.links = dataState.links.filter((item: any) => {
+      dataset.links = data.links.filter((item: any) => {
         return (
           //@ts-ignore
           filterNode.includes(dist[item.type][0]) &&
@@ -235,7 +194,7 @@ const Network: React.FC<NetworkProps> = (props) => {
           filterNode.includes(dist[item.type][1])
         );
       });
-      graph?.graphData(data);
+      graph?.graphData(dataset);
     }
   }, [filterNode]);
 
@@ -265,7 +224,7 @@ const Network: React.FC<NetworkProps> = (props) => {
         drawGraph();
         getData(getNetWorkByCommunity, currentGragh.communities).then(
           (dataset: any) => {
-            setDataState(dataset.data);
+            setData(dataset.data);
           }
         );
       } else {
