@@ -51,7 +51,7 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
       .column(buildNumberColumn('wrong_num', [0, NaN]).width(100));
     category.forEach((item) => {
       dataBuilder = dataBuilder.column(
-        buildNumberColumn('wrong_list', [0, NaN]).asArray(category)
+        buildNumberColumn('wrong_list', [-1, 100]).asArray(category)
       );
     });
     dataBuilder

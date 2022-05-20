@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   getAllCommunities,
   getFilterNetworkByCommunities,
@@ -9,6 +9,7 @@ import ForceGraph, { ForceGraphInstance, GraphData } from 'force-graph';
 import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
 import type { DataState, NetworkProps } from './types';
 import * as THREE from 'three';
+import { Switch } from 'antd';
 
 /**
  * 主图组件
@@ -28,6 +29,8 @@ const Network: React.FC<NetworkProps> = (props) => {
     tagFilter,
     data,
     setData,
+    currentList,
+    setCurrentList,
   } = props;
 
   const getData = (func: Function, params: any) => {
@@ -142,7 +145,9 @@ const Network: React.FC<NetworkProps> = (props) => {
     //@ts-ignore
     graph.d3Force('link').distance((link: any) => 50);
   };
-
+  const switchChange = (item: any) => {
+    setCurrentList(item);
+  };
   useEffect(() => {
     if (didMountState) {
       getData(getNetWorkByParams, [searchParams]).then((dataset: any) => {
@@ -240,9 +245,9 @@ const Network: React.FC<NetworkProps> = (props) => {
   useEffect(() => {
     //@ts-ignore
     graph = ForceGraph3D()(container.current);
-    // all communities connected graph
     initGraph();
     setDidMountState(true);
+    // all communities connected graph
   }, []);
 
   return (
@@ -252,16 +257,20 @@ const Network: React.FC<NetworkProps> = (props) => {
         ref={container}
         id='network'
         style={{ width: '100%', height: '100%' }}></div>
-      <div
+      <Switch
         style={{
-          height: '8%',
-          width: '97.5%',
-          background: 'rgba(0,0,0,0.5)',
+          // height: '8%',
+          // width: '97.5%',
+          // background: 'rgba(0,0,0,0.5)',
           position: 'absolute',
           right: 18,
-          top: 45,
+          top: 50,
           zIndex: 999,
-        }}></div>
+        }}
+        onChange={switchChange}
+        checkedChildren='社区'
+        unCheckedChildren='总览'
+      />
     </>
   );
 };

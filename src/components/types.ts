@@ -42,10 +42,12 @@ export type NetworkProps = {
   currentGragh: CurrentNetworkState;
   setCurrentGraph: SetState<CurrentNetworkState>;
   data: DataState;
-  setData:SetState<DataState>;
+  setData: SetState<DataState>;
   searchParams: string;
   filterNode: NodeType[];
   tagFilter: TagFilterState;
+  currentList: Boolean;
+  setCurrentList: SetState<Boolean>;
 };
 
 export type DataState = {

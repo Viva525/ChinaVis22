@@ -45,6 +45,8 @@ const MyLayout: React.FC<{}> = () => {
     current: 'IP',
   });
 
+  const [currentListState, setCurrentListState] = useState<Boolean>(false);
+
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <Layout>
@@ -89,6 +91,8 @@ const MyLayout: React.FC<{}> = () => {
                   tagFilter={tagFilterState}
                   data={dataState}
                   setData={setDataState}
+                  currentList={currentListState}
+                  setCurrentList={setCurrentListState}
                 />
               }
             />
