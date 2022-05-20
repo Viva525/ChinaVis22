@@ -46,8 +46,6 @@ export type NetworkProps = {
   searchParams: string;
   filterNode: NodeType[];
   tagFilter: TagFilterState;
-  currentList: Boolean;
-  setCurrentList: SetState<Boolean>;
 };
 
 export type DataState = {

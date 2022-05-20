@@ -23,13 +23,15 @@ const MyLayout: React.FC<{}> = () => {
   const [currentGraphState, setCurrentGraphState] =
     useState<CurrentNetworkState>({
       current: 'allCommunity',
-      communities: [1910103],
+      communities: [],
     });
 
   const [dataState, setDataState] = useState<DataState>({
     nodes: [],
     links: [],
   });
+
+  const [selectNodeState, setSelectNodeState] = useState<any>();
 
   const [searchParamsState, setSearchParamsState] =
     useState<ControlState['searchParams']>('');
@@ -44,8 +46,6 @@ const MyLayout: React.FC<{}> = () => {
     Domain: 'id',
     current: 'IP',
   });
-
-  const [currentListState, setCurrentListState] = useState<Boolean>(false);
 
   return (
     <div style={{ width: '100%', height: '100vh' }}>
@@ -91,8 +91,6 @@ const MyLayout: React.FC<{}> = () => {
                   tagFilter={tagFilterState}
                   data={dataState}
                   setData={setDataState}
-                  currentList={currentListState}
-                  setCurrentList={setCurrentListState}
                 />
               }
             />
@@ -102,6 +100,7 @@ const MyLayout: React.FC<{}> = () => {
               title='COMMUNITY &amp; NODE LIST'
               component={
                 <CommunityAndNodeList
+                  currentGragh={currentGraphState}
                   setCurrentGraph={setCurrentGraphState}
                   data={dataState}
                 />

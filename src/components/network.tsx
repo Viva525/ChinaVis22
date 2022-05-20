@@ -21,6 +21,7 @@ const Network: React.FC<NetworkProps> = (props) => {
   const container = React.useRef();
   const linkColor = ['rgba(0,0,0,0.1)', 'rgba(255,255,255,0.1)'];
   const [didMountState, setDidMountState] = useState(false);
+  const [currentListState, setCurrentListState] = useState<Boolean>(false);
   const {
     currentGragh,
     setCurrentGraph,
@@ -28,9 +29,7 @@ const Network: React.FC<NetworkProps> = (props) => {
     filterNode,
     tagFilter,
     data,
-    setData,
-    currentList,
-    setCurrentList,
+    setData
   } = props;
 
   const getData = (func: Function, params: any) => {
@@ -44,7 +43,7 @@ const Network: React.FC<NetworkProps> = (props) => {
     graph
       ?.graphData({ nodes: [], links: [] })
       .backgroundColor('#CFD8DC')
-      .width(1240)
+      .width(1266)
       .height(790)
       .onNodeClick((node: any) => {
         console.log(node);
@@ -67,15 +66,6 @@ const Network: React.FC<NetworkProps> = (props) => {
         let shape = null;
         let geometry: any = null;
         let color;
-
-        // if (node.properties.email_id !== undefined) {
-        //   color = '#ff0000';
-        // } else if (node.properties.phone_id !== undefined) {
-        //   color = '#00ff00';
-        // } else if (node.properties.register_id !== undefined) {
-        //   color = '#0000ff';
-        // }
-
         switch (node.group) {
           case 'Domain':
             color = '#dcd6c5';
@@ -116,7 +106,7 @@ const Network: React.FC<NetworkProps> = (props) => {
         'https://raw.githubusercontent.com/religiones/ChinaVis22/master/src/assets/allCommunity.json'
       )
       .backgroundColor('#CFD8DC')
-      .width(1240)
+      .width(1266)
       .height(790)
       .nodeLabel((node: any) => {
         return node.id;
@@ -145,9 +135,17 @@ const Network: React.FC<NetworkProps> = (props) => {
     //@ts-ignore
     graph.d3Force('link').distance((link: any) => 50);
   };
+  //切换视图显示
   const switchChange = (item: any) => {
-    setCurrentList(item);
+    if(!item){
+      setCurrentGraph((prevState)=>({
+        ...prevState,
+        current: "allCommunity"
+      }))
+    }
+    setCurrentListState(item);
   };
+
   useEffect(() => {
     if (didMountState) {
       getData(getNetWorkByParams, [searchParams]).then((dataset: any) => {
@@ -235,12 +233,15 @@ const Network: React.FC<NetworkProps> = (props) => {
             setData(dataset);
           }
         );
+        setCurrentListState(true);
       } else {
         // all communities connected graph
         initGraph();
+        setCurrentListState(false);
       }
     }
   }, [currentGragh.current, currentGragh.communities]);
+
 
   useEffect(() => {
     //@ts-ignore
@@ -267,6 +268,7 @@ const Network: React.FC<NetworkProps> = (props) => {
           top: 50,
           zIndex: 999,
         }}
+        checked={currentListState as boolean}
         onChange={switchChange}
         checkedChildren='社区'
         unCheckedChildren='总览'

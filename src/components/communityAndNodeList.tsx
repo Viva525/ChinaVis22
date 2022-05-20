@@ -11,6 +11,7 @@ import { CurrentNetworkState, DataState, SetState } from './types';
 
 type CommunityAndNodeListProps = {
   data: DataState;
+  currentGragh:CurrentNetworkState;
   setCurrentGraph: SetState<CurrentNetworkState>;
 };
 let lineUp: any = null;
@@ -28,7 +29,7 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
     'pay',
     'other',
   ];
-  const { data, setCurrentGraph } = props;
+  const { data,currentGragh, setCurrentGraph } = props;
   const [didMountState, setDidMountState] = useState(false);
 
   document.oncontextmenu = function (e: any) {
@@ -42,7 +43,7 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
     return false; //阻止浏览器的默认弹窗行为
   };
 
-  useEffect(() => {
+  const initList = () => {
     //本地数据
     const data = require('../assets/lineUp.json');
     let dataBuilder = builder(data)
@@ -69,12 +70,11 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
         communities: [lineUp._data._data[id].id],
       });
     });
-    setDidMountState(true);
-  }, []);
+    
+  };
 
-  useEffect(() => {
-    if (didMountState) {
-      let array = [];
+  const drawList = ()=>{
+    let array = [];
       for (let i = 0; i < data.nodes.length; i++) {
         let temp: any = {};
         temp.id = data.nodes[i].properties.id;
@@ -136,13 +136,30 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
         .column(buildStringColumn('register').width(100))
         .column(buildStringColumn('asn').width(100))
         .column(buildStringColumn('ipc').width(100));
-
-      lineUp.destroy();
       lineUp = nodeDataBuilder
         .deriveColors()
         .buildTaggle(container.current as HTMLElement);
+  }
+
+  useEffect(() => {
+    initList();
+    setDidMountState(true);
+  }, []);
+
+  useEffect(() => {
+    if (didMountState) {
+      lineUp.destroy();
+      if(currentGragh.current==="allCommunity"){
+          initList();
+      }
+      else if(currentGragh.current==="communities"){
+          drawList();
+      }
+      else{
+          drawList();
+      }
     }
-  }, [data.nodes, data.links]);
+  }, [data.nodes, data.links, currentGragh.current]);
 
   return <div ref={container} style={{ width: '100%', height: '100%' }}></div>;
 };
