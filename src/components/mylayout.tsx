@@ -31,7 +31,7 @@ const MyLayout: React.FC<{}> = () => {
     links: [],
   });
 
-  const [selectNodeState, setSelectNodeState] = useState<any>();
+  const [selectNodeState, setSelectNodeState] = useState<string[]>([]);
 
   const [searchParamsState, setSearchParamsState] =
     useState<ControlState['searchParams']>('');
@@ -91,6 +91,7 @@ const MyLayout: React.FC<{}> = () => {
                   tagFilter={tagFilterState}
                   data={dataState}
                   setData={setDataState}
+                  selectNode={selectNodeState}
                 />
               }
             />
@@ -103,6 +104,7 @@ const MyLayout: React.FC<{}> = () => {
                   currentGragh={currentGraphState}
                   setCurrentGraph={setCurrentGraphState}
                   data={dataState}
+                  setSelectNode={setSelectNodeState}
                 />
               }
             />

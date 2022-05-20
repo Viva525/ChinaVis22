@@ -29,7 +29,8 @@ const Network: React.FC<NetworkProps> = (props) => {
     filterNode,
     tagFilter,
     data,
-    setData
+    setData,
+    selectNode
   } = props;
 
   const getData = (func: Function, params: any) => {
@@ -145,7 +146,10 @@ const Network: React.FC<NetworkProps> = (props) => {
     }
     setCurrentListState(item);
   };
-
+  /**
+   * 监听searchParams,搜索框变化，查询对应数据
+   * 调用setData,setCurrentGraph
+   */
   useEffect(() => {
     if (didMountState) {
       getData(getNetWorkByParams, [searchParams]).then((dataset: any) => {
@@ -171,13 +175,19 @@ const Network: React.FC<NetworkProps> = (props) => {
       });
     }
   }, [searchParams]);
-
+  /**
+   * 监听data,数据变化,更改绘图数据并更新图
+   * 无调用
+   */
   useEffect(() => {
     if (didMountState) {
       graph?.graphData(data);
     }
   }, [data.nodes, data.links]);
-
+  /**
+   * 监听filterNode,按类别过滤节点
+   * 无调用
+   */
   useEffect(() => {
     if (didMountState) {
       const dist = {
@@ -203,7 +213,10 @@ const Network: React.FC<NetworkProps> = (props) => {
       graph?.graphData(dataset);
     }
   }, [filterNode]);
-
+  /**
+   * 监听tagFilter,更改鼠标指向节点标签
+   * 无调用
+   */
   useEffect(() => {
     if (didMountState) {
       //@ts-ignore
@@ -220,7 +233,10 @@ const Network: React.FC<NetworkProps> = (props) => {
       });
     }
   }, [tagFilter.IP, tagFilter.Cert, tagFilter.Domain]);
-
+  /**
+   * 监听currentGragh,绘制不同场景的图，以及list更新
+   * 调用setData,setCurrentListState
+   */
   useEffect(() => {
     if (didMountState) {
       if (currentGragh.current === 'searchStr') {
@@ -242,7 +258,48 @@ const Network: React.FC<NetworkProps> = (props) => {
     }
   }, [currentGragh.current, currentGragh.communities]);
 
+  /**
+   * 监听selectNode,选取节点高亮显示
+   * 无调用
+   */
+  useEffect(() => {
+    if(didMountState){
+      graph.nodeThreeObject((node: any) => {
+        let shape = null;
+        let geometry: any = null;
+        let color;
+        switch (node.group) {
+          case 'Domain':
+            color = '#dcd6c5';
+            geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
+            break;
+          case 'Cert':
+            color = '#e87e5c';
+            geometry = new THREE.SphereGeometry(10);
+            break;
+          case 'IP':
+            color = '#335a71';
+            geometry = new THREE.SphereGeometry(10);
+            break;
+          default:
+        }
+        if(selectNode.includes(node.properties.id)){
+          color = '#ff0000';
+        }
+        let material = new THREE.MeshToonMaterial({
+          color: color,
+          transparent: true,
+          opacity: 0.8,
+        });
+        shape = new THREE.Mesh(geometry, material);
+        return shape;
+      })
+    }
+  },[selectNode])
 
+  /**
+   * 初始化，绑定元素
+   */
   useEffect(() => {
     //@ts-ignore
     graph = ForceGraph3D()(container.current);
