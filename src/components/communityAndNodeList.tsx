@@ -11,7 +11,7 @@ import { CurrentNetworkState, DataState, SetState } from './types';
 
 type CommunityAndNodeListProps = {
   data: DataState;
-  currentGragh:CurrentNetworkState;
+  currentGragh: CurrentNetworkState;
   setCurrentGraph: SetState<CurrentNetworkState>;
 };
 let lineUp: any = null;
@@ -29,7 +29,7 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
     'pay',
     'other',
   ];
-  const { data,currentGragh, setCurrentGraph } = props;
+  const { data, currentGragh, setCurrentGraph } = props;
   const [didMountState, setDidMountState] = useState(false);
 
   document.oncontextmenu = function (e: any) {
@@ -70,76 +70,78 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
         communities: [lineUp._data._data[id].id],
       });
     });
-    
   };
 
-  const drawList = ()=>{
+  const drawList = () => {
     let array = [];
-      for (let i = 0; i < data.nodes.length; i++) {
-        let temp: any = {};
-        temp.id = data.nodes[i].properties.id;
-        temp.name = data.nodes[i].properties.name;
-        temp.community = data.nodes[i].properties.community;
-        switch (data.nodes[i].group) {
-          case 'Domain':
-            temp.email =
-              data.nodes[i].properties.email_id != undefined
-                ? data.nodes[i].properties.email_id
-                : undefined;
-            temp.phone =
-              data.nodes[i].properties.phone_id != undefined
-                ? data.nodes[i].properties.phone_id
-                : undefined;
-            temp.register =
-              data.nodes[i].properties.register_id != undefined
-                ? data.nodes[i].properties.register_id
-                : undefined;
-            temp.wrong_list = [
-              data.nodes[i].properties.porn == 'True' ? 1 : 0,
-              data.nodes[i].properties.gambling == 'True' ? 1 : 0,
-              data.nodes[i].properties.fraud == 'True' ? 1 : 0,
-              data.nodes[i].properties.drug == 'True' ? 1 : 0,
-              data.nodes[i].properties.gun == 'True' ? 1 : 0,
-              data.nodes[i].properties.hacker == 'True' ? 1 : 0,
-              data.nodes[i].properties.trading == 'True' ? 1 : 0,
-              data.nodes[i].properties.pay == 'True' ? 1 : 0,
-              data.nodes[i].properties.other == 'True' ? 1 : 0,
-            ];
-            break;
-          case 'IP':
-            temp.asn =
-              data.nodes[i].properties.asn_id != undefined
-                ? data.nodes[i].properties.asn_id
-                : undefined;
-            temp.ipc =
-              data.nodes[i].properties.ipc_id != undefined
-                ? data.nodes[i].properties.ipc_id
-                : undefined;
-            break;
-        }
-        array.push(temp);
+    for (let i = 0; i < data.nodes.length; i++) {
+      let temp: any = {};
+      temp.id = data.nodes[i].properties.id;
+      temp.name = data.nodes[i].properties.name;
+      temp.community = data.nodes[i].properties.community;
+      switch (data.nodes[i].group) {
+        case 'Domain':
+          temp.email =
+            data.nodes[i].properties.email_id != undefined
+              ? data.nodes[i].properties.email_id
+              : undefined;
+          temp.phone =
+            data.nodes[i].properties.phone_id != undefined
+              ? data.nodes[i].properties.phone_id
+              : undefined;
+          temp.register =
+            data.nodes[i].properties.register_id != undefined
+              ? data.nodes[i].properties.register_id
+              : undefined;
+          temp.wrong_list = [
+            data.nodes[i].properties.porn == 'True' ? 1 : 0,
+            data.nodes[i].properties.gambling == 'True' ? 1 : 0,
+            data.nodes[i].properties.fraud == 'True' ? 1 : 0,
+            data.nodes[i].properties.drug == 'True' ? 1 : 0,
+            data.nodes[i].properties.gun == 'True' ? 1 : 0,
+            data.nodes[i].properties.hacker == 'True' ? 1 : 0,
+            data.nodes[i].properties.trading == 'True' ? 1 : 0,
+            data.nodes[i].properties.pay == 'True' ? 1 : 0,
+            data.nodes[i].properties.other == 'True' ? 1 : 0,
+          ];
+          break;
+        case 'IP':
+          temp.asn =
+            data.nodes[i].properties.asn_id != undefined
+              ? data.nodes[i].properties.asn_id
+              : undefined;
+          temp.ipc =
+            data.nodes[i].properties.ipc_id != undefined
+              ? data.nodes[i].properties.ipc_id
+              : undefined;
+          break;
       }
-      console.log(array);
-      let nodeDataBuilder = builder(array);
+      array.push(temp);
+    }
+    console.log(array);
+    let nodeDataBuilder = builder(array);
 
-      category.forEach((item) => {
-        nodeDataBuilder = nodeDataBuilder.column(
-          buildNumberColumn('wrong_list', [-1, 4]).asArray(category)
-        );
-      });
-      nodeDataBuilder
-        .column(buildStringColumn('id').width(100))
-        .column(buildStringColumn('name').width(100))
-        .column(buildStringColumn('community').width(80))
-        .column(buildStringColumn('email').width(100))
-        .column(buildStringColumn('phone').width(100))
-        .column(buildStringColumn('register').width(100))
-        .column(buildStringColumn('asn').width(100))
-        .column(buildStringColumn('ipc').width(100));
-      lineUp = nodeDataBuilder
-        .deriveColors()
-        .buildTaggle(container.current as HTMLElement);
-  }
+    category.forEach((item) => {
+      nodeDataBuilder = nodeDataBuilder.column(
+        buildNumberColumn('wrong_list', [-1, 4]).asArray(category)
+      );
+    });
+    nodeDataBuilder
+      .column(buildStringColumn('id').width(100))
+      .column(buildStringColumn('name').width(100))
+      .column(buildStringColumn('community').width(80))
+      .column(buildStringColumn('email').width(100))
+      .column(buildStringColumn('phone').width(100))
+      .column(buildStringColumn('register').width(100))
+      .column(buildStringColumn('asn').width(100))
+      .column(buildStringColumn('ipc').width(100));
+    lineUp = nodeDataBuilder
+      .deriveColors()
+      .buildTaggle(container.current as HTMLElement);
+    lineUp.on('selectionChanged', (id: any) => {
+      console.log(id);
+    });
+  };
 
   useEffect(() => {
     initList();
@@ -149,14 +151,12 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
   useEffect(() => {
     if (didMountState) {
       lineUp.destroy();
-      if(currentGragh.current==="allCommunity"){
-          initList();
-      }
-      else if(currentGragh.current==="communities"){
-          drawList();
-      }
-      else{
-          drawList();
+      if (currentGragh.current === 'allCommunity') {
+        initList();
+      } else if (currentGragh.current === 'communities') {
+        drawList();
+      } else {
+        drawList();
       }
     }
   }, [data.nodes, data.links, currentGragh.current]);

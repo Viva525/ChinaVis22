@@ -1,4 +1,4 @@
-import { Select, Segmented } from 'antd';
+import { Select, Segmented, Slider } from 'antd';
 import Search from 'antd/lib/input/Search';
 import React, { useState } from 'react';
 import type { ControlBarProps, NodeType, Node, Tag } from './types';
@@ -27,6 +27,8 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
   const handleChange = (nodes: Node) => {
     setFilterNode(nodes);
   };
+
+  const onAfterChange = (nodes: any) => {};
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -70,6 +72,12 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
         }}
         value={tagFilter[current]}
         style={{ marginTop: '8px' }}></Segmented>
+      <Slider
+        range
+        step={10}
+        defaultValue={[20, 50]}
+        onAfterChange={onAfterChange}
+      />
     </div>
   );
 };
