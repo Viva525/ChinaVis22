@@ -1,11 +1,5 @@
 import React, { LegacyRef, useEffect, useState } from 'react';
-import {
-  asLineUp,
-  buildCategoricalColumn,
-  builder,
-  buildNumberColumn,
-  buildStringColumn,
-} from 'lineupjs';
+import { builder, buildNumberColumn, buildStringColumn } from 'lineupjs';
 import 'lineupjs/build/LineUpJS.css';
 import { CurrentNetworkState, DataState, SetState } from './types';
 
@@ -13,6 +7,7 @@ type CommunityAndNodeListProps = {
   data: DataState;
   currentGragh: CurrentNetworkState;
   setCurrentGraph: SetState<CurrentNetworkState>;
+  setSelectNode: SetState<string[]>;
 };
 let lineUp: any = null;
 
@@ -29,7 +24,7 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
     'pay',
     'other',
   ];
-  const { data, currentGragh, setCurrentGraph } = props;
+  const { data, currentGragh, setCurrentGraph, setSelectNode } = props;
   const [didMountState, setDidMountState] = useState(false);
 
   document.oncontextmenu = function (e: any) {
@@ -118,9 +113,7 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
       }
       array.push(temp);
     }
-    console.log(array);
     let nodeDataBuilder = builder(array);
-
     category.forEach((item) => {
       nodeDataBuilder = nodeDataBuilder.column(
         buildNumberColumn('wrong_list', [-1, 4]).asArray(category)
@@ -138,8 +131,13 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
     lineUp = nodeDataBuilder
       .deriveColors()
       .buildTaggle(container.current as HTMLElement);
-    lineUp.on('selectionChanged', (id: any) => {
-      console.log(id);
+    lineUp.on('selectionChanged', (idArray: number[]) => {
+      console.log(lineUp);
+      let arr = [];
+      for (let i = 0; i < idArray.length; i++) {
+        arr.push(lineUp._data._data[idArray[i]].id);
+      }
+      setSelectNode(arr);
     });
   };
 

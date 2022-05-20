@@ -46,6 +46,7 @@ export type NetworkProps = {
   searchParams: string;
   filterNode: NodeType[];
   tagFilter: TagFilterState;
+  selectNode: string[];
 };
 
 export type DataState = {
