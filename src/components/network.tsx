@@ -9,7 +9,7 @@ import ForceGraph, { ForceGraphInstance, GraphData } from 'force-graph';
 import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
 import type { DataState, NetworkProps } from './types';
 import * as THREE from 'three';
-import { Switch } from 'antd';
+import { Descriptions, Switch } from 'antd';
 import { nodeModuleNameResolver } from 'typescript';
 
 /**
@@ -120,7 +120,7 @@ const Network: React.FC<NetworkProps> = (props) => {
         return node.id;
       })
       .linkColor(() => linkColor[0])
-      .linkVisibility(false)
+      // .linkVisibility(false)
       .nodeThreeObject(() => {})
       // .nodeThreeObject((node: any) => {
       //   let shape = null;
@@ -391,6 +391,18 @@ const Network: React.FC<NetworkProps> = (props) => {
         checkedChildren='社区'
         unCheckedChildren='总览'
       />
+      <Descriptions title="nodeInfo" style={{ 
+          position: 'absolute',
+          right: 18,
+          top: 50,
+          zIndex: 999}}>
+        <Descriptions.Item label="nodeName">1</Descriptions.Item>
+        <Descriptions.Item label="nodeName">1</Descriptions.Item>
+        <Descriptions.Item label="nodeName">1</Descriptions.Item>
+        <Descriptions.Item label="nodeName">1</Descriptions.Item>
+        <Descriptions.Item label="nodeName">1</Descriptions.Item>
+        <Descriptions.Item label="nodeName">1</Descriptions.Item>
+      </Descriptions>
     </>
   );
 };
