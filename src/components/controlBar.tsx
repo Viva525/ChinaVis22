@@ -1,6 +1,6 @@
-import { Select, Segmented, Slider } from 'antd';
+import { Select, Segmented, Slider, Row, Col } from 'antd';
 import Search from 'antd/lib/input/Search';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { ControlBarProps, NodeType, Node, Tag } from './types';
 
 /**
@@ -20,69 +20,99 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
   const { range, setRange } = props;
   const { current } = tagFilter;
 
+  const container = React.useRef(null);
+
   const getResult = (value: string) => {
     // setIsLoading(true);
     setSearchParams(value);
   };
 
-  const handleChange = (nodes: Node) => {
+  const filterChange = (nodes: Node) => {
     setFilterNode(nodes);
   };
+
+  const filterNumChange = (node: any) => {};
 
   const onAfterChange = (range: [number, number]) => {
     setRange(range);
   };
 
   return (
-    <div style={{ width: '100%', height: '100%' }}>
-      <Search
-        placeholder='input node or link want to search'
-        style={{ width: '100%' }}
-        enterButton='Search'
-        loading={isLoading}
-        onSearch={getResult}
-      />
-      <Select
-        mode='multiple'
-        allowClear
-        placeholder='filter node'
-        //@ts-ignore
-        defaultValue={filterNode}
-        onChange={handleChange}
-        style={{ width: '100%', marginTop: '8px' }}>
-        {node.map((item) => (
-          <Select.Option key={item} value={item}>
-            {item}
-          </Select.Option>
-        ))}
-      </Select>
-      <Segmented
-        options={node}
-        block
-        onChange={(value) => {
-          setTagFilter((prevState) => ({
-            ...prevState,
-            current: value as NodeType,
-          }));
-        }}
-        value={current}
-        style={{ marginTop: '8px' }}></Segmented>
-      <Segmented
-        options={tag}
-        block
-        onChange={(value) => {
-          setTagFilter((prevState) => ({ ...prevState, [current]: value }));
-        }}
-        value={tagFilter[current]}
-        style={{ marginTop: '8px' }}></Segmented>
-      <Slider
-        min={0}
-        max={1443}
-        range
-        step={1}
-        defaultValue={range}
-        onAfterChange={onAfterChange}
-      />
+    <div ref={container} style={{ width: '100%', height: '100%' }}>
+      <Row style={{ width: '100%' }} align='middle'>
+        <Search
+          placeholder='input node or link want to search'
+          style={{ width: '100%' }}
+          enterButton='Search'
+          loading={isLoading}
+          onSearch={getResult}
+        />
+      </Row>
+      <Row style={{ width: '100%' }} align='middle'>
+        <Select
+          mode='multiple'
+          allowClear
+          placeholder='filter node'
+          //@ts-ignore
+          defaultValue={filterNode}
+          onChange={filterChange}
+          style={{ width: '100%', marginTop: '8px' }}>
+          {node.map((item) => (
+            <Select.Option key={item} value={item}>
+              {item}
+            </Select.Option>
+          ))}
+        </Select>
+      </Row>
+      <Row style={{ width: '100%' }} align='middle'>
+        <Segmented
+          options={node}
+          block
+          onChange={(value) => {
+            setTagFilter((prevState) => ({
+              ...prevState,
+              current: value as NodeType,
+            }));
+          }}
+          value={current}
+          style={{ width: '100%', marginTop: '8px' }}></Segmented>
+      </Row>
+      <Row style={{ width: '100%' }} align='middle'>
+        <Segmented
+          options={tag}
+          block
+          onChange={(value) => {
+            setTagFilter((prevState) => ({ ...prevState, [current]: value }));
+          }}
+          value={tagFilter[current]}
+          style={{ width: '100%', marginTop: '8px' }}></Segmented>
+      </Row>
+
+      <Row align='middle'>
+        <Col span={8}>
+          <Select
+            style={{ width: '100%', marginLeft: '2px', marginTop: '10px' }}
+            labelInValue
+            defaultValue={{ value: 'Wrong_num', label: 'Wrong_num' }}
+            onChange={filterNumChange}>
+            <Select.Option value='Node_num'>Node_num</Select.Option>
+            <Select.Option value='Wrong_num'>Wrong_num</Select.Option>
+            <Select.Option value='Neighbour_num'>Neighbour_num</Select.Option>
+          </Select>
+        </Col>
+        <Col span={16} push={1}>
+          <Slider
+            style={{ width: '85%', marginTop: '18px' }}
+            min={0}
+            max={1443}
+            disabled={currentGraph.current !== 'allCommunity'}
+            range
+            step={1}
+            defaultValue={range}
+            onAfterChange={onAfterChange}
+          />
+        </Col>
+      </Row>
     </div>
   );
 };

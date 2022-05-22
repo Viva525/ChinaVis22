@@ -54,7 +54,7 @@ const MyLayout: React.FC<{}> = () => {
       <Layout>
         <Row style={{ height: '65vh', overflow: 'hidden' }}>
           <Col span={4} style={{ height: '100%' }}>
-            <Row style={{ height: '27%' }}>
+            <Row style={{ height: '28%' }}>
               <Box
                 title='CONTROL BAR'
                 component={
@@ -73,7 +73,7 @@ const MyLayout: React.FC<{}> = () => {
                 }
               />
             </Row>
-            <Row style={{ height: '23%' }}>
+            <Row style={{ height: '22%' }}>
               <Box title='Neighbour Heatmap' />
             </Row>
             <Row style={{ height: '50%' }}>

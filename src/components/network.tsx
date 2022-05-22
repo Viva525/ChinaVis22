@@ -10,7 +10,6 @@ import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
 import type { DataState, NetworkProps } from './types';
 import * as THREE from 'three';
 import { Descriptions, Switch } from 'antd';
-import { nodeModuleNameResolver } from 'typescript';
 
 /**
  * 主图组件
@@ -46,8 +45,7 @@ const Network: React.FC<NetworkProps> = (props) => {
     graph
       ?.graphData({ nodes: [], links: [] })
       .backgroundColor('#CFD8DC')
-      .width(1266)
-      .height(790)
+
       .onNodeClick((node: any) => {
         console.log(node);
       })
@@ -108,10 +106,9 @@ const Network: React.FC<NetworkProps> = (props) => {
     graph
       ?.graphData({ nodes: [], links: [] })
       .backgroundColor('#CFD8DC')
-      .width(1266)
-      .height(790)
+
       .nodeColor(() => {
-        return '#2d2e36';
+        return '#685e48';
       })
       .nodeOpacity(0.95)
       .nodeVal((node: any) => {
@@ -121,6 +118,7 @@ const Network: React.FC<NetworkProps> = (props) => {
         return node.id;
       })
       .linkColor(() => linkColor[0])
+      .linkDirectionalParticles(0)
       .nodeThreeObject(() => {})
       // .nodeThreeObject((node: any) => {
       //   let shape = null;
@@ -363,6 +361,8 @@ const Network: React.FC<NetworkProps> = (props) => {
       setData(dataset);
     });
     setDidMountState(true);
+    const { clientWidth, clientHeight }: any = container.current;
+    graph.width(clientWidth).height(clientHeight);
   }, []);
 
   return (
@@ -382,6 +382,7 @@ const Network: React.FC<NetworkProps> = (props) => {
           top: 50,
           zIndex: 999,
         }}
+        disabled={currentGragh.current === 'allCommunity'}
         checked={currentListState as boolean}
         onChange={switchChange}
         checkedChildren='社区'
