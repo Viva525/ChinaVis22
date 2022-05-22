@@ -16,13 +16,14 @@ import { nodeModuleNameResolver } from 'typescript';
  * 主图组件
  */
 let graph: any = null;
-
+let context: HTMLElement | null = null;
 //React FC 写法 推荐写这种
 const Network: React.FC<NetworkProps> = (props) => {
   const container = React.useRef();
   const linkColor = ['rgba(0,0,0,0.2)', 'rgba(255,255,255,0.1)'];
   const [didMountState, setDidMountState] = useState(false);
   const [currentListState, setCurrentListState] = useState<Boolean>(false);
+  const [switch3DState, setSwith3DState] = useState<boolean>(false);
   const {
     currentGragh,
     setCurrentGraph,
@@ -42,6 +43,9 @@ const Network: React.FC<NetworkProps> = (props) => {
     });
   };
 
+  /**
+   * 绘制社区3D网络图
+   */
   const drawGraph = () => {
     graph
       ?.graphData({ nodes: [], links: [] })
@@ -66,44 +70,61 @@ const Network: React.FC<NetworkProps> = (props) => {
       .linkColor(() => linkColor[0])
       .linkDirectionalParticles(1)
       .linkDirectionalParticleWidth(2)
-      .nodeThreeObject((node: any) => {
-        let shape = null;
-        let geometry: any = null;
-        let color;
-        switch (node.group) {
-          case 'Domain':
-            color = '#dcd6c5';
-            geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
-            break;
-          case 'Cert':
-            color = '#e87e5c';
-            geometry = new THREE.SphereGeometry(10);
-            break;
-          case 'IP':
-            color = '#335a71';
-            geometry = new THREE.SphereGeometry(10);
-            break;
-          default:
-        }
 
-        let material = new THREE.MeshToonMaterial({
-          color: color,
-          transparent: true,
-          opacity: 0.8,
-        });
-        shape = new THREE.Mesh(geometry, material);
-        return shape;
-      })
-
-      .showNavInfo(false)
       .onNodeDragEnd((node: any) => {
         node.fx = node.x;
         node.fy = node.y;
         node.fz = node.z;
       });
+    if (!switch3DState) {
+      graph
+        .nodeThreeObject((node: any) => {
+          let shape = null;
+          let geometry: any = null;
+          let color;
+          switch (node.group) {
+            case 'Domain':
+              color = '#dcd6c5';
+              geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
+              break;
+            case 'Cert':
+              color = '#e87e5c';
+              geometry = new THREE.SphereGeometry(10);
+              break;
+            case 'IP':
+              color = '#335a71';
+              geometry = new THREE.SphereGeometry(10);
+              break;
+            default:
+          }
+
+          let material = new THREE.MeshToonMaterial({
+            color: color,
+            transparent: true,
+            opacity: 0.8,
+          });
+          shape = new THREE.Mesh(geometry, material);
+          return shape;
+        })
+        .showNavInfo(false);
+    } else {
+      graph.nodeColor((node: any) => {
+        switch (node.group) {
+          case 'Domain':
+            return '#dcd6c5';
+          case 'Cert':
+            return '#e87e5c';
+          case 'IP':
+            return '#335a71';
+        }
+      });
+    }
     //@ts-ignore
     graph.d3Force('link').distance((link: any) => 50);
   };
+  /**
+   * 初始化绘制社区连接图
+   */
   const initGraph = () => {
     graph
       ?.graphData({ nodes: [], links: [] })
@@ -113,45 +134,35 @@ const Network: React.FC<NetworkProps> = (props) => {
       .nodeColor(() => {
         return '#2d2e36';
       })
-      .nodeOpacity(0.95)
-      .nodeVal((node: any) => {
-        return (node.wrong_num * node.wrong_num) / 200;
-      })
       .nodeLabel((node: any) => {
         return node.id;
       })
       .linkColor(() => linkColor[0])
-      .nodeThreeObject(() => {})
-      // .nodeThreeObject((node: any) => {
-      //   let shape = null;
-      //   let geometry: any = null;
-      //   let material = new THREE.MeshToonMaterial({
-      //     color: '#173728',
-      //     // transparent: true,
-      //     // opacity: 0.75,
-      //   });
-      //   let r = 0;
-      //   if (node.neighbour.length > 10) {
-      //     r = node.neighbour.length / 15;
-      //   } else {
-      //     r = 1;
-      //   }
-      //   geometry = new THREE.SphereGeometry(node.wrong_num / 20);
-      //   shape = new THREE.Mesh(geometry, material);
-      //   return shape;
-      // })
       .onNodeDragEnd((node: any) => {
         node.fx = node.x;
         node.fy = node.y;
         node.fz = node.z;
-      })
-      .showNavInfo(false);
-
+      });
+    if (!switch3DState) {
+      graph
+        .nodeVal((node: any) => {
+          return (node.wrong_num * node.wrong_num) / 200;
+        })
+        .nodeOpacity(0.95)
+        .nodeThreeObject(() => {})
+        .showNavInfo(false);
+    } else {
+      graph.nodeVal((node: any) => {
+        return node.wrong_num/10;
+      });
+    }
     //@ts-ignore
     graph.d3Force('link').distance((link: any) => 100);
   };
-  //切换视图显示
-  const switchChange = (item: any) => {
+  /**
+   * 切换视图显示
+   */
+  const switchViewChange = (item: boolean) => {
     if (!item) {
       setCurrentGraph((prevState) => ({
         ...prevState,
@@ -159,6 +170,12 @@ const Network: React.FC<NetworkProps> = (props) => {
       }));
     }
     setCurrentListState(item);
+  };
+  /**
+   * 切换3D/2D模式
+   */
+  const switch3DViewChange = (item: boolean) => {
+    setSwith3DState(item);
   };
   /**
    * 监听searchParams,搜索框变化，查询对应数据
@@ -290,46 +307,61 @@ const Network: React.FC<NetworkProps> = (props) => {
       }
     }
   }, [currentGragh.current, currentGragh.communities]);
-
   /**
    * 监听selectNode,选取节点高亮显示
    * 无调用
    */
   useEffect(() => {
     if (didMountState) {
-      graph.nodeThreeObject((node: any) => {
-        let shape = null;
-        let geometry: any = null;
-        let color;
-        switch (node.group) {
-          case 'Domain':
-            color = '#dcd6c5';
-            geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
-            break;
-          case 'Cert':
-            color = '#e87e5c';
-            geometry = new THREE.SphereGeometry(10);
-            break;
-          case 'IP':
-            color = '#335a71';
-            geometry = new THREE.SphereGeometry(10);
-            break;
-          default:
-        }
-        if (selectNode.includes(node.properties.id)) {
-          color = '#ff0000';
-        }
-        let material = new THREE.MeshToonMaterial({
-          color: color,
-          transparent: true,
-          opacity: 0.8,
+      if (!switch3DState) {
+        graph.nodeThreeObject((node: any) => {
+          let shape = null;
+          let geometry: any = null;
+          let color;
+          switch (node.group) {
+            case 'Domain':
+              color = '#dcd6c5';
+              geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
+              break;
+            case 'Cert':
+              color = '#e87e5c';
+              geometry = new THREE.SphereGeometry(10);
+              break;
+            case 'IP':
+              color = '#335a71';
+              geometry = new THREE.SphereGeometry(10);
+              break;
+            default:
+          }
+          if (selectNode.includes(node.properties.id)) {
+            color = '#ff0000';
+          }
+          let material = new THREE.MeshToonMaterial({
+            color: color,
+            transparent: true,
+            opacity: 0.8,
+          });
+          shape = new THREE.Mesh(geometry, material);
+          return shape;
         });
-        shape = new THREE.Mesh(geometry, material);
-        return shape;
-      });
+      } else {
+        graph.nodeColor((node: any) => {
+          if (selectNode.includes(node.properties.id)) {
+            return '#ff0000';
+          } else {
+            switch (node.group) {
+              case 'Domain':
+                return '#dcd6c5';
+              case 'Cert':
+                return '#e87e5c';
+              case 'IP':
+                return '#335a71';
+            }
+          }
+        });
+      }
     }
   }, [selectNode]);
-
   /**
    * 监听range，过滤初始视图的节点
    * 无调用
@@ -350,14 +382,36 @@ const Network: React.FC<NetworkProps> = (props) => {
       graph.graphData({ nodes: nodes, links: links });
     }
   }, [range]);
-
+  /**
+   * 监听3DState，切换3D/2D模式
+   * 无调用
+   */
+  useEffect(() => {
+    if (context == null) return;
+    const dataset = graph.graphData();
+    if (switch3DState) {
+      // 2D模式
+      graph = ForceGraph()(context);
+    } else {
+      // 3D模式
+      graph = ForceGraph3D()(context);
+    }
+    if (currentGragh.current == 'allCommunity') {
+      initGraph();
+    } else {
+      drawGraph();
+    }
+    graph.graphData(dataset);
+  }, [switch3DState]);
   /**
    * 初始化，绑定元素
    */
   useEffect(() => {
     //@ts-ignore
-    graph = ForceGraph3D()(container.current);
-
+    if (container.current != undefined) {
+      context = container.current;
+      graph = ForceGraph3D()(context);
+    }
     initGraph();
     getData(getAllCommunities, []).then((dataset: any) => {
       setData(dataset);
@@ -371,21 +425,31 @@ const Network: React.FC<NetworkProps> = (props) => {
         //@ts-ignore
         ref={container}
         id='network'
-        style={{ width: '100%', height: '100%' }}></div>
+        style={{ width: '100%', height: '100%' }}
+      ></div>
       <Switch
         style={{
-          // height: '8%',
-          // width: '97.5%',
-          // background: 'rgba(0,0,0,0.5)',
           position: 'absolute',
           right: 18,
           top: 50,
           zIndex: 999,
         }}
         checked={currentListState as boolean}
-        onChange={switchChange}
+        onChange={switchViewChange}
         checkedChildren='社区'
         unCheckedChildren='总览'
+      />
+      <Switch
+        style={{
+          position: 'absolute',
+          right: 90,
+          top: 50,
+          zIndex: 999,
+        }}
+        checked={switch3DState as boolean}
+        onChange={switch3DViewChange}
+        checkedChildren='2D'
+        unCheckedChildren='3D'
       />
       {/* <Descriptions title="nodeInfo" style={{ 
           position: 'absolute',
