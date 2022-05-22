@@ -387,7 +387,7 @@ const Network: React.FC<NetworkProps> = (props) => {
         checkedChildren='社区'
         unCheckedChildren='总览'
       />
-      <Descriptions title="nodeInfo" style={{ 
+      {/* <Descriptions title="nodeInfo" style={{ 
           position: 'absolute',
           right: 18,
           top: 50,
@@ -398,7 +398,7 @@ const Network: React.FC<NetworkProps> = (props) => {
         <Descriptions.Item label="nodeName">1</Descriptions.Item>
         <Descriptions.Item label="nodeName">1</Descriptions.Item>
         <Descriptions.Item label="nodeName">1</Descriptions.Item>
-      </Descriptions>
+      </Descriptions> */}
     </>
   );
 };
