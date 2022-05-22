@@ -368,10 +368,10 @@ const Network: React.FC<NetworkProps> = (props) => {
     if (didMountState) {
       let links = data.links.filter((link: any) => {
         return (
-          link?.sourceNode[0].wrong_num >= range[0] &&
-          link?.sourceNode[0].wrong_num <= range[1] &&
-          link?.targetNode[0].wrong_num >= range[0] &&
-          link?.targetNode[0].wrong_num <= range[1]
+          link.sourceNode[0].wrong_num >= range[0] &&
+          link.sourceNode[0].wrong_num <= range[1] &&
+          link.targetNode[0].wrong_num >= range[0] &&
+          link.targetNode[0].wrong_num <= range[1]
         );
       });
       let nodes = data.nodes.filter((node: any) => {
@@ -399,6 +399,8 @@ const Network: React.FC<NetworkProps> = (props) => {
     } else {
       drawGraph();
     }
+    const { clientWidth, clientHeight }: any = container.current;
+    graph.width(clientWidth).height(clientHeight);
     graph.graphData(dataset);
   }, [switch3DState]);
   /**
