@@ -17,6 +17,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
   const { filterNode, setFilterNode } = props;
   const { tagFilter, setTagFilter } = props;
   const { currentGraph, setCurrentGraph } = props;
+  const { range, setRange } = props;
   const { current } = tagFilter;
 
   const getResult = (value: string) => {
@@ -28,7 +29,9 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
     setFilterNode(nodes);
   };
 
-  const onAfterChange = (nodes: any) => {};
+  const onAfterChange = (range: [number, number]) => {
+    setRange(range);
+  };
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -73,9 +76,11 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
         value={tagFilter[current]}
         style={{ marginTop: '8px' }}></Segmented>
       <Slider
+        min={0}
+        max={1443}
         range
-        step={10}
-        defaultValue={[20, 50]}
+        step={1}
+        defaultValue={range}
         onAfterChange={onAfterChange}
       />
     </div>

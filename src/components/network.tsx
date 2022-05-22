@@ -10,6 +10,7 @@ import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
 import type { DataState, NetworkProps } from './types';
 import * as THREE from 'three';
 import { Switch } from 'antd';
+import { nodeModuleNameResolver } from 'typescript';
 
 /**
  * 主图组件
@@ -30,7 +31,8 @@ const Network: React.FC<NetworkProps> = (props) => {
     tagFilter,
     data,
     setData,
-    selectNode
+    selectNode,
+    range,
   } = props;
 
   const getData = (func: Function, params: any) => {
@@ -60,6 +62,7 @@ const Network: React.FC<NetworkProps> = (props) => {
             return node.properties[Domain];
         }
       })
+      .linkVisibility(true)
       .linkColor(() => linkColor[0])
       .linkDirectionalParticles(1)
       .linkDirectionalParticleWidth(2)
@@ -103,34 +106,40 @@ const Network: React.FC<NetworkProps> = (props) => {
   };
   const initGraph = () => {
     graph
-      ?.jsonUrl(
-        'https://raw.githubusercontent.com/religiones/ChinaVis22/master/src/assets/allCommunity.json'
-      )
+      ?.graphData({ nodes: [], links: [] })
       .backgroundColor('#CFD8DC')
       .width(1266)
       .height(790)
+      .nodeColor(() => {
+        return '#173728';
+      })
+      .nodeVal((node: any) => {
+        return node.wrong_num;
+      })
       .nodeLabel((node: any) => {
         return node.id;
       })
       .linkColor(() => linkColor[0])
-      .nodeThreeObject((node: any) => {
-        let shape = null;
-        let geometry: any = null;
-        let material = new THREE.MeshToonMaterial({
-          color: '#173728',
-          // transparent: true,
-          // opacity: 0.75,
-        });
-        let r = 0;
-        if (node.neighbour.length > 10) {
-          r = node.neighbour.length / 15;
-        } else {
-          r = 1;
-        }
-        geometry = new THREE.SphereGeometry(node.wrong_num / 20);
-        shape = new THREE.Mesh(geometry, material);
-        return shape;
-      })
+      .linkVisibility(false)
+      .nodeThreeObject(() => {})
+      // .nodeThreeObject((node: any) => {
+      //   let shape = null;
+      //   let geometry: any = null;
+      //   let material = new THREE.MeshToonMaterial({
+      //     color: '#173728',
+      //     // transparent: true,
+      //     // opacity: 0.75,
+      //   });
+      //   let r = 0;
+      //   if (node.neighbour.length > 10) {
+      //     r = node.neighbour.length / 15;
+      //   } else {
+      //     r = 1;
+      //   }
+      //   geometry = new THREE.SphereGeometry(node.wrong_num / 20);
+      //   shape = new THREE.Mesh(geometry, material);
+      //   return shape;
+      // })
       .showNavInfo(false);
 
     //@ts-ignore
@@ -138,11 +147,11 @@ const Network: React.FC<NetworkProps> = (props) => {
   };
   //切换视图显示
   const switchChange = (item: any) => {
-    if(!item){
-      setCurrentGraph((prevState)=>({
+    if (!item) {
+      setCurrentGraph((prevState) => ({
         ...prevState,
-        current: "allCommunity"
-      }))
+        current: 'allCommunity',
+      }));
     }
     setCurrentListState(item);
   };
@@ -181,7 +190,25 @@ const Network: React.FC<NetworkProps> = (props) => {
    */
   useEffect(() => {
     if (didMountState) {
-      graph?.graphData(data);
+      if (currentGragh.current === 'allCommunity') {
+        graph.graphData(data);
+        // let { nodes, links } = graph.graphData();
+        // // debugger;
+        // let arr = links.filter((link: any) => {
+        //   return (
+        //     link?.source.wrong_num >= range[0] &&
+        //     link?.source.wrong_num <= range[1] &&
+        //     link?.target.wrong_num >= range[0] &&
+        //     link?.target.wrong_num <= range[1]
+        //   );
+        // });
+        // nodes = nodes.filter((node: any) => {
+        //   return node.wrong_num >= range[0] && node.wrong_num <= range[1];
+        // });
+        // graph.graphData({ nodes: nodes, links: arr });
+      } else {
+        graph?.graphData(data);
+      }
     }
   }, [data.nodes, data.links]);
   /**
@@ -243,16 +270,20 @@ const Network: React.FC<NetworkProps> = (props) => {
         // do nothing wait data change
         drawGraph();
       } else if (currentGragh.current === 'communities') {
-        drawGraph();
         getData(getFilterNetworkByCommunities, [currentGragh.communities]).then(
           (dataset: any) => {
             setData(dataset);
+            drawGraph();
           }
         );
         setCurrentListState(true);
       } else {
         // all communities connected graph
-        initGraph();
+
+        getData(getAllCommunities, []).then((dataset: any) => {
+          setData(dataset);
+          initGraph();
+        });
         setCurrentListState(false);
       }
     }
@@ -263,7 +294,7 @@ const Network: React.FC<NetworkProps> = (props) => {
    * 无调用
    */
   useEffect(() => {
-    if(didMountState){
+    if (didMountState) {
       graph.nodeThreeObject((node: any) => {
         let shape = null;
         let geometry: any = null;
@@ -283,7 +314,7 @@ const Network: React.FC<NetworkProps> = (props) => {
             break;
           default:
         }
-        if(selectNode.includes(node.properties.id)){
+        if (selectNode.includes(node.properties.id)) {
           color = '#ff0000';
         }
         let material = new THREE.MeshToonMaterial({
@@ -293,9 +324,35 @@ const Network: React.FC<NetworkProps> = (props) => {
         });
         shape = new THREE.Mesh(geometry, material);
         return shape;
-      })
+      });
     }
-  },[selectNode])
+  }, [selectNode]);
+
+  /**
+   * 监听range，过滤初始视图的节点
+   * 无调用
+   */
+  useEffect(() => {
+    if (didMountState) {
+      graph.graphData(data);
+      let { nodes, links } = graph.graphData();
+      console.log(nodes, links);
+      links = links.filter((link: any) => {
+        return (
+          link.source.wrong_num >= range[0] &&
+          link.source.wrong_num <= range[1] &&
+          link.target.wrong_num >= range[0] &&
+          link.target.wrong_num <= range[1]
+        );
+      });
+      nodes = nodes.filter((node: any) => {
+        return node.wrong_num >= range[0] && node.wrong_num <= range[1];
+      });
+      console.log({ nodes, links });
+
+      graph.graphData({ nodes, links });
+    }
+  }, [range]);
 
   /**
    * 初始化，绑定元素
@@ -303,9 +360,13 @@ const Network: React.FC<NetworkProps> = (props) => {
   useEffect(() => {
     //@ts-ignore
     graph = ForceGraph3D()(container.current);
+
     initGraph();
+    getData(getAllCommunities, []).then((dataset: any) => {
+      graph.graphData(dataset);
+      setData(dataset);
+    });
     setDidMountState(true);
-    // all communities connected graph
   }, []);
 
   return (

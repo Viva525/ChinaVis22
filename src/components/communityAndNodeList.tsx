@@ -157,7 +157,7 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
         drawList();
       }
     }
-  }, [data.nodes, data.links, currentGragh.current]);
+  }, [data.nodes, data.links]);
 
   return <div ref={container} style={{ width: '100%', height: '100%' }}></div>;
 };

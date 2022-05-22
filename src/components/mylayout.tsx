@@ -47,12 +47,14 @@ const MyLayout: React.FC<{}> = () => {
     current: 'IP',
   });
 
+  const [rangeState, setRangeState] = useState<[number, number]>([20, 1443]);
+
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <Layout>
         <Row style={{ height: '65vh', overflow: 'hidden' }}>
           <Col span={4} style={{ height: '100%' }}>
-            <Row style={{ height: '25%' }}>
+            <Row style={{ height: '27%' }}>
               <Box
                 title='CONTROL BAR'
                 component={
@@ -65,11 +67,13 @@ const MyLayout: React.FC<{}> = () => {
                     setTagFilter={setTagFilterState}
                     currentGraph={currentGraphState}
                     setCurrentGraph={setCurrentGraphState}
+                    range={rangeState}
+                    setRange={setRangeState}
                   />
                 }
               />
             </Row>
-            <Row style={{ height: '25%' }}>
+            <Row style={{ height: '23%' }}>
               <Box title='Neighbour Heatmap' />
             </Row>
             <Row style={{ height: '50%' }}>
@@ -92,6 +96,7 @@ const MyLayout: React.FC<{}> = () => {
                   data={dataState}
                   setData={setDataState}
                   selectNode={selectNodeState}
+                  range={rangeState}
                 />
               }
             />
