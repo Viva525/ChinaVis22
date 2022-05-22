@@ -20,7 +20,7 @@ let graph: any = null;
 //React FC 写法 推荐写这种
 const Network: React.FC<NetworkProps> = (props) => {
   const container = React.useRef();
-  const linkColor = ['rgba(0,0,0,0.1)', 'rgba(255,255,255,0.1)'];
+  const linkColor = ['rgba(0,0,0,0.2)', 'rgba(255,255,255,0.1)'];
   const [didMountState, setDidMountState] = useState(false);
   const [currentListState, setCurrentListState] = useState<Boolean>(false);
   const {
@@ -111,16 +111,16 @@ const Network: React.FC<NetworkProps> = (props) => {
       .width(1266)
       .height(790)
       .nodeColor(() => {
-        return '#173728';
+        return '#2d2e36';
       })
+      .nodeOpacity(0.95)
       .nodeVal((node: any) => {
-        return node.wrong_num;
+        return (node.wrong_num * node.wrong_num) / 200;
       })
       .nodeLabel((node: any) => {
         return node.id;
       })
       .linkColor(() => linkColor[0])
-      .linkVisibility(false)
       .nodeThreeObject(() => {})
       // .nodeThreeObject((node: any) => {
       //   let shape = null;
@@ -140,10 +140,15 @@ const Network: React.FC<NetworkProps> = (props) => {
       //   shape = new THREE.Mesh(geometry, material);
       //   return shape;
       // })
+      .onNodeDragEnd((node: any) => {
+        node.fx = node.x;
+        node.fy = node.y;
+        node.fz = node.z;
+      })
       .showNavInfo(false);
 
     //@ts-ignore
-    graph.d3Force('link').distance((link: any) => 50);
+    graph.d3Force('link').distance((link: any) => 100);
   };
   //切换视图显示
   const switchChange = (item: any) => {
@@ -191,21 +196,18 @@ const Network: React.FC<NetworkProps> = (props) => {
   useEffect(() => {
     if (didMountState) {
       if (currentGragh.current === 'allCommunity') {
-        graph.graphData(data);
-        // let { nodes, links } = graph.graphData();
-        // // debugger;
-        // let arr = links.filter((link: any) => {
-        //   return (
-        //     link?.source.wrong_num >= range[0] &&
-        //     link?.source.wrong_num <= range[1] &&
-        //     link?.target.wrong_num >= range[0] &&
-        //     link?.target.wrong_num <= range[1]
-        //   );
-        // });
-        // nodes = nodes.filter((node: any) => {
-        //   return node.wrong_num >= range[0] && node.wrong_num <= range[1];
-        // });
-        // graph.graphData({ nodes: nodes, links: arr });
+        let links = data.links.filter((link: any) => {
+          return (
+            link?.sourceNode[0].wrong_num >= range[0] &&
+            link?.sourceNode[0].wrong_num <= range[1] &&
+            link?.targetNode[0].wrong_num >= range[0] &&
+            link?.targetNode[0].wrong_num <= range[1]
+          );
+        });
+        let nodes = data.nodes.filter((node: any) => {
+          return node.wrong_num >= range[0] && node.wrong_num <= range[1];
+        });
+        graph.graphData({ nodes: nodes, links: links });
       } else {
         graph?.graphData(data);
       }
@@ -334,23 +336,18 @@ const Network: React.FC<NetworkProps> = (props) => {
    */
   useEffect(() => {
     if (didMountState) {
-      graph.graphData(data);
-      let { nodes, links } = graph.graphData();
-      console.log(nodes, links);
-      links = links.filter((link: any) => {
+      let links = data.links.filter((link: any) => {
         return (
-          link.source.wrong_num >= range[0] &&
-          link.source.wrong_num <= range[1] &&
-          link.target.wrong_num >= range[0] &&
-          link.target.wrong_num <= range[1]
+          link?.sourceNode[0].wrong_num >= range[0] &&
+          link?.sourceNode[0].wrong_num <= range[1] &&
+          link?.targetNode[0].wrong_num >= range[0] &&
+          link?.targetNode[0].wrong_num <= range[1]
         );
       });
-      nodes = nodes.filter((node: any) => {
+      let nodes = data.nodes.filter((node: any) => {
         return node.wrong_num >= range[0] && node.wrong_num <= range[1];
       });
-      console.log({ nodes, links });
-
-      graph.graphData({ nodes, links });
+      graph.graphData({ nodes: nodes, links: links });
     }
   }, [range]);
 
@@ -363,7 +360,6 @@ const Network: React.FC<NetworkProps> = (props) => {
 
     initGraph();
     getData(getAllCommunities, []).then((dataset: any) => {
-      graph.graphData(dataset);
       setData(dataset);
     });
     setDidMountState(true);

@@ -47,7 +47,7 @@ const MyLayout: React.FC<{}> = () => {
     current: 'IP',
   });
 
-  const [rangeState, setRangeState] = useState<[number, number]>([20, 1443]);
+  const [rangeState, setRangeState] = useState<[number, number]>([15, 1443]);
 
   return (
     <div style={{ width: '100%', height: '100vh' }}>
