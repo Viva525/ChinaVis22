@@ -30,8 +30,8 @@ export type ControlBarProps = {
   setTagFilter: SetState<TagFilterState>;
   currentGraph: CurrentNetworkState;
   setCurrentGraph: SetState<CurrentNetworkState>;
-  range: [number, number];
-  setRange: SetState<[number, number]>;
+  range: RangeState;
+  setRange: SetState<RangeState>;
 };
 
 /////////////////////////////Network Type
@@ -49,10 +49,18 @@ export type NetworkProps = {
   filterNode: NodeType[];
   tagFilter: TagFilterState;
   selectNode: string[];
-  range: [number, number];
+  range: RangeState;
 };
 
 export type DataState = {
   nodes: any[];
   links: any[];
+};
+
+export type RangeState = {
+  select: string;
+  min: number;
+  max: number;
+  currMin: number;
+  currMax: number;
 };

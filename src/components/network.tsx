@@ -213,14 +213,16 @@ const Network: React.FC<NetworkProps> = (props) => {
       if (currentGragh.current === 'allCommunity') {
         let links = data.links.filter((link: any) => {
           return (
-            link?.sourceNode[0].wrong_num >= range[0] &&
-            link?.sourceNode[0].wrong_num <= range[1] &&
-            link?.targetNode[0].wrong_num >= range[0] &&
-            link?.targetNode[0].wrong_num <= range[1]
+            link?.sourceNode[0].wrong_num >= range.currMin &&
+            link?.sourceNode[0].wrong_num <= range.currMax &&
+            link?.targetNode[0].wrong_num >= range.currMin &&
+            link?.targetNode[0].wrong_num <= range.currMax
           );
         });
         let nodes = data.nodes.filter((node: any) => {
-          return node.wrong_num >= range[0] && node.wrong_num <= range[1];
+          return (
+            node.wrong_num >= range.currMin && node.wrong_num <= range.currMax
+          );
         });
         graph.graphData({ nodes: nodes, links: links });
       } else {
@@ -366,17 +368,51 @@ const Network: React.FC<NetworkProps> = (props) => {
    */
   useEffect(() => {
     if (didMountState) {
-      let links = data.links.filter((link: any) => {
-        return (
-          link.sourceNode[0].wrong_num >= range[0] &&
-          link.sourceNode[0].wrong_num <= range[1] &&
-          link.targetNode[0].wrong_num >= range[0] &&
-          link.targetNode[0].wrong_num <= range[1]
-        );
-      });
-      let nodes = data.nodes.filter((node: any) => {
-        return node.wrong_num >= range[0] && node.wrong_num <= range[1];
-      });
+      let links, nodes;
+      if (range.select === 'Wrong_num') {
+        links = data.links.filter((link: any) => {
+          return (
+            link.sourceNode[0].wrong_num >= range.currMin &&
+            link.sourceNode[0].wrong_num <= range.currMax &&
+            link.targetNode[0].wrong_num >= range.currMin &&
+            link.targetNode[0].wrong_num <= range.currMax
+          );
+        });
+        nodes = data.nodes.filter((node: any) => {
+          return (
+            node.wrong_num >= range.currMin && node.wrong_num <= range.currMax
+          );
+        });
+      } else if (range.select === 'Node_num') {
+        links = data.links.filter((link: any) => {
+          return (
+            link.sourceNode[0].node_num >= range.currMin &&
+            link.sourceNode[0].node_num <= range.currMax &&
+            link.targetNode[0].node_num >= range.currMin &&
+            link.targetNode[0].node_num <= range.currMax
+          );
+        });
+        nodes = data.nodes.filter((node: any) => {
+          return (
+            node.node_num >= range.currMin && node.node_num <= range.currMax
+          );
+        });
+      } else {
+        links = data.links.filter((link: any) => {
+          return (
+            link.sourceNode[0].neighbour.length >= range.currMin &&
+            link.sourceNode[0].neighbour.length <= range.currMax &&
+            link.targetNode[0].neighbour.length >= range.currMin &&
+            link.targetNode[0].neighbour.length <= range.currMax
+          );
+        });
+        nodes = data.nodes.filter((node: any) => {
+          return (
+            node.neighbour.length >= range.currMin &&
+            node.neighbour.length <= range.currMax
+          );
+        });
+      }
       graph.graphData({ nodes: nodes, links: links });
     }
   }, [range]);

@@ -11,6 +11,7 @@ import type {
   ControlState,
   CurrentNetworkState,
   DataState,
+  RangeState,
   TagFilterState,
 } from './types';
 import CommunitiesInfo from './communitiesInfo';
@@ -47,7 +48,13 @@ const MyLayout: React.FC<{}> = () => {
     current: 'IP',
   });
 
-  const [rangeState, setRangeState] = useState<[number, number]>([15, 1443]);
+  const [rangeState, setRangeState] = useState<RangeState>({
+    select: 'Wrong_num',
+    min: 0,
+    max: 1443,
+    currMin: 15,
+    currMax: 1443,
+  });
 
   return (
     <div style={{ width: '100%', height: '100vh' }}>
