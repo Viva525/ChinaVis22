@@ -12,7 +12,7 @@ type CommunityAndNodeListProps = {
 let lineUp: any = null;
 
 const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
-  const container: LegacyRef<HTMLDivElement> | undefined = React.createRef();
+  const container: LegacyRef<HTMLDivElement> = React.createRef();
   const category = [
     'porn',
     'gambling',
@@ -29,7 +29,7 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
 
   document.oncontextmenu = function (e: any) {
     //点击右键后要执行的代码
-    if (e.button == 2) {
+    if (e.button === 2) {
       if (e.target !== null) {
         navigator.clipboard.writeText(e.target.textContent);
       }
@@ -77,36 +77,36 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
       switch (data.nodes[i].group) {
         case 'Domain':
           temp.email =
-            data.nodes[i].properties.email_id != undefined
+            data.nodes[i].properties.email_id !== undefined
               ? data.nodes[i].properties.email_id
               : undefined;
           temp.phone =
-            data.nodes[i].properties.phone_id != undefined
+            data.nodes[i].properties.phone_id !== undefined
               ? data.nodes[i].properties.phone_id
               : undefined;
           temp.register =
-            data.nodes[i].properties.register_id != undefined
+            data.nodes[i].properties.register_id !== undefined
               ? data.nodes[i].properties.register_id
               : undefined;
           temp.wrong_list = [
-            data.nodes[i].properties.porn == 'True' ? 1 : 0,
-            data.nodes[i].properties.gambling == 'True' ? 1 : 0,
-            data.nodes[i].properties.fraud == 'True' ? 1 : 0,
-            data.nodes[i].properties.drug == 'True' ? 1 : 0,
-            data.nodes[i].properties.gun == 'True' ? 1 : 0,
-            data.nodes[i].properties.hacker == 'True' ? 1 : 0,
-            data.nodes[i].properties.trading == 'True' ? 1 : 0,
-            data.nodes[i].properties.pay == 'True' ? 1 : 0,
-            data.nodes[i].properties.other == 'True' ? 1 : 0,
+            data.nodes[i].properties.porn === 'True' ? 1 : 0,
+            data.nodes[i].properties.gambling === 'True' ? 1 : 0,
+            data.nodes[i].properties.fraud === 'True' ? 1 : 0,
+            data.nodes[i].properties.drug === 'True' ? 1 : 0,
+            data.nodes[i].properties.gun === 'True' ? 1 : 0,
+            data.nodes[i].properties.hacker === 'True' ? 1 : 0,
+            data.nodes[i].properties.trading === 'True' ? 1 : 0,
+            data.nodes[i].properties.pay === 'True' ? 1 : 0,
+            data.nodes[i].properties.other === 'True' ? 1 : 0,
           ];
           break;
         case 'IP':
           temp.asn =
-            data.nodes[i].properties.asn_id != undefined
+            data.nodes[i].properties.asn_id !== undefined
               ? data.nodes[i].properties.asn_id
               : undefined;
           temp.ipc =
-            data.nodes[i].properties.ipc_id != undefined
+            data.nodes[i].properties.ipc_id !== undefined
               ? data.nodes[i].properties.ipc_id
               : undefined;
           break;

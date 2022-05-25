@@ -14,6 +14,7 @@ import type {
   TagFilterState,
 } from './types';
 import CommunitiesInfo from './communitiesInfo';
+import CorePath from './corePath';
 
 /**
  * 装所有box组件的布局
@@ -32,7 +33,7 @@ const MyLayout: React.FC<{}> = () => {
   });
 
   const [selectNodeState, setSelectNodeState] = useState<string[]>([]);
-
+  const [selectKeyNodeState, setSelectKeyNodeState] = useState<Set<any>>(new Set());
   const [searchParamsState, setSearchParamsState] =
     useState<ControlState['searchParams']>('');
 
@@ -97,6 +98,8 @@ const MyLayout: React.FC<{}> = () => {
                   setData={setDataState}
                   selectNode={selectNodeState}
                   range={rangeState}
+                  setSelectKeyNode={setSelectKeyNodeState}
+                  selectKeyNode={selectKeyNodeState}
                 />
               }
             />
@@ -119,8 +122,14 @@ const MyLayout: React.FC<{}> = () => {
           <Col span={12}>
             <Box title='NODE MATRIX' />
           </Col>
-          <Col span={12}>
-            <Box title='CORE ASSETS &amp; KEY PATH' />
+          <Col span={6}>
+            <Box title='CORE ASSETS &amp; KEY PATH' component={
+            <CorePath 
+            selectKeyNode={selectKeyNodeState}/>} 
+              />
+          </Col>
+          <Col span={6}>
+            <Box title='KEY PATH RESULTS' />
           </Col>
         </Row>
       </Layout>

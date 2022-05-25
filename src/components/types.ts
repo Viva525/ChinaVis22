@@ -50,6 +50,8 @@ export type NetworkProps = {
   tagFilter: TagFilterState;
   selectNode: string[];
   range: [number, number];
+  setSelectKeyNode: SetState<Set<any>>;
+  selectKeyNode: Set<any>;
 };
 
 export type DataState = {

@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState} from 'react';
 import {
   getAllCommunities,
   getFilterNetworkByCommunities,
-  getNetWorkByCommunity,
   getNetWorkByParams,
 } from '../api/networkApi';
-import ForceGraph, { ForceGraphInstance, GraphData } from 'force-graph';
+import ForceGraph, { ForceGraphInstance, GraphData} from 'force-graph';
 import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
-import type { DataState, NetworkProps } from './types';
+import type { NetworkProps } from './types';
 import * as THREE from 'three';
 import { Descriptions, Switch } from 'antd';
+import { getData } from '../utils/utils';
 
 /**
  * 主图组件
@@ -33,15 +33,22 @@ const Network: React.FC<NetworkProps> = (props) => {
     setData,
     selectNode,
     range,
+    setSelectKeyNode,
+    selectKeyNode
   } = props;
 
-  const getData = (func: Function, params: any) => {
-    let data = func(...params);
-    return new Promise((resolve, reject) => {
-      resolve(data);
+  const setSelectKeyState = (node:any) => {
+
+    setSelectKeyNode((prevState:Set<any>)=>{
+      const newSet = new Set(Array.from(prevState))
+      if(newSet.has(node)){
+        newSet.delete(node)
+      }else if(newSet.size<2){
+        newSet.add(node);
+      }
+      return newSet;
     });
   };
-
   /**
    * 绘制社区3D网络图
    */
@@ -49,9 +56,9 @@ const Network: React.FC<NetworkProps> = (props) => {
     graph
       ?.graphData({ nodes: [], links: [] })
       .backgroundColor('#CFD8DC')
-
+      
       .onNodeClick((node: any) => {
-        console.log(node);
+        setSelectKeyState(node)
       })
       .nodeLabel((node: any) => {
         const { IP, Cert, Domain } = tagFilter;
@@ -403,6 +410,43 @@ const Network: React.FC<NetworkProps> = (props) => {
     graph.width(clientWidth).height(clientHeight);
     graph.graphData(dataset);
   }, [switch3DState]);
+  /**
+   * 监听selectKeyNode
+   */
+  useEffect(()=>{
+    if(didMountState){
+      graph.nodeThreeObject((node: any) => {
+        let shape = null;
+        let geometry: any = null;
+        let color;
+        switch (node.group) {
+          case 'Domain':
+            color = '#dcd6c5';
+            geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
+            break;
+          case 'Cert':
+            color = '#e87e5c';
+            geometry = new THREE.SphereGeometry(10);
+            break;
+          case 'IP':
+            color = '#335a71';
+            geometry = new THREE.SphereGeometry(10);
+            break;
+          default:
+        }
+        if (new Set(selectKeyNode).has(node)) {
+          color = '#ff0000';
+        }
+        let material = new THREE.MeshToonMaterial({
+          color: color,
+          transparent: true,
+          opacity: 0.8,
+        });
+        shape = new THREE.Mesh(geometry, material);
+        return shape;
+      });
+    }
+  },[selectKeyNode])
   /**
    * 初始化，绑定元素
    */
