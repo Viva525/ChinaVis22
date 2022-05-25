@@ -31,10 +31,50 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
     setFilterNode(nodes);
   };
 
-  const filterNumChange = (node: any) => {};
+  const filterNumChange = (CurrSelect: { value: string; label: string }) => {
+    console.log(CurrSelect.value);
+    const map: {
+      Wrong_num: number[];
+      Node_num: number[];
+      Neighbour: number[];
+    } = {
+      Wrong_num: [0, 1443],
+      Node_num: [0, 8903],
+      Neighbour: [0, 1000],
+    };
+    if (CurrSelect.value === 'Wrong_num') {
+      setRange({
+        select: CurrSelect.value,
+        min: 0,
+        max: 1443,
+        currMin: 15,
+        currMax: 1443,
+      });
+    } else if (CurrSelect.value === 'Node_num') {
+      setRange({
+        select: CurrSelect.value,
+        min: 0,
+        max: 8903,
+        currMin: 50,
+        currMax: 8903,
+      });
+    } else {
+      setRange({
+        select: CurrSelect.value,
+        min: 0,
+        max: 1000,
+        currMin: 15,
+        currMax: 1000,
+      });
+    }
+  };
 
-  const onAfterChange = (range: [number, number]) => {
-    setRange(range);
+  const onAfterChange = (Currange: number[]) => {
+    setRange((prevState) => ({
+      ...prevState,
+      currMin: Currange[0],
+      currMax: Currange[1],
+    }));
   };
 
   return (
@@ -97,18 +137,18 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
             onChange={filterNumChange}>
             <Select.Option value='Node_num'>Node_num</Select.Option>
             <Select.Option value='Wrong_num'>Wrong_num</Select.Option>
-            <Select.Option value='Neighbour_num'>Neighbour_num</Select.Option>
+            <Select.Option value='Neighbour'>Neighbour_num</Select.Option>
           </Select>
         </Col>
         <Col span={16} push={1}>
           <Slider
             style={{ width: '85%', marginTop: '18px' }}
-            min={0}
-            max={1443}
+            min={range.min}
+            max={range.max}
             disabled={currentGraph.current !== 'allCommunity'}
             range
             step={1}
-            defaultValue={range}
+            defaultValue={[range.currMin, range.currMax]}
             onAfterChange={onAfterChange}
           />
         </Col>
