@@ -135,7 +135,12 @@ const MyLayout: React.FC<{}> = () => {
           <Col span={6}>
             <Box
               title='DIMENSION REDUCTION'
-              component={<DimReduct currentGraph={currentGraphState} />}
+              component={
+                <DimReduct
+                  currentGraph={currentGraphState}
+                  setCurrentGraph={setCurrentGraphState}
+                />
+              }
             />
           </Col>
           <Col span={6}>

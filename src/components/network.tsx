@@ -1,10 +1,10 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   getAllCommunities,
   getFilterNetworkByCommunities,
   getNetWorkByParams,
 } from '../api/networkApi';
-import ForceGraph, { ForceGraphInstance, GraphData} from 'force-graph';
+import ForceGraph, { ForceGraphInstance, GraphData } from 'force-graph';
 import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
 import type { NetworkProps } from './types';
 import * as THREE from 'three';
@@ -34,16 +34,15 @@ const Network: React.FC<NetworkProps> = (props) => {
     selectNode,
     range,
     setSelectKeyNode,
-    selectKeyNode
+    selectKeyNode,
   } = props;
 
-  const setSelectKeyState = (node:any) => {
-
-    setSelectKeyNode((prevState:Set<any>)=>{
-      const newSet = new Set(Array.from(prevState))
-      if(newSet.has(node)){
-        newSet.delete(node)
-      }else if(newSet.size<2){
+  const setSelectKeyState = (node: any) => {
+    setSelectKeyNode((prevState: Set<any>) => {
+      const newSet = new Set(Array.from(prevState));
+      if (newSet.has(node)) {
+        newSet.delete(node);
+      } else if (newSet.size < 2) {
         newSet.add(node);
       }
       return newSet;
@@ -56,9 +55,9 @@ const Network: React.FC<NetworkProps> = (props) => {
     graph
       ?.graphData({ nodes: [], links: [] })
       .backgroundColor('#CFD8DC')
-      
+
       .onNodeClick((node: any) => {
-        setSelectKeyState(node)
+        setSelectKeyState(node);
       })
       .nodeLabel((node: any) => {
         const { IP, Cert, Domain } = tagFilter;
@@ -321,7 +320,6 @@ const Network: React.FC<NetworkProps> = (props) => {
         getData(getFilterNetworkByCommunities, [currentGragh.communities]).then(
           (dataset: any) => {
             console.log(dataset);
-            debugger;
             setData(dataset);
             drawGraph();
           }
@@ -473,8 +471,8 @@ const Network: React.FC<NetworkProps> = (props) => {
   /**
    * 监听selectKeyNode
    */
-  useEffect(()=>{
-    if(didMountState){
+  useEffect(() => {
+    if (didMountState) {
       graph.nodeThreeObject((node: any) => {
         let shape = null;
         let geometry: any = null;
@@ -506,7 +504,7 @@ const Network: React.FC<NetworkProps> = (props) => {
         return shape;
       });
     }
-  },[selectKeyNode])
+  }, [selectKeyNode]);
   /**
    * 初始化，绑定元素
    */

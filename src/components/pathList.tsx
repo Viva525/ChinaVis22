@@ -17,10 +17,13 @@ const PathList: React.FC<PathListProps> = (props) => {
     const keyNode = Array.from(selectKeyNode);
     let res: { id: number; type: string; name: string }[][] = [];
     let startNode = { id: 123, type: 'Cert', name: '123' };
-    if(keyNode.length != 0){
-        startNode = { id: keyNode[0].id, type: keyNode[0].group, name: keyNode[0].properties.name };
+    if (keyNode.length != 0) {
+      startNode = {
+        id: keyNode[0].id,
+        type: keyNode[0].group,
+        name: keyNode[0].properties.name,
+      };
     }
-    debugger;
     let arr: { id: number; type: string; name: string }[] = [startNode];
     for (let i = 0; i < pathList.length; i++) {
       pathList[i].nodes.forEach((node: any) => {
@@ -64,16 +67,14 @@ const PathList: React.FC<PathListProps> = (props) => {
                   <div
                     style={{
                       background: `${color}`,
-                    }}
-                  >
+                    }}>
                     {node.properties.name}
                   </div>
                 );
               })}
             </List.Item>
           );
-        }}
-      ></List>
+        }}></List>
     </div>
   );
 };
