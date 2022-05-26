@@ -8,3 +8,10 @@ export const getNodeById = (NodeType: string, id: string) => {
 export const getAllCommuntiesScatter = () => {
   return post('getAllCommuntiesScatter', {});
 };
+
+export const getLinksBT2Nodes = (source: string, target: string) => {
+  return post('getLinksBT2Nodes', {
+    node1: source,
+    node2: target,
+  });
+};

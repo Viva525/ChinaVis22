@@ -49,6 +49,8 @@ export type NetworkProps = {
   filterNode: NodeType[];
   tagFilter: TagFilterState;
   selectNode: string[];
+  setSelectKeyNode: SetState<Set<any>>;
+  selectKeyNode: Set<any>;
   range: RangeState;
 };
 
