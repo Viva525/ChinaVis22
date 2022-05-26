@@ -38,7 +38,7 @@ const MyLayout: React.FC<{}> = () => {
   const [selectKeyNodeState, setSelectKeyNodeState] = useState<Set<any>>(
     new Set()
   );
-  const [pathListState, setPathListState] = useState<any[]>([]);
+  const [pathListState, setPathListState] = useState<Set<any>>(new Set());
 
   const [searchParamsState, setSearchParamsState] =
     useState<ControlState['searchParams']>('');
@@ -65,7 +65,7 @@ const MyLayout: React.FC<{}> = () => {
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <Layout>
-        <Row style={{ height: '65vh'}}>
+        <Row style={{ height: '65vh', overflow:"hidden"}}>
           <Col span={4} style={{ height: '100%' }}>
             <Row style={{ height: '28%' }}>
               <Box
@@ -130,11 +130,11 @@ const MyLayout: React.FC<{}> = () => {
             />
           </Col>
         </Row>
-        <Row style={{ height: '35vh', overflow: 'hidden' }}>
-          <Col span={12}>
+        <Row style={{ height: '35vh', overflow:"hidden"}}>
+          <Col span={12} style={{ height: '100%' }}>
             <Box title='NODE MATRIX' />
           </Col>
-          <Col span={6}>
+          <Col span={6} style={{ height: '100%' }}>
             <Box
               title='CORE ASSETS &amp; KEY PATH'
               component={
@@ -145,7 +145,7 @@ const MyLayout: React.FC<{}> = () => {
               }
             />
           </Col>
-          <Col span={6}>
+          <Col span={6} style={{ height: '100%' }}>
             <Box
               title='KEY PATH RESULTS'
               component={

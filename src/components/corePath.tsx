@@ -8,13 +8,14 @@ import { SetState } from './types';
 
 type CorePathProps = {
   selectKeyNode: Set<any>;
-  setPathList: SetState<any[]>;
+  setPathList: SetState<Set<any>>;
 };
 
 const CorePath: React.FC<CorePathProps> = (props) => {
   const [didMountState, setDidMountState] = useState(false);
   const [dataState, setDataState] = useState<any>([{ nodes: [], links: [] }]);
   const { selectKeyNode, setPathList } = props;
+  let startNode: null = null;
   /**
    * 绘制Sankey图 表达关键路径
    */
@@ -46,37 +47,38 @@ const CorePath: React.FC<CorePathProps> = (props) => {
         color: '#795548',
       },
     ];
-    let startNodeColor = '#6fb971';
-    if(keyNode.length === 2){
-      switch(keyNode[0].group){
-        case "Domain":
+    let startNodeColor = '#5d85cf';
+    if (keyNode.length === 2) {
+      switch (keyNode[0].group) {
+        case 'Domain':
           startNodeColor = group[0].color;
           break;
-        case "IP":
+        case 'IP':
           startNodeColor = group[1].color;
           break;
-        case "Cert":
+        case 'Cert':
           startNodeColor = group[2].color;
           break;
       }
     }
-    
-    d3.select("#svg").remove();
+
+    d3.select('#svg').remove();
     d3.select('#sunBurst')
       .append('svg')
       .attr('width', width)
       .attr('height', height)
-      .attr('id','svg')
+      .attr('id', 'svg')
       .append('g')
       .attr('id', 'container');
     const container = d3
       .select('#container')
-      .attr('transform', `translate(${width / 2 +20}, ${height / 2})`);
-    container.append('circle')
-    .attr('r', nodeSize)
-    .attr('fill',startNodeColor)
-    .attr("stroke",group[3].color)
-    .attr("stroke-width", 2)
+      .attr('transform', `translate(${width / 2 + 20}, ${height / 2})`);
+    container
+      .append('circle')
+      .attr('r', nodeSize)
+      .attr('fill', startNodeColor)
+      .attr('stroke', group[3].color)
+      .attr('stroke-width', 2);
 
     container
       .selectAll('g')
@@ -86,11 +88,18 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       .attr('id', (_, i) => {
         return `path-${i}`;
       })
-      .on('click', function(d: any){
+      .on('click', function (e: any,d: any) {
         let pathData: any = d3.select(this).data()[0];
-          setPathList((prevState: any)=>{
-            return [...prevState, pathData];
-        })
+        setPathList((prevState: Set<any>) => {
+          const newSet = new Set(Array.from(prevState));
+          if (!newSet.has(pathData)) {
+            pathData.nodes.unshift(startNode);
+            newSet.add(pathData);
+          }else{
+            newSet.delete(pathData);
+          }
+          return newSet;
+        });
       })
       .attr('class', 'path')
       .on('mouseenter', function (d: any) {
@@ -110,9 +119,9 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       .append('g')
       .attr('class', 'legend')
       .attr('transform', (d: any, i: any) => {
-        if(d.name === "Start" || d.name === "End"){
+        if (d.name === 'Start' || d.name === 'End') {
           return `translate(0,${i * 20 + 280})`;
-        }else{
+        } else {
           return `translate(0,${i * 20 + 30})`;
         }
       });
@@ -124,22 +133,23 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       .attr('width', 20)
       .attr('height', 10)
       .style('fill', function (d) {
-        if(d.name === "Start" || d.name === "End"){
-          return "rgba(0,0,0,0)";
-        }else{
+        if (d.name === 'Start' || d.name === 'End') {
+          return 'rgba(0,0,0,0)';
+        } else {
           return d.color;
         }
-        
-      }).style('stroke',(d: any)=>{
-        if(d.name === "Start" || d.name === "End"){
+      })
+      .style('stroke', (d: any) => {
+        if (d.name === 'Start' || d.name === 'End') {
           return d.color;
-        }else{
+        } else {
           return null;
         }
-      }).style("stroke-width", (d: any)=>{
-        if(d.name === "Start" || d.name === "End"){
+      })
+      .style('stroke-width', (d: any) => {
+        if (d.name === 'Start' || d.name === 'End') {
           return 2;
-        }else{
+        } else {
           return null;
         }
       });
@@ -150,11 +160,23 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       .attr('y', 18)
       .style('text-anchor', 'start') //样式对齐
       .text(function (d) {
-        if(d.name === "Start"){
-          return d.name+" : "+(keyNode.length==0?"638f7385e9.com":keyNode[0].properties.name);
-        }else if(d.name === "End"){
-          return d.name+" : "+(keyNode.length==0?"aef319dbcd.com":keyNode[1].properties.name);
-        }else{
+        if (d.name === 'Start') {
+          return (
+            d.name +
+            ' : ' +
+            (keyNode.length == 0
+              ? '638f7385e9.com'
+              : keyNode[0].properties.name)
+          );
+        } else if (d.name === 'End') {
+          return (
+            d.name +
+            ' : ' +
+            (keyNode.length == 0
+              ? 'aef319dbcd.com'
+              : keyNode[1].properties.name)
+          );
+        } else {
           return d.name;
         }
       });
@@ -179,7 +201,7 @@ const CorePath: React.FC<CorePathProps> = (props) => {
     //@ts-ignore
     dataState.forEach((path, index) => {
       const pathGroup = d3.select(`#path-${index}`);
-      path.nodes.shift();
+      startNode = path.nodes.shift();
       pathGroup
         .selectAll('circle')
         .data(path.nodes)
@@ -197,17 +219,17 @@ const CorePath: React.FC<CorePathProps> = (props) => {
               return group[2].color;
           }
         })
-        .attr('stroke', (d: any ,i: number)=>{
-          if(i === (path.nodes.length - 1)){
+        .attr('stroke', (d: any, i: number) => {
+          if (i === path.nodes.length - 1) {
             return group[4].color;
-          }else{
+          } else {
             return null;
           }
         })
-        .attr('stroke-width', (d: any, i: number)=>{
-          if(i === (path.nodes.length - 1)){
+        .attr('stroke-width', (d: any, i: number) => {
+          if (i === path.nodes.length - 1) {
             return 2;
-          }else{
+          } else {
             return null;
           }
         })
@@ -273,10 +295,7 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       setDataState(dataset);
     });
   }, []);
-  return (
-    <div id='sunBurst' style={{ width: '100%', height: '100%' }}>
-    </div>
-  );
+  return <div id='sunBurst' style={{ width: '100%', height: '100%' }}></div>;
 };
 
 export default CorePath;
