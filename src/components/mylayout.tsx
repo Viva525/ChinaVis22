@@ -16,6 +16,7 @@ import type {
 } from './types';
 import CommunitiesInfo from './communitiesInfo';
 import CorePath from './corePath';
+import PathList from './pathList';
 
 /**
  * 装所有box组件的布局
@@ -34,7 +35,11 @@ const MyLayout: React.FC<{}> = () => {
   });
 
   const [selectNodeState, setSelectNodeState] = useState<string[]>([]);
-  const [selectKeyNodeState, setSelectKeyNodeState] = useState<Set<any>>(new Set());
+  const [selectKeyNodeState, setSelectKeyNodeState] = useState<Set<any>>(
+    new Set()
+  );
+  const [pathListState, setPathListState] = useState<any[]>([]);
+
   const [searchParamsState, setSearchParamsState] =
     useState<ControlState['searchParams']>('');
 
@@ -60,7 +65,7 @@ const MyLayout: React.FC<{}> = () => {
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <Layout>
-        <Row style={{ height: '65vh', overflow: 'hidden' }}>
+        <Row style={{ height: '65vh'}}>
           <Col span={4} style={{ height: '100%' }}>
             <Row style={{ height: '28%' }}>
               <Box
@@ -130,13 +135,27 @@ const MyLayout: React.FC<{}> = () => {
             <Box title='NODE MATRIX' />
           </Col>
           <Col span={6}>
-            <Box title='CORE ASSETS &amp; KEY PATH' component={
-            <CorePath 
-            selectKeyNode={selectKeyNodeState}/>} 
-              />
+            <Box
+              title='CORE ASSETS &amp; KEY PATH'
+              component={
+                <CorePath
+                  selectKeyNode={selectKeyNodeState}
+                  setPathList={setPathListState}
+                />
+              }
+            />
           </Col>
           <Col span={6}>
-            <Box title='KEY PATH RESULTS' />
+            <Box
+              title='KEY PATH RESULTS'
+              component={
+                <PathList
+                  pathList={pathListState}
+                  setPathList={setPathListState}
+                  selectKeyNode={selectKeyNodeState}
+                />
+              }
+            />
           </Col>
         </Row>
       </Layout>

@@ -3,19 +3,23 @@ import * as d3 from 'd3';
 
 import { getData } from '../utils/utils';
 import { getLinksBT2Nodes } from '../api/nodeApi';
+import { Color } from 'three';
+import { SetState } from './types';
 
 type CorePathProps = {
   selectKeyNode: Set<any>;
+  setPathList: SetState<any[]>;
 };
 
 const CorePath: React.FC<CorePathProps> = (props) => {
   const [didMountState, setDidMountState] = useState(false);
   const [dataState, setDataState] = useState<any>([{ nodes: [], links: [] }]);
-  const { selectKeyNode } = props;
+  const { selectKeyNode, setPathList } = props;
   /**
    * 绘制Sankey图 表达关键路径
    */
   const drawSunburst = () => {
+    const keyNode = Array.from(selectKeyNode);
     const width: number = 626;
     const height: number = 412;
     const nodeSize: number = 8;
@@ -33,7 +37,30 @@ const CorePath: React.FC<CorePathProps> = (props) => {
         name: 'Cert',
         color: '#6fb971',
       },
+      {
+        name: 'Start',
+        color: '#FF0000',
+      },
+      {
+        name: 'End',
+        color: '#795548',
+      },
     ];
+    let startNodeColor = '#6fb971';
+    if(keyNode.length === 2){
+      switch(keyNode[0].group){
+        case "Domain":
+          startNodeColor = group[0].color;
+          break;
+        case "IP":
+          startNodeColor = group[1].color;
+          break;
+        case "Cert":
+          startNodeColor = group[2].color;
+          break;
+      }
+    }
+    
     d3.select("#svg").remove();
     d3.select('#sunBurst')
       .append('svg')
@@ -42,11 +69,14 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       .attr('id','svg')
       .append('g')
       .attr('id', 'container');
-
     const container = d3
       .select('#container')
-      .attr('transform', `translate(${width / 2}, ${height / 2})`);
-    container.append('circle').attr('r', nodeSize).attr('fill', '#6fb971');
+      .attr('transform', `translate(${width / 2 +20}, ${height / 2})`);
+    container.append('circle')
+    .attr('r', nodeSize)
+    .attr('fill',startNodeColor)
+    .attr("stroke",group[3].color)
+    .attr("stroke-width", 2)
 
     container
       .selectAll('g')
@@ -55,6 +85,12 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       .append('g')
       .attr('id', (_, i) => {
         return `path-${i}`;
+      })
+      .on('click', function(d: any){
+        let pathData: any = d3.select(this).data()[0];
+          setPathList((prevState: any)=>{
+            return [...prevState, pathData];
+        })
       })
       .attr('class', 'path')
       .on('mouseenter', function (d: any) {
@@ -74,8 +110,13 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       .append('g')
       .attr('class', 'legend')
       .attr('transform', (d: any, i: any) => {
-        return `translate(0,${i * 20 + 30})`;
+        if(d.name === "Start" || d.name === "End"){
+          return `translate(0,${i * 20 + 280})`;
+        }else{
+          return `translate(0,${i * 20 + 30})`;
+        }
       });
+
     legend
       .append('rect')
       .attr('x', 10)
@@ -83,7 +124,24 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       .attr('width', 20)
       .attr('height', 10)
       .style('fill', function (d) {
-        return d.color;
+        if(d.name === "Start" || d.name === "End"){
+          return "rgba(0,0,0,0)";
+        }else{
+          return d.color;
+        }
+        
+      }).style('stroke',(d: any)=>{
+        if(d.name === "Start" || d.name === "End"){
+          return d.color;
+        }else{
+          return null;
+        }
+      }).style("stroke-width", (d: any)=>{
+        if(d.name === "Start" || d.name === "End"){
+          return 2;
+        }else{
+          return null;
+        }
       });
     //绘制图例文字
     legend
@@ -92,7 +150,13 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       .attr('y', 18)
       .style('text-anchor', 'start') //样式对齐
       .text(function (d) {
-        return d.name;
+        if(d.name === "Start"){
+          return d.name+" : "+(keyNode.length==0?"638f7385e9.com":keyNode[0].properties.name);
+        }else if(d.name === "End"){
+          return d.name+" : "+(keyNode.length==0?"aef319dbcd.com":keyNode[1].properties.name);
+        }else{
+          return d.name;
+        }
       });
 
     //  利用defs绘制箭头
@@ -111,7 +175,6 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       .attr('orient', 'auto');
     const arrow_path = 'M2,2 L10,6 L2,10 L6,6 L2,2';
     marker.append('path').attr('d', arrow_path).attr('fill', 'rgb(0,0,0,1)');
-
     //为每个组添加箭头和节点
     //@ts-ignore
     dataState.forEach((path, index) => {
@@ -134,6 +197,20 @@ const CorePath: React.FC<CorePathProps> = (props) => {
               return group[2].color;
           }
         })
+        .attr('stroke', (d: any ,i: number)=>{
+          if(i === (path.nodes.length - 1)){
+            return group[4].color;
+          }else{
+            return null;
+          }
+        })
+        .attr('stroke-width', (d: any, i: number)=>{
+          if(i === (path.nodes.length - 1)){
+            return 2;
+          }else{
+            return null;
+          }
+        })
         .attr('transform', (_, i: any) => {
           return `translate(0,${(i + 1) * (arrowLength + nodeSize * 2)})`;
         });
@@ -144,11 +221,11 @@ const CorePath: React.FC<CorePathProps> = (props) => {
         .append('line')
         .attr('x1', 0)
         .attr('y1', (d: any) => {
-          return d != 0 ? arrowLength + nodeSize : nodeSize;
+          return d.direction != 0 ? arrowLength + nodeSize : nodeSize;
         })
         .attr('x2', 0)
         .attr('y2', (d: any) => {
-          return d == 0 ? arrowLength + nodeSize : nodeSize;
+          return d.direction == 0 ? arrowLength + nodeSize : nodeSize;
         })
         // .attr("tansform","translate(0,15)")
         .attr('stroke', 'black')
