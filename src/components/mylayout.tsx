@@ -15,6 +15,7 @@ import type {
   TagFilterState,
 } from './types';
 import CommunitiesInfo from './communitiesInfo';
+import DimReduct from './dimReduct';
 import CorePath from './corePath';
 import PathList from './pathList';
 
@@ -130,8 +131,19 @@ const MyLayout: React.FC<{}> = () => {
             />
           </Col>
         </Row>
-        <Row style={{ height: '35vh', overflow:"hidden"}}>
-          <Col span={12} style={{ height: '100%' }}>
+        <Row style={{ height: '35vh', overflow: 'hidden' }}>
+          <Col span={6}>
+            <Box
+              title='DIMENSION REDUCTION'
+              component={
+                <DimReduct
+                  currentGraph={currentGraphState}
+                  setCurrentGraph={setCurrentGraphState}
+                />
+              }
+            />
+          </Col>
+          <Col span={6}>
             <Box title='NODE MATRIX' />
           </Col>
           <Col span={6} style={{ height: '100%' }}>
