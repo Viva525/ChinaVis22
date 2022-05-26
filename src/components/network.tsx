@@ -128,9 +128,6 @@ const Network: React.FC<NetworkProps> = (props) => {
       ?.graphData({ nodes: [], links: [] })
       .backgroundColor('#CFD8DC')
 
-      .nodeColor(() => {
-        return '#685e48';
-      })
       .nodeLabel((node: any) => {
         return node.id;
       })
@@ -140,19 +137,38 @@ const Network: React.FC<NetworkProps> = (props) => {
         node.fx = node.x;
         node.fy = node.y;
         node.fz = node.z;
+      })
+      .onNodeClick((node: any) => {
+        setCurrentGraph({
+          current: 'communities',
+          communities: [node.id],
+        });
       });
     if (!switch3DState) {
       graph
-        .nodeVal((node: any) => {
-          return (node.wrong_num * node.wrong_num) / 200;
-        })
         .nodeOpacity(0.95)
-        .nodeThreeObject(() => {})
+        .nodeThreeObject((node: any) => {
+          let shape = null;
+          let geometry: any = new THREE.SphereGeometry(node.wrong_num / 20);
+          let color = '#335a71';
+
+          let material = new THREE.MeshToonMaterial({
+            color: color,
+            transparent: true,
+            opacity: 0.8,
+          });
+          shape = new THREE.Mesh(geometry, material);
+          return shape;
+        })
         .showNavInfo(false);
     } else {
-      graph.nodeVal((node: any) => {
-        return node.wrong_num / 10;
-      });
+      graph
+        .nodeColor(() => {
+          return '#335a71';
+        })
+        .nodeVal((node: any) => {
+          return node.wrong_num / 10;
+        });
     }
     //@ts-ignore
     graph.d3Force('link').distance((link: any) => 100);
@@ -224,9 +240,15 @@ const Network: React.FC<NetworkProps> = (props) => {
             node.wrong_num >= range.currMin && node.wrong_num <= range.currMax
           );
         });
-        graph.graphData({ nodes: nodes, links: links });
+        graph
+          .graphData({ nodes: nodes, links: links })
+          .cooldownTicks(80)
+          .onEngineStop(() => graph.zoomToFit(500));
       } else {
-        graph?.graphData(data);
+        graph
+          ?.graphData(data)
+          .cooldownTicks(80)
+          .onEngineStop(() => graph.zoomToFit(500));
       }
     }
   }, [data.nodes, data.links]);
@@ -291,6 +313,8 @@ const Network: React.FC<NetworkProps> = (props) => {
       } else if (currentGragh.current === 'communities') {
         getData(getFilterNetworkByCommunities, [currentGragh.communities]).then(
           (dataset: any) => {
+            console.log(dataset);
+            debugger;
             setData(dataset);
             drawGraph();
           }

@@ -15,6 +15,7 @@ import type {
   TagFilterState,
 } from './types';
 import CommunitiesInfo from './communitiesInfo';
+import DimReduct from './dimReduct';
 
 /**
  * 装所有box组件的布局
@@ -123,7 +124,13 @@ const MyLayout: React.FC<{}> = () => {
           </Col>
         </Row>
         <Row style={{ height: '35vh', overflow: 'hidden' }}>
-          <Col span={12}>
+          <Col span={6}>
+            <Box
+              title='DIMENSION REDUCTION'
+              component={<DimReduct currentGraph={currentGraphState} />}
+            />
+          </Col>
+          <Col span={6}>
             <Box title='NODE MATRIX' />
           </Col>
           <Col span={12}>
