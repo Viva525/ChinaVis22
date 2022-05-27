@@ -429,7 +429,7 @@ const CommunitiesInfo: React.FC<{}> = () => {
     }
     return (
         <div style={{ width: '100%', height: '100%' }}>
-            show Communities Info
+            test Communities Info
         </div>);
 };
 
