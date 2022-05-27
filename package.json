@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "3d-force-graph": "^1.70.10",
     "@antv/g": "^5.0.22",
     "@antv/g-canvas": "^1.0.21",
     "@antv/g-svg": "^1.0.19",
@@ -17,6 +16,7 @@
     "@types/node": "^16.11.26",
     "@types/react": "^17.0.44",
     "@types/react-dom": "^17.0.15",
+    "3d-force-graph": "^1.70.10",
     "antd": "^4.20.3",
     "axios": "^0.27.2",
     "d3": "^6.7.0",
@@ -26,6 +26,7 @@
     "force-graph": "^1.42.9",
     "golden-layout": "^2.5.0",
     "lineupjs": "^4.6.0",
+    "lodash": "^4.17.21",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-scripts": "5.0.0",

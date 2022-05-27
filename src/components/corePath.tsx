@@ -15,7 +15,6 @@ const CorePath: React.FC<CorePathProps> = (props) => {
   const [didMountState, setDidMountState] = useState(false);
   const [dataState, setDataState] = useState<any>([{ nodes: [], links: [] }]);
   const { selectKeyNode, setPathList } = props;
-  let startNode: null = null;
   /**
    * 绘制Sankey图 表达关键路径
    */
@@ -93,7 +92,6 @@ const CorePath: React.FC<CorePathProps> = (props) => {
         setPathList((prevState: Set<any>) => {
           const newSet = new Set(Array.from(prevState));
           if (!newSet.has(pathData)) {
-            pathData.nodes.unshift(startNode);
             newSet.add(pathData);
           }else{
             newSet.delete(pathData);
@@ -201,7 +199,6 @@ const CorePath: React.FC<CorePathProps> = (props) => {
     //@ts-ignore
     dataState.forEach((path, index) => {
       const pathGroup = d3.select(`#path-${index}`);
-      startNode = path.nodes.shift();
       pathGroup
         .selectAll('circle')
         .data(path.nodes)
@@ -219,6 +216,13 @@ const CorePath: React.FC<CorePathProps> = (props) => {
               return group[2].color;
           }
         })
+        .attr('opacity',(d: any, i: number)=>{
+          if(i>=1){
+            return 1;
+          }else{
+            return 0;
+          }
+        })
         .attr('stroke', (d: any, i: number) => {
           if (i === path.nodes.length - 1) {
             return group[4].color;
@@ -228,13 +232,13 @@ const CorePath: React.FC<CorePathProps> = (props) => {
         })
         .attr('stroke-width', (d: any, i: number) => {
           if (i === path.nodes.length - 1) {
-            return 2;
+            return 3;
           } else {
             return null;
           }
         })
         .attr('transform', (_, i: any) => {
-          return `translate(0,${(i + 1) * (arrowLength + nodeSize * 2)})`;
+          return `translate(0,${i * (arrowLength + nodeSize * 2)})`;
         });
       pathGroup
         .selectAll('line')

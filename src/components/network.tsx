@@ -10,7 +10,10 @@ import type { NetworkProps } from './types';
 import * as THREE from 'three';
 import { Descriptions, Switch } from 'antd';
 import { getData } from '../utils/utils';
+import { isArray, keys } from 'lodash';
+import * as d3 from 'd3';
 
+window.d3 = d3;
 /**
  * 主图组件
  */
@@ -35,6 +38,7 @@ const Network: React.FC<NetworkProps> = (props) => {
     range,
     setSelectKeyNode,
     selectKeyNode,
+    selectPaths,
   } = props;
 
   const setSelectKeyState = (node: any) => {
@@ -178,6 +182,97 @@ const Network: React.FC<NetworkProps> = (props) => {
     }
     //@ts-ignore
     graph.d3Force('link').distance((link: any) => 100);
+  };
+  /**
+   * 高亮节点
+   */
+
+  type numberNodes = {
+    type: 'number';
+    nodes: number[];
+  };
+
+  type stringNodes = {
+    type: 'string';
+    nodes: string[];
+  };
+
+  /**
+   * 高亮节点
+   */
+  const hightLightNodes = ({ type, nodes }: numberNodes | stringNodes) => {
+    if (!switch3DState) {
+      graph.nodeThreeObject((node: any) => {
+        let shape = null;
+        let geometry: any = null;
+        let color;
+        switch (node.group) {
+          case 'Domain':
+            color = '#dcd6c5';
+            geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
+            break;
+          case 'Cert':
+            color = '#e87e5c';
+            geometry = new THREE.SphereGeometry(10);
+            break;
+          case 'IP':
+            color = '#335a71';
+            geometry = new THREE.SphereGeometry(10);
+            break;
+          default:
+        }
+        let res = undefined;
+        if (type === 'string') {
+          res = nodes.includes(node.properties.id);
+        } else {
+          res = nodes.includes(node.id);
+        }
+        if (res) {
+          color = '#ff0000';
+        }
+        let material = new THREE.MeshToonMaterial({
+          color: color,
+          transparent: true,
+          opacity: 0.8,
+        });
+        shape = new THREE.Mesh(geometry, material);
+        return shape;
+      });
+    } else {
+      graph.nodeColor((node: any) => {
+        let res = undefined;
+        if (type === 'string') {
+          res = nodes.includes(node.properties.id);
+        } else {
+          res = nodes.includes(node.id);
+        }
+        if (res) {
+          return '#ff0000';
+        } else {
+          switch (node.group) {
+            case 'Domain':
+              return '#dcd6c5';
+            case 'Cert':
+              return '#e87e5c';
+            case 'IP':
+              return '#335a71';
+          }
+        }
+      });
+    }
+  };
+
+  /**
+   * 高亮边
+   */
+  const hightLightLinks = (links: number[]) => {
+    graph.linkColor((link: any) => {
+      if (links.includes(link.identity)) {
+        return '#ff0000';
+      } else {
+        return linkColor[0];
+      }
+    });
   };
   /**
    * 切换视图显示
@@ -342,55 +437,33 @@ const Network: React.FC<NetworkProps> = (props) => {
    */
   useEffect(() => {
     if (didMountState) {
-      if (!switch3DState) {
-        graph.nodeThreeObject((node: any) => {
-          let shape = null;
-          let geometry: any = null;
-          let color;
-          switch (node.group) {
-            case 'Domain':
-              color = '#dcd6c5';
-              geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
-              break;
-            case 'Cert':
-              color = '#e87e5c';
-              geometry = new THREE.SphereGeometry(10);
-              break;
-            case 'IP':
-              color = '#335a71';
-              geometry = new THREE.SphereGeometry(10);
-              break;
-            default:
-          }
-          if (selectNode.includes(node.properties.id)) {
-            color = '#ff0000';
-          }
-          let material = new THREE.MeshToonMaterial({
-            color: color,
-            transparent: true,
-            opacity: 0.8,
-          });
-          shape = new THREE.Mesh(geometry, material);
-          return shape;
-        });
-      } else {
-        graph.nodeColor((node: any) => {
-          if (selectNode.includes(node.properties.id)) {
-            return '#ff0000';
-          } else {
-            switch (node.group) {
-              case 'Domain':
-                return '#dcd6c5';
-              case 'Cert':
-                return '#e87e5c';
-              case 'IP':
-                return '#335a71';
-            }
-          }
-        });
-      }
+      hightLightNodes({ type: 'string', nodes: selectNode });
     }
   }, [selectNode]);
+  /**
+   * 监听selectPaths，选取路径高亮
+   */
+  useEffect(() => {
+    if (didMountState) {
+      const selectPathsArray = Array.from(selectPaths);
+      let nodes: number[] = [];
+      let links: number[] = [];
+      selectPathsArray.forEach((path: any) => {
+        nodes.push(
+          ...path.nodes.map((node: any) => {
+            return node.id;
+          })
+        );
+        links.push(
+          ...path.links.map((link: any) => {
+            return link.identity;
+          })
+        );
+        hightLightNodes({ type: 'number', nodes: nodes });
+        hightLightLinks(links);
+      });
+    }
+  }, [selectPaths]);
   /**
    * 监听range，过滤初始视图的节点
    * 无调用
@@ -473,36 +546,53 @@ const Network: React.FC<NetworkProps> = (props) => {
    */
   useEffect(() => {
     if (didMountState) {
-      graph.nodeThreeObject((node: any) => {
-        let shape = null;
-        let geometry: any = null;
-        let color;
-        switch (node.group) {
-          case 'Domain':
-            color = '#dcd6c5';
-            geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
-            break;
-          case 'Cert':
-            color = '#e87e5c';
-            geometry = new THREE.SphereGeometry(10);
-            break;
-          case 'IP':
-            color = '#335a71';
-            geometry = new THREE.SphereGeometry(10);
-            break;
-          default:
-        }
-        if (new Set(selectKeyNode).has(node)) {
-          color = '#ff0000';
-        }
-        let material = new THREE.MeshToonMaterial({
-          color: color,
-          transparent: true,
-          opacity: 0.8,
+      if(!switch3DState){
+        graph.nodeThreeObject((node: any) => {
+          let shape = null;
+          let geometry: any = null;
+          let color;
+          switch (node.group) {
+            case 'Domain':
+              color = '#dcd6c5';
+              geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
+              break;
+            case 'Cert':
+              color = '#e87e5c';
+              geometry = new THREE.SphereGeometry(10);
+              break;
+            case 'IP':
+              color = '#335a71';
+              geometry = new THREE.SphereGeometry(10);
+              break;
+            default:
+          }
+          if (new Set(selectKeyNode).has(node)) {
+            color = '#ff0000';
+          }
+          let material = new THREE.MeshToonMaterial({
+            color: color,
+            transparent: true,
+            opacity: 0.8,
+          });
+          shape = new THREE.Mesh(geometry, material);
+          return shape;
         });
-        shape = new THREE.Mesh(geometry, material);
-        return shape;
-      });
+      }else{
+        graph.nodeColor((node:any)=>{
+          if(new Set(selectKeyNode).has(node)){
+            return '#ff0000';
+          }else{
+            switch (node.group) {
+              case 'Domain':
+                return '#dcd6c5';
+              case 'Cert':
+                return '#e87e5c';
+              case 'IP':
+                return '#335a71';
+            }
+          }
+        })
+      }
     }
   }, [selectKeyNode]);
   /**
@@ -529,7 +619,8 @@ const Network: React.FC<NetworkProps> = (props) => {
         //@ts-ignore
         ref={container}
         id='network'
-        style={{ width: '100%', height: '100%' }}></div>
+        style={{ width: '100%', height: '100%' }}
+      ></div>
       <Switch
         style={{
           position: 'absolute',
