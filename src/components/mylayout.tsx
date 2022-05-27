@@ -40,6 +40,7 @@ const MyLayout: React.FC<{}> = () => {
     new Set()
   );
   const [pathListState, setPathListState] = useState<Set<any>>(new Set());
+  const [selectPathsState, setSelectPathState] = useState<Set<any>>(new Set());
 
   const [searchParamsState, setSearchParamsState] =
     useState<ControlState['searchParams']>('');
@@ -110,6 +111,7 @@ const MyLayout: React.FC<{}> = () => {
                   range={rangeState}
                   setSelectKeyNode={setSelectKeyNodeState}
                   selectKeyNode={selectKeyNodeState}
+                  selectPaths={selectPathsState}
                 />
               }
             />
@@ -165,6 +167,8 @@ const MyLayout: React.FC<{}> = () => {
                   pathList={pathListState}
                   setPathList={setPathListState}
                   selectKeyNode={selectKeyNodeState}
+                  selectPaths={selectPathsState}
+                  setSelectPaths={setSelectPathState}
                 />
               }
             />

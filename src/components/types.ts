@@ -52,6 +52,7 @@ export type NetworkProps = {
   setSelectKeyNode: SetState<Set<any>>;
   selectKeyNode: Set<any>;
   range: RangeState;
+  selectPaths: Set<any>;
 };
 
 export type DataState = {
