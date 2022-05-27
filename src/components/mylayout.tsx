@@ -66,9 +66,9 @@ const MyLayout: React.FC<{}> = () => {
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <Layout>
-        <Row style={{ height: '65vh', overflow:"hidden"}}>
+        <Row style={{ height: '60vh', overflow: 'hidden' }}>
           <Col span={4} style={{ height: '100%' }}>
-            <Row style={{ height: '28%' }}>
+            <Row style={{ height: '30%' }}>
               <Box
                 title='CONTROL BAR'
                 component={
@@ -87,14 +87,11 @@ const MyLayout: React.FC<{}> = () => {
                 }
               />
             </Row>
-            <Row style={{ height: '22%' }}>
+            <Row style={{ height: '25%' }}>
               <Box title='Neighbour Heatmap' />
             </Row>
-            <Row style={{ height: '50%' }}>
-              <Box
-                title='COMMUNITY INFORMATION'
-                component={<CommunitiesInfo />}
-              />
+            <Row style={{ height: '45%' }}>
+              <Box title='NODE MATRIX' />
             </Row>
           </Col>
           <Col span={12} style={{ height: '100%' }}>
@@ -131,7 +128,7 @@ const MyLayout: React.FC<{}> = () => {
             />
           </Col>
         </Row>
-        <Row style={{ height: '35vh', overflow: 'hidden' }}>
+        <Row style={{ height: '40vh', overflow: 'hidden' }}>
           <Col span={6}>
             <Box
               title='DIMENSION REDUCTION'
@@ -144,7 +141,10 @@ const MyLayout: React.FC<{}> = () => {
             />
           </Col>
           <Col span={6}>
-            <Box title='NODE MATRIX' />
+            <Box
+              title='COMMUNITY INFORMATION'
+              component={<CommunitiesInfo />}
+            />
           </Col>
           <Col span={6} style={{ height: '100%' }}>
             <Box
