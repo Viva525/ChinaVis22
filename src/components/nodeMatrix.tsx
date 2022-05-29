@@ -49,74 +49,74 @@ const NodeMatrix: React.FC<{}> = () => {
         }
     ]
 
-    // const drawMatrix = () => {
-    //     const width: number= 410;
-    //     const height: number = 300;
-    //     const rectHeight: number = 12;
-    //     const rectWidth: number = 6;
-    //     const nums = 10;
-    //     const margin: number = 2;
+    const drawMatrix = () => {
+        const width: number= 410;
+        const height: number = 300;
+        const rectHeight: number = 12;
+        const rectWidth: number = 6;
+        const nums = 10;
+        const margin: number = 2;
 
-    //     d3.select('#svg-nodeMatrix').remove();
-    //     const svg = d3.select('#nodeMatrix')
-    //         .append('svg')
-    //         .attr('width', width)
-    //         .attr('height', height)
-    //         .attr('id', 'svg-nodeMatrix');
-    //     const g = svg.selectAll('g')
-    //         .data(data)
-    //         .enter()
-    //         .append('g')
-    //         .attr('id',(d: any)=>{
-    //             return d.id;
-    //         })
-    //         .attr('transform',(_,i)=>{
-    //             return `translate(${i*(rectWidth+margin)},${Math.floor(i/nums)+margin})`
-    //         });
+        d3.select('#svg-nodeMatrix').remove();
+        const svg = d3.select('#nodeMatrix')
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height)
+            .attr('id', 'svg-nodeMatrix');
+        const g = svg.selectAll('g')
+            .data(data)
+            .enter()
+            .append('g')
+            .attr('id',(d: any)=>{
+                return d.id;
+            })
+            .attr('transform',(_,i)=>{
+                return `translate(${i*(rectWidth+margin)},${Math.floor(i/nums)+margin})`
+            });
 
-    //     data.forEach((community: any, index: number)=>{
-    //         const communityGroup = d3.select(`#${community.id}`);
-    //         //  绘制矩形
-    //         communityGroup.selectAll('rect')
-    //             .data(community.wrongTypes)
-    //             .enter()
-    //             .append('rect')
-    //             .attr('width', rectWidth)
-    //             .attr('height', ((d:any)=>{
-    //                 return (d.num/community.all)*rectHeight;
-    //             })
-    //             // .attr('fill',(d: any)=>{
-    //             //     // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other"
-    //             //     switch(d.type){
-    //             //         case 'porn':
-    //             //             return color[0];
-    //             //         case 'gambling':
-    //             //             return color[1];
-    //             //         case 'fraud':
-    //             //             return color[2];
-    //             //         case 'drug':
-    //             //             return color[3];
-    //             //         case 'gun':
-    //             //             return color[4];
-    //             //         case 'hacker':
-    //             //             return color[5];
-    //             //         case 'trading':
-    //             //             return color[6];
-    //             //         case 'pay':
-    //             //             return color[7];
-    //             //         case 'other':
-    //             //             return color[8];
-    //             //     }
-    //             // })
-    //     })
+        data.forEach((community: any, index: number)=>{
+            // const communityGroup = d3.select(`#${community.id}`);
+            //  绘制矩形
+            // communityGroup.selectAll('rect')
+            //     .data(community.wrongTypes)
+            //     .enter()
+            //     .append('rect')
+            //     .attr('width', rectWidth)
+            //     .attr('height', ((d:any)=>{
+            //         return (d.num/community.all)*rectHeight;
+            //     }))
+                // .attr('fill',(d: any)=>{
+                //     // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other"
+                //     switch(d.type){
+                //         case 'porn':
+                //             return color[0];
+                //         case 'gambling':
+                //             return color[1];
+                //         case 'fraud':
+                //             return color[2];
+                //         case 'drug':
+                //             return color[3];
+                //         case 'gun':
+                //             return color[4];
+                //         case 'hacker':
+                //             return color[5];
+                //         case 'trading':
+                //             return color[6];
+                //         case 'pay':
+                //             return color[7];
+                //         case 'other':
+                //             return color[8];
+                //     }
+                // })
+        })
         
-    // }
+    
             
-
+    }
     
 
     useEffect(()=>{
-        //drawMatrix();
+        drawMatrix();
     },[]);
 
     return (

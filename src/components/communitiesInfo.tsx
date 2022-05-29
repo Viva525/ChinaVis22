@@ -1,7 +1,15 @@
 import * as d3 from 'd3';
 import React, { LegacyRef, useEffect, useState } from 'react';
+import { getAllCommunitiesInfo } from '../api/networkApi';
+import {getData} from '../utils/utils'
 
-const CommunitiesInfo: React.FC<{}> = () => {
+type communitiesInfoProps = {
+	currentCommunities: number[]
+}
+
+const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
+	const [didMountState, setDidMountState] = useState(false);
+	const { currentCommunities } =props;
     //假数据
     let sunData = {
         "name": "Community",
@@ -77,226 +85,228 @@ const CommunitiesInfo: React.FC<{}> = () => {
                 ]
 
             },
-
+						{
+							"name": "211346",
+							"children": [
+									{
+											"name": "Domain",
+											"weight": 6000,//Domain节点的数量
+											"children": [
+													{
+															"name": "Domain",
+															"popularity": 500,
+															"weight": 300
+													},
+													{
+															"name": "Cert",
+															"popularity": 500,
+															"weight": 400
+													},
+													{
+															"name": "IP",
+															"popularity": 500,
+															"weight": 500
+													}
+											]
+									},
+									{
+											"name": "IP",
+											"weight": 5000,//Domain节点的数量
+											"children": [
+													{
+															"name": "Domain",
+															"popularity": 500,
+															"weight": 400
+													},
+													{
+															"name": "Cert",
+															"popularity": 500,
+															"weight": 500
+													},
+													{
+															"name": "IP",
+															"popularity": 500,
+															"weight": 200
+													}
+											]
+									},
+									{
+											"name": "Cert",
+											"weight": 8000,//Domain节点的数量
+											"children": [
+													{
+															"name": "Domain",
+															"popularity": 500,
+															"weight": 300
+			
+													},
+													{
+															"name": "Cert",
+															"popularity": 500,
+															"weight": 350
+													},
+													{
+															"name": "IP",
+															"popularity": 500,
+															"weight": 450
+													}
+											]
+									}
+			
+							]
+			
+					},
+					{
+							"name": "211347",
+							"children": [
+									{
+											"name": "Domain",
+											"weight": 2000,//Domain节点的数量
+											"children": [
+													{
+															"name": "Domain",
+															"popularity": 500,
+															"weight": 300
+													},
+													{
+															"name": "Cert",
+															"popularity": 500,
+															"weight": 400
+													},
+													{
+															"name": "IP",
+															"popularity": 500,
+															"weight": 500
+													}
+											]
+									},
+									{
+											"name": "IP",
+											"weight": 7000,//Domain节点的数量
+											"children": [
+													{
+															"name": "Domain",
+															"popularity": 500,
+															"weight": 400
+													},
+													{
+															"name": "Cert",
+															"popularity": 500,
+															"weight": 500
+													},
+													{
+															"name": "IP",
+															"popularity": 500,
+															"weight": 200
+													}
+											]
+									},
+									{
+											"name": "Cert",
+											"weight": 9000,//Domain节点的数量
+											"children": [
+													{
+															"name": "Domain",
+															"popularity": 500,
+															"weight": 300
+			
+													},
+													{
+															"name": "Cert",
+															"popularity": 500,
+															"weight": 350
+													},
+													{
+															"name": "IP",
+															"popularity": 500,
+															"weight": 450
+													}
+											]
+									}
+			
+							]
+			
+					},
+					{
+							"name": "211348",
+							"children": [
+									{
+											"name": "Domain",
+											"weight": 1000,//Domain节点的数量
+											"children": [
+													{
+															"name": "Domain",
+															"popularity": 500,
+															"weight": 300
+													},
+													{
+															"name": "Cert",
+															"popularity": 500,
+															"weight": 400
+													},
+													{
+															"name": "IP",
+															"popularity": 500,
+															"weight": 500
+													}
+											]
+									},
+									{
+											"name": "IP",
+											"weight": 2000,//Domain节点的数量
+											"children": [
+													{
+															"name": "Domain",
+															"popularity": 500,
+															"weight": 400
+													},
+													{
+															"name": "Cert",
+															"popularity": 500,
+															"weight": 500
+													},
+													{
+															"name": "IP",
+															"weight": 200
+													}
+											]
+									},
+									{
+											"name": "Cert",
+											"weight": 3000,//Domain节点的数量
+											"children": [
+													{
+															"name": "Domain",
+															"popularity": 500,
+															"weight": 300
+			
+													},
+													{
+															"name": "Cert",
+															"popularity": 500,
+															"weight": 350
+													},
+													{
+															"name": "IP",
+															"popularity": 500,
+															"weight": 450
+													}
+											]
+									}
+			
+							]
+			
+					}
         ]
     }
-    let d1 = [{
-        "name": "211346",
-        "children": [
-            {
-                "name": "Domain",
-                "weight": 6000,//Domain节点的数量
-                "children": [
-                    {
-                        "name": "Domain",
-                        "popularity": 500,
-                        "weight": 300
-                    },
-                    {
-                        "name": "Cert",
-                        "popularity": 500,
-                        "weight": 400
-                    },
-                    {
-                        "name": "IP",
-                        "popularity": 500,
-                        "weight": 500
-                    }
-                ]
-            },
-            {
-                "name": "IP",
-                "weight": 5000,//Domain节点的数量
-                "children": [
-                    {
-                        "name": "Domain",
-                        "popularity": 500,
-                        "weight": 400
-                    },
-                    {
-                        "name": "Cert",
-                        "popularity": 500,
-                        "weight": 500
-                    },
-                    {
-                        "name": "IP",
-                        "popularity": 500,
-                        "weight": 200
-                    }
-                ]
-            },
-            {
-                "name": "Cert",
-                "weight": 8000,//Domain节点的数量
-                "children": [
-                    {
-                        "name": "Domain",
-                        "popularity": 500,
-                        "weight": 300
 
-                    },
-                    {
-                        "name": "Cert",
-                        "popularity": 500,
-                        "weight": 350
-                    },
-                    {
-                        "name": "IP",
-                        "popularity": 500,
-                        "weight": 450
-                    }
-                ]
-            }
-
-        ]
-
-    },
-    {
-        "name": "211347",
-        "children": [
-            {
-                "name": "Domain",
-                "weight": 2000,//Domain节点的数量
-                "children": [
-                    {
-                        "name": "Domain",
-                        "popularity": 500,
-                        "weight": 300
-                    },
-                    {
-                        "name": "Cert",
-                        "popularity": 500,
-                        "weight": 400
-                    },
-                    {
-                        "name": "IP",
-                        "popularity": 500,
-                        "weight": 500
-                    }
-                ]
-            },
-            {
-                "name": "IP",
-                "weight": 7000,//Domain节点的数量
-                "children": [
-                    {
-                        "name": "Domain",
-                        "popularity": 500,
-                        "weight": 400
-                    },
-                    {
-                        "name": "Cert",
-                        "popularity": 500,
-                        "weight": 500
-                    },
-                    {
-                        "name": "IP",
-                        "popularity": 500,
-                        "weight": 200
-                    }
-                ]
-            },
-            {
-                "name": "Cert",
-                "weight": 9000,//Domain节点的数量
-                "children": [
-                    {
-                        "name": "Domain",
-                        "popularity": 500,
-                        "weight": 300
-
-                    },
-                    {
-                        "name": "Cert",
-                        "popularity": 500,
-                        "weight": 350
-                    },
-                    {
-                        "name": "IP",
-                        "popularity": 500,
-                        "weight": 450
-                    }
-                ]
-            }
-
-        ]
-
-    },
-    {
-        "name": "211348",
-        "children": [
-            {
-                "name": "Domain",
-                "weight": 1000,//Domain节点的数量
-                "children": [
-                    {
-                        "name": "Domain",
-                        "popularity": 500,
-                        "weight": 300
-                    },
-                    {
-                        "name": "Cert",
-                        "popularity": 500,
-                        "weight": 400
-                    },
-                    {
-                        "name": "IP",
-                        "popularity": 500,
-                        "weight": 500
-                    }
-                ]
-            },
-            {
-                "name": "IP",
-                "weight": 2000,//Domain节点的数量
-                "children": [
-                    {
-                        "name": "Domain",
-                        "popularity": 500,
-                        "weight": 400
-                    },
-                    {
-                        "name": "Cert",
-                        "popularity": 500,
-                        "weight": 500
-                    },
-                    {
-                        "name": "IP",
-                        "weight": 200
-                    }
-                ]
-            },
-            {
-                "name": "Cert",
-                "weight": 3000,//Domain节点的数量
-                "children": [
-                    {
-                        "name": "Domain",
-                        "popularity": 500,
-                        "weight": 300
-
-                    },
-                    {
-                        "name": "Cert",
-                        "popularity": 500,
-                        "weight": 350
-                    },
-                    {
-                        "name": "IP",
-                        "popularity": 500,
-                        "weight": 450
-                    }
-                ]
-            }
-
-        ]
-
-    }]
 
     const drawSun = () => {
         const width: number = 626
         const height: number = 477
-
+				const innerRadiu: number = 50;
+				const outerRadiu: number = 60;
+				const rectHeight: number = 60;
         let l = 0
         let typeNum = [[1, 4, 3, 5, 7, 8, 6, 9, 10]]
         let t1 = [[2, 3, 3, 7, 7, 8, 6, 9, 10], [3, 3, 3, 7, 7, 8, 6, 9, 10], [4, 3, 3, 7, 7, 8, 6, 9, 10]]
@@ -313,12 +323,6 @@ const CommunitiesInfo: React.FC<{}> = () => {
             .attr('transform', `translate(${width / 2}, ${height / 2})`)
         let color = d3.scaleOrdinal(d3.schemeCategory10);
 
-        //画一段圆弧
-        const arc = d3.arc()
-            .startAngle((d: any) => d.x0)
-            .endAngle((d: any) => d.x1)
-            .innerRadius((d: any) => d.y0)
-            .outerRadius((d: any) => d.y1)
         let maxR = 500 //关系的最大量
         d3.arc()
             .startAngle((d: any) => d.x0)
@@ -344,7 +348,7 @@ const CommunitiesInfo: React.FC<{}> = () => {
         //push
         for (l = 0; l < t1.length; l++) {
             //@ts-ignore
-            sunData.children.push(d1[l])
+            // sunData.children.push(sunData[l])
             typeNum.push(t1[l])
         }
 
@@ -396,8 +400,8 @@ const CommunitiesInfo: React.FC<{}> = () => {
 
         g.selectAll('.datapath4').data(root.descendants().filter((d: any) => (d.depth == 2 && d.data.name == 'Domain'))).join('path') //去掉根节点
             .attr('class', 'datapath4')
-            //@ts-ignore
-            .attr('d', d3.arc().startAngle((d: any) => d.x0).endAngle((d: any) => d.x1).innerRadius((d: any) => d.y1 + 90).outerRadius((d: any) => (d.y1 + 100))).attr('fill', fill);
+            //@ts-ignore ///////////////////////90
+            .attr('d', d3.arc().startAngle((d: any) => d.x0).endAngle((d: any) => d.x1).innerRadius((d: any) => d.y1 + innerRadiu).outerRadius((d: any) => (d.y1 + outerRadiu))).attr('fill', fill);
 
 
         g.selectAll('.datatext').data(root.descendants().filter((d: any) => d.depth == 2))
@@ -441,12 +445,22 @@ const CommunitiesInfo: React.FC<{}> = () => {
             for (let i = 0; i < 9; i++) {
                 g.selectAll('.darc' + m.toString() + i.toString()).data(d).join('path') //去掉根节点
                     .attr('class', 'darc' + m.toString() + i.toString())
-                    .attr('d', d3.arc().startAngle((d: any) => (d.x0 + (d.x1 - d.x0) * i / 9)).endAngle((d: any) => (d.x0 + (d.x1 - d.x0) * (i + 1) / 9)).innerRadius((d: any) => d.y1 + 100).outerRadius((d: any) => (d.y1 + 100 + typeNum[m][i] * 160 / maxNum)))
+                    .attr('d', d3.arc().startAngle((d: any) => (d.x0 + (d.x1 - d.x0) * i / 9)).endAngle((d: any) => (d.x0 + (d.x1 - d.x0) * (i + 1) / 9)).innerRadius((d: any) => d.y1 + outerRadiu).outerRadius((d: any) => (d.y1 + outerRadiu + typeNum[m][i] * rectHeight / maxNum)))
                     .attr('fill', fill);
             };
         }
     }
+
+		useEffect(()=>{
+			if(didMountState){
+				getData(getAllCommunitiesInfo, [currentCommunities]).then((dataset: any)=>{
+					console.log(dataset);
+				})
+			}
+		},[currentCommunities]);
+
     useEffect(() => {
+				setDidMountState(true);
         drawSun();
     }, []);
 

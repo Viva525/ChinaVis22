@@ -38,3 +38,9 @@ export const getNetWorkByParams = (params: string) => {
     searchParams: params,
   });
 };
+
+export const getAllCommunitiesInfo = (communities: number[]) => {
+  return post('getCommunitiesInfo', {
+    communities,
+  });
+}

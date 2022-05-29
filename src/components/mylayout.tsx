@@ -146,7 +146,7 @@ const MyLayout: React.FC<{}> = () => {
           <Col span={6}>
             <Box
               title='COMMUNITY INFORMATION'
-              component={<CommunitiesInfo/>}
+              component={<CommunitiesInfo currentCommunities={currentGraphState.communities}/>}
             />
           </Col>
           <Col span={6} style={{ height: '100%' }}>
