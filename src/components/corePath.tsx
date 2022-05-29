@@ -61,12 +61,12 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       }
     }
 
-    d3.select('#svg').remove();
-    d3.select('#sunBurst')
+    d3.select('#svg-corePath').remove();
+    d3.select('#corePath')
       .append('svg')
       .attr('width', width)
       .attr('height', height)
-      .attr('id', 'svg')
+      .attr('id', 'svg-corePath')
       .append('g')
       .attr('id', 'container');
     const container = d3
@@ -110,7 +110,7 @@ const CorePath: React.FC<CorePathProps> = (props) => {
 
     // 绘制图例
     const legend = d3
-      .select('#svg')
+      .select('#svg-corePath')
       .selectAll('.legend')
       .data(group)
       .enter()
@@ -181,7 +181,7 @@ const CorePath: React.FC<CorePathProps> = (props) => {
 
     //  利用defs绘制箭头
     //  添加定义
-    const defs = d3.select('#svg').append('defs');
+    const defs = d3.select('#svg-corePath').append('defs');
     // 绘制箭头
     const marker = defs
       .append('marker')
@@ -299,7 +299,7 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       setDataState(dataset);
     });
   }, []);
-  return <div id='sunBurst' style={{ width: '100%', height: '100%' }}></div>;
+  return <div id='corePath' style={{ width: '100%', height: '100%' }}></div>;
 };
 
 export default CorePath;

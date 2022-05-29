@@ -18,6 +18,7 @@ import CommunitiesInfo from './communitiesInfo';
 import DimReduct from './dimReduct';
 import CorePath from './corePath';
 import PathList from './pathList';
+import NodeMatrix from './nodeMatrix';
 
 /**
  * 装所有box组件的布局
@@ -92,7 +93,7 @@ const MyLayout: React.FC<{}> = () => {
               <Box title='Neighbour Heatmap' />
             </Row>
             <Row style={{ height: '45%' }}>
-              <Box title='NODE MATRIX' />
+              <Box title='NODE MATRIX' component={<NodeMatrix/>}/>
             </Row>
           </Col>
           <Col span={12} style={{ height: '100%' }}>
@@ -145,7 +146,7 @@ const MyLayout: React.FC<{}> = () => {
           <Col span={6}>
             <Box
               title='COMMUNITY INFORMATION'
-              component={<CommunitiesInfo />}
+              component={<CommunitiesInfo/>}
             />
           </Col>
           <Col span={6} style={{ height: '100%' }}>

@@ -607,6 +607,7 @@ const Network: React.FC<NetworkProps> = (props) => {
     initGraph();
     getData(getAllCommunities, []).then((dataset: any) => {
       setData(dataset);
+      console.log(dataset);
     });
     setDidMountState(true);
     const { clientWidth, clientHeight }: any = container.current;
