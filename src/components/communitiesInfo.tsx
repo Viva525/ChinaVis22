@@ -453,7 +453,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 
 		useEffect(()=>{
 			if(didMountState){
-				console.log(currentCommunities);
+				console.log(currentCommunities)
 				getData(getAllCommunitiesInfo, [currentCommunities]).then((dataset: any)=>{
 					console.log(dataset);
 				})
