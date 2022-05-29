@@ -294,8 +294,8 @@ const CommunitiesInfo: React.FC<{}> = () => {
     }]
 
     const drawSun = () => {
-        const width: number = 1600
-        const height: number = 940
+        const width: number = 626
+        const height: number = 477
 
         let l = 0
         let typeNum = [[1, 4, 3, 5, 7, 8, 6, 9, 10]]
@@ -452,7 +452,6 @@ const CommunitiesInfo: React.FC<{}> = () => {
 
     return (
         <div id='sunSvg' style={{ width: '100%', height: '100%' }}>
-            test Communities Info
         </div>);
 };
 
