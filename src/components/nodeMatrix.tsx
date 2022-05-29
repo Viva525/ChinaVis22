@@ -1,61 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as d3 from 'd3';
+import { getData } from '../utils/utils';
+import { getCurrNeighbours } from '../api/networkApi';
 
 const NodeMatrix: React.FC<{}> = () => {
-    // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other"
-    const color = ['#F44336','#E91E63','#9C27B0',
+    // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other, none"
+    const color = ['#3F51B5','#E91E63','#9C27B0',
                 '#673AB7','#3F51B5','#2196F3',
-                '#03A9F4','#00BCD4','#009688']
-
-    const data = [
-        {
-            id:123,
-            all: 5,
-            wrongTypes: [
-                {
-                    type: 'pron',
-                    num: 2
-                },{
-                    type: 'gambling',
-                    num: 3
-                }
-            ]
-        },
-        {
-            id:124,
-            all: 8,
-            wrongTypes: [
-                {
-                    type: 'pron',
-                    num: 4
-                },{
-                    type: 'gambling',
-                    num: 4
-                }
-            ]
-        },
-        {
-            id:125,
-            all: 9,
-            wrongTypes: [
-                {
-                    type: 'pron',
-                    num: 5
-                },{
-                    type: 'gambling',
-                    num: 4
-                }
-            ]
-        }
-    ]
+                '#03A9F4','#00BCD4','#009688','#607D8B'];
+    const [communitiesDataState, setCommunitiesDataState] = useState<any[]>([]);
+	const [didMountState, setDidMountState] = useState(false);
 
     const drawMatrix = () => {
         const width: number= 410;
         const height: number = 300;
-        const rectHeight: number = 12;
-        const rectWidth: number = 6;
-        const nums = 10;
-        const margin: number = 2;
+        const margin: number = 4;
+        const rectHeight: number = 40;
+        const rectWidth: number = 20;
+        const nums = 17;
 
         d3.select('#svg-nodeMatrix').remove();
         const svg = d3.select('#nodeMatrix')
@@ -63,60 +25,84 @@ const NodeMatrix: React.FC<{}> = () => {
             .attr('width', width)
             .attr('height', height)
             .attr('id', 'svg-nodeMatrix');
-        const g = svg.selectAll('g')
-            .data(data)
+        svg.selectAll('g')
+            .data(communitiesDataState)
             .enter()
             .append('g')
             .attr('id',(d: any)=>{
-                return d.id;
+                return `community-${d.id}`;
             })
             .attr('transform',(_,i)=>{
-                return `translate(${i*(rectWidth+margin)},${Math.floor(i/nums)+margin})`
+                return `translate(${(i%nums)*(rectWidth+margin)},${Math.floor(i/nums)*(rectHeight+margin)})`
             });
-
-        data.forEach((community: any, index: number)=>{
-            // const communityGroup = d3.select(`#${community.id}`);
-            //  绘制矩形
-            // communityGroup.selectAll('rect')
-            //     .data(community.wrongTypes)
-            //     .enter()
-            //     .append('rect')
-            //     .attr('width', rectWidth)
-            //     .attr('height', ((d:any)=>{
-            //         return (d.num/community.all)*rectHeight;
-            //     }))
-                // .attr('fill',(d: any)=>{
-                //     // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other"
-                //     switch(d.type){
-                //         case 'porn':
-                //             return color[0];
-                //         case 'gambling':
-                //             return color[1];
-                //         case 'fraud':
-                //             return color[2];
-                //         case 'drug':
-                //             return color[3];
-                //         case 'gun':
-                //             return color[4];
-                //         case 'hacker':
-                //             return color[5];
-                //         case 'trading':
-                //             return color[6];
-                //         case 'pay':
-                //             return color[7];
-                //         case 'other':
-                //             return color[8];
-                //     }
-                // })
+        communitiesDataState.forEach((community: any, index: number)=>{
+            const communityGroup = d3.select(`#community-${community.id}`);
+            // 绘制矩形
+            if(community.wrong_list.length === 0){
+                communityGroup.append('rect')
+                    .attr('height', rectHeight)
+                    .attr('width', rectWidth)
+                    .attr('fill', color[9])
+            }else{
+                communityGroup.selectAll('rect')
+                .data(community.wrong_list)
+                .enter()
+                .append('rect')
+                .attr('width', rectWidth)
+                .attr('height', ((d:any)=>{
+                    return (d.num/community.wrong_sum)*rectHeight;
+                }))
+                .attr('fill',(d: any)=>{
+                    // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other"
+                    switch(d.type){
+                        case 'porn':
+                            return color[0];
+                        case 'gambling':
+                            return color[1];
+                        case 'fraud':
+                            return color[2];
+                        case 'drug':
+                            return color[3];
+                        case 'gun':
+                            return color[4];
+                        case 'hacker':
+                            return color[5];
+                        case 'trading':
+                            return color[6];
+                        case 'pay':
+                            return color[7];
+                        case 'other':
+                            return color[8];
+                    }
+                })
+                .attr('transform',(d: any, i: number)=>{
+                    if(i > 0){
+                        // 计算上一块的高度
+                        let lastRectHeight = 0;
+                        while(i>0){
+                            lastRectHeight += (community.wrong_list[i-1].num);
+                            i--;
+                        }
+                        lastRectHeight =(lastRectHeight/community.wrong_sum)*rectHeight;
+                        return `translate(0,${lastRectHeight})`
+                    }
+                })
+            }
         })
-        
-    
-            
     }
+
+    useEffect(()=>{
+        if(didMountState){
+            drawMatrix();
+        }
+    },[communitiesDataState]);
     
 
     useEffect(()=>{
-        drawMatrix();
+        getData(getCurrNeighbours, [[1834615]]).then((dataset: any) => {
+            setDidMountState(true);
+            setCommunitiesDataState(dataset);
+        });
     },[]);
 
     return (

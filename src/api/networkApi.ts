@@ -39,8 +39,24 @@ export const getNetWorkByParams = (params: string) => {
   });
 };
 
+/**
+ * 获取社区信息数据
+ * @param communities 
+ * @returns 
+ */
 export const getAllCommunitiesInfo = (communities: number[]) => {
   return post('getCommunitiesInfo', {
+    communities,
+  });
+}
+
+/**
+ * 获取当前社区的邻居社区
+ * @param communities 
+ * @returns 
+ */
+export const getCurrNeighbours = (communities: number[]) => {
+  return post('getCurrNeighbours', {
     communities,
   });
 }
