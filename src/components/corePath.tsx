@@ -292,8 +292,8 @@ const CorePath: React.FC<CorePathProps> = (props) => {
    */
   useEffect(() => {
     getData(getLinksBT2Nodes, [
-      'Domain_638f7385e9f207463212486e14e3220f9159dd4b2587cd5299883b91d3f65450',
-      'Domain_aef319dbcd7caa2483b3677fe8eced662419728d591a9615beba2b7e0df7b9dd',
+      'Domain_04d5c6e4382c3b31090ba7860012444949f8287ea8fe2d192bca306c1e00d4b1',
+      'Domain_91ff7d24432dcee0df1e7127e4a1a06226fe26bd09d30a51bc8b9b2656ee3f33',
     ]).then((dataset: any) => {
       setDidMountState(true);
       setDataState(dataset);
