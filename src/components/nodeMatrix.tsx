@@ -2,8 +2,17 @@ import React, { useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import { getData } from '../utils/utils';
 import { getCurrNeighbours } from '../api/networkApi';
+import { type } from 'os';
+
+type nodeType = {
+  type: string;
+  num: number;
+  color?: string;
+};
 
 const NodeMatrix: React.FC<{}> = () => {
+  const [currentNodeState, setCurrentNodeState] = useState<nodeType[]>([]);
+
   // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other, none"
   const color = [
     '#f49c84',
@@ -17,20 +26,35 @@ const NodeMatrix: React.FC<{}> = () => {
     '#009688',
     '#68bb8c',
   ];
-  const legend = [
-    'porn',
-    'gambling',
-    'fraud',
-    'drug',
-    'gun',
-    'hacker',
-    'trading',
-    'pay',
-    'other',
-    'none',
-  ];
+
   const [communitiesDataState, setCommunitiesDataState] = useState<any[]>([]);
   const [didMountState, setDidMountState] = useState(false);
+
+  // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other"
+  const colorMapping = (name: string) => {
+    switch (name) {
+      case 'porn':
+        return color[0];
+      case 'gambling':
+        return color[1];
+      case 'fraud':
+        return color[2];
+      case 'drug':
+        return color[3];
+      case 'gun':
+        return color[4];
+      case 'hacker':
+        return color[5];
+      case 'trading':
+        return color[6];
+      case 'pay':
+        return color[7];
+      case 'other':
+        return color[8];
+      case 'none':
+        return color[9];
+    }
+  };
 
   const drawMatrix = () => {
     const width: number = 390;
@@ -51,7 +75,6 @@ const NodeMatrix: React.FC<{}> = () => {
       (i % nums) * (rectWidth + margin) + x,
       Math.floor(i / nums) * (rectHeight + margin) + y,
     ];
-
     const svg = d3
       .select('#nodeMatrix')
       .append('svg')
@@ -70,23 +93,6 @@ const NodeMatrix: React.FC<{}> = () => {
       .attr('transform', (_, i) => {
         return `translate(${indexToPosition(i).join(',')})`;
       });
-
-    // const border = svg
-    //   .append('rect')
-    //   .attr('id', 'border-rect')
-    //   .attr('fill', 'rgba(0,0,0,0)')
-    //   .attr('opacity', 0)
-    //   .attr('stroke', 'red')
-    //   .attr('stroke-width', borderWidth)
-    //   .attr('width', rectWidth)
-    //   .attr('height', rectHeight)
-    //   .on('click',function(){
-    //       d3.select(this).attr('opacity',0)
-    //       .attr('transform','translate(-100,-100)');
-    //   })
-    //   .on('mouseover', function () {
-    //     d3.select(this).attr('cursor', 'pointer');
-    //   });
 
     nodes
       .on('click', function (d, i) {
@@ -109,9 +115,20 @@ const NodeMatrix: React.FC<{}> = () => {
             d3.select(this).remove();
           });
       })
-      .on('mouseover', function () {
+      .on('mouseenter', function (event: any, d: any) {
         d3.select(this).attr('cursor', 'pointer');
-        
+        setCurrentNodeState(d.wrong_list);
+        d3.select('#toolTip')
+          .style('display', 'block')
+          .style('left',event.clientX-20+"px")
+          .style('top', event.clientY+30+"px")
+      })
+      .on('mouseleave',function(){
+        console.log('leave');
+        d3.select('#toolTip')
+          .style('display','none')
+          // .style('left','-100px')
+          // .style('top','-100px')
       });
 
     communitiesDataState.forEach((community: any, index: number) => {
@@ -134,29 +151,7 @@ const NodeMatrix: React.FC<{}> = () => {
             return (d.num / community.wrong_sum) * rectHeight;
           })
           .attr('fill', (d: any) => {
-            // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other"
-            switch (d.type) {
-              case 'porn':
-                return color[0];
-              case 'gambling':
-                return color[1];
-              case 'fraud':
-                return color[2];
-              case 'drug':
-                return color[3];
-              case 'gun':
-                return color[4];
-              case 'hacker':
-                return color[5];
-              case 'trading':
-                return color[6];
-              case 'pay':
-                return color[7];
-              case 'other':
-                return color[8];
-              case 'none':
-                return color[9];
-            }
+            return colorMapping(d.type);
           })
           .attr('transform', (d: any, i: number) => {
             if (i > 0) {
@@ -185,7 +180,6 @@ const NodeMatrix: React.FC<{}> = () => {
   useEffect(() => {
     getData(getCurrNeighbours, [[1834615]]).then((dataset: any) => {
       setDidMountState(true);
-
       setCommunitiesDataState(dataset);
     });
   }, []);
@@ -194,7 +188,46 @@ const NodeMatrix: React.FC<{}> = () => {
     <div
       id='nodeMatrix'
       style={{ width: '100%', height: '100%', overflowY: 'scroll' }}
-    ></div>
+    >
+      <div
+        id='toolTip'
+        style={{
+          width: '130px',
+          height: `${currentNodeState.length * 30 }px`,
+          background: '#fff',
+          // border: '1px solid #fff',
+          borderRadius: '4px',
+          position: 'absolute',
+          display: 'flex',
+          flexDirection: 'column',
+          zIndex:999,
+          boxShadow:'rgba(0,0,0,0.4) 1px 2px 5px',
+        }}
+      >
+        {currentNodeState.map((node: nodeType, i: number) => {
+          return (
+            <div key={i} style={{width:'100%', height:'30px',
+            display: 'flex',
+            flexDirection: 'row',
+            paddingLeft:'10px'}}>
+              <div
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  display: 'inline-block',
+                  marginTop:'10px',
+                  background: `${colorMapping(node.type)}`,
+                }}
+              ></div>
+              <p style={{color:'#333', margin:`0 0 0 10px`}}>
+                &nbsp;{node.type} : {node.num}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
