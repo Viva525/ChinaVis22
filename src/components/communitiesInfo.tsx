@@ -301,8 +301,8 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 			}
 		]
 	}
-	let typeNum = [[1, 4, 3, 5, 7, 8, 6, 9, 10], [2, 3, 3, 7, 7, 8, 6, 9, 10]]
-	//, [3, 3, 3, 7, 7, 8, 6, 9, 10], [4, 3, 3, 7, 7, 8, 6, 9, 10]]
+	let typeNum = [[1, 4, 3, 5, 7, 8, 6, 9, 10], [2, 3, 3, 7, 7, 8, 6, 9, 10]
+		, [3, 3, 3, 7, 7, 8, 6, 9, 10], [4, 3, 3, 7, 7, 8, 6, 9, 10]]
 
 
 	const drawSun = () => {
@@ -315,6 +315,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 
 
 		//初始化画布
+		d3.select('#mainsvg').remove();
 		d3.select('#sunSvg')
 			.append('svg')
 			.attr('id', 'mainsvg')
@@ -449,22 +450,21 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 
 
 	//监听currentCommunities，绘制图表
-	useEffect(() => {
-		if (didMountState) {
-			drawSun();
-		}
-	}, [currentCommunities]);
 
 	useEffect(() => {
 		if (didMountState) {
 			console.log(currentCommunities)
 			getData(getAllCommunitiesInfo, [currentCommunities]).then((dataset: any) => {
 				console.log(dataset);
+				//数据初始化
 				var communityFinal = {
 					'name': "Community",
 					'children': []
-				}
+				};
+				var typeCrim = [];
+				//数据填充
 				for (let i: number = 0; i < currentCommunities.length; i++) {
+					//旭日图数据生成
 					var communityState = {
 						'name': String(currentCommunities[i]),
 						'children': [
@@ -486,17 +486,32 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 						]
 					}
 					communityFinal.children.push(communityState)
+
+					//柱状图数据生成
+					var temp = []
+					let l = 0;
+					for (let key in dataset.count_res.industry_res[i]) {
+						//console.log((dataset.count_res.industry_res[0] as any)[key]);
+						temp[l] = (dataset.count_res.industry_res[i] as any)[key];
+						l++;
+					}
+					typeCrim[i] = temp
 				}
-				console.log(communityFinal);
+
+				//更新初始数据
 				sunData = communityFinal;
+				typeNum = typeCrim;
+				console.log(typeNum);
 				drawSun();
 			})
+
 		}
 	}, [currentCommunities]);
 
+	//初始化
 	useEffect(() => {
 		setDidMountState(true);
-		//drawSun();
+		drawSun();
 	}, []);
 
 	return (
