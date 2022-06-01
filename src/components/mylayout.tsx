@@ -93,7 +93,7 @@ const MyLayout: React.FC<{}> = () => {
               <Box title='Neighbour Heatmap' />
             </Row>
             <Row style={{ height: '45%' }}>
-              <Box title='NODE MATRIX' component={<NodeMatrix/>}/>
+              <Box title='NODE MATRIX' component={<NodeMatrix currentCommunities={currentGraphState} setCurrenttCommunities={setCurrentGraphState}/>}/>
             </Row>
           </Col>
           <Col span={12} style={{ height: '100%' }}>

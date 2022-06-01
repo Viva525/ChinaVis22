@@ -647,18 +647,13 @@ const Network: React.FC<NetworkProps> = (props) => {
         checkedChildren='2D'
         unCheckedChildren='3D'
       />
-      {/* <Descriptions title="nodeInfo" style={{ 
-          position: 'absolute',
-          right: 18,
-          top: 50,
-          zIndex: 999}}>
-        <Descriptions.Item label="nodeName">1</Descriptions.Item>
-        <Descriptions.Item label="nodeName">1</Descriptions.Item>
-        <Descriptions.Item label="nodeName">1</Descriptions.Item>
-        <Descriptions.Item label="nodeName">1</Descriptions.Item>
-        <Descriptions.Item label="nodeName">1</Descriptions.Item>
-        <Descriptions.Item label="nodeName">1</Descriptions.Item>
-      </Descriptions> */}
+      {
+        currentGragh.communities.map((item:any, i: number)=>{
+          return <div key={i} style={{position: 'absolute', width:'50px',height:'30px',
+          top:`${i*30+20}px`}}>{item}</div>
+        })
+        
+      }
     </>
   );
 };

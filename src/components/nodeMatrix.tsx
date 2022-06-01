@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import { getData } from '../utils/utils';
 import { getCurrNeighbours } from '../api/networkApi';
 import { type } from 'os';
+import { CurrentNetworkState, SetState } from './types';
 
 type nodeType = {
   type: string;
@@ -10,9 +11,19 @@ type nodeType = {
   color?: string;
 };
 
-const NodeMatrix: React.FC<{}> = () => {
-  const [currentNodeState, setCurrentNodeState] = useState<nodeType[]>([]);
+type currentNode = {
+  community: number;
+  wrongList: nodeType[];
+}
 
+type NodeMatrixProps = {
+  currentCommunities: CurrentNetworkState;
+  setCurrenttCommunities: SetState<CurrentNetworkState>;
+}
+
+const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
+  const [currentNodeState, setCurrentNodeState] = useState<currentNode>({community:0,wrongList:[]});
+  const {currentCommunities, setCurrenttCommunities} = props;
   // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other, none"
   const color = [
     '#f49c84',
@@ -95,29 +106,39 @@ const NodeMatrix: React.FC<{}> = () => {
       });
 
     nodes
-      .on('click', function (d, i) {
-        const index = communitiesDataState.indexOf(i);
-        svg
-          .append('rect')
-          .attr('id', 'border-rect')
-          .attr('fill', 'rgba(0,0,0,0)')
-          .attr('opacity', 0)
-          .attr('stroke', 'red')
-          .attr('stroke-width', borderWidth)
-          .attr('width', rectWidth)
-          .attr('height', rectHeight)
-          .on('mouseover', function () {
-            d3.select(this).attr('cursor', 'pointer');
-          })
-          .attr('transform', `translate(${indexToPosition(index).join(',')})`)
-          .attr('opacity', 1)
-          .on('click', function () {
-            d3.select(this).remove();
-          });
+      .on('click', function (e:any, d:any) {
+        const index = communitiesDataState.indexOf(d);
+        let newSet = new Set(currentCommunities.communities);
+        if(newSet.has(d.id)){
+          newSet.delete(d.id);
+        }else{
+          newSet.add(d.id);
+        }
+        setCurrenttCommunities({
+          current: 'communities',
+          communities: Array.from(newSet)
+        });
+        // svg
+        //   .append('rect')
+        //   .attr('id', 'border-rect')
+        //   .attr('fill', 'rgba(0,0,0,0)')
+        //   .attr('opacity', 0)
+        //   .attr('stroke', 'red')
+        //   .attr('stroke-width', borderWidth)
+        //   .attr('width', rectWidth)
+        //   .attr('height', rectHeight)
+        //   .on('mouseover', function () {
+        //     d3.select(this).attr('cursor', 'pointer');
+        //   })
+        //   .attr('transform', `translate(${indexToPosition(index).join(',')})`)
+        //   .attr('opacity', 1)
+        //   .on('click', function () {
+        //     d3.select(this).remove();
+        //   });
       })
       .on('mouseenter', function (event: any, d: any) {
         d3.select(this).attr('cursor', 'pointer');
-        setCurrentNodeState(d.wrong_list);
+        setCurrentNodeState({community:d.id,wrongList:d.wrong_list});
         d3.select('#toolTip')
           .style('display', 'block')
           .style('left',event.clientX-20+"px")
@@ -171,6 +192,19 @@ const NodeMatrix: React.FC<{}> = () => {
     });
   };
 
+  useEffect(()=>{
+    if(didMountState){
+      if(currentCommunities.communities.length != 0){
+        getData(getCurrNeighbours,[currentCommunities.communities]).then((dataset: any)=>{
+          setCommunitiesDataState(dataset);
+        });
+      }
+      console.log(currentCommunities);
+    }
+  }, [currentCommunities]);
+
+
+  //监听数据变化 绘制邻居矩阵图
   useEffect(() => {
     if (didMountState) {
       drawMatrix();
@@ -192,19 +226,18 @@ const NodeMatrix: React.FC<{}> = () => {
       <div
         id='toolTip'
         style={{
-          width: '130px',
-          height: `${currentNodeState.length * 30 }px`,
+          width: '180px',
+          height: `${(currentNodeState.wrongList.length+1) * 30 }px`,
           background: '#fff',
-          // border: '1px solid #fff',
           borderRadius: '4px',
           position: 'absolute',
-          display: 'flex',
-          flexDirection: 'column',
+          display: 'none',
           zIndex:999,
           boxShadow:'rgba(0,0,0,0.4) 1px 2px 5px',
         }}
       >
-        {currentNodeState.map((node: nodeType, i: number) => {
+        <p style={{color:'#333', margin:`0 0 0 12px`}}>community : {currentNodeState.community}</p>
+        {currentNodeState.wrongList.map((node: nodeType, i: number) => {
           return (
             <div key={i} style={{width:'100%', height:'30px',
             display: 'flex',
