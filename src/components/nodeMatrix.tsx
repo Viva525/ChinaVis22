@@ -194,12 +194,11 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
 
   useEffect(()=>{
     if(didMountState){
-      if(currentCommunities.communities.length != 0){
+      if(currentCommunities.communities!= undefined){
         getData(getCurrNeighbours,[currentCommunities.communities]).then((dataset: any)=>{
           setCommunitiesDataState(dataset);
         });
       }
-      console.log(currentCommunities);
     }
   }, [currentCommunities]);
 

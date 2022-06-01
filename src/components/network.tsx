@@ -261,7 +261,6 @@ const Network: React.FC<NetworkProps> = (props) => {
       });
     }
   };
-
   /**
    * 高亮边
    */
@@ -292,6 +291,12 @@ const Network: React.FC<NetworkProps> = (props) => {
   const switch3DViewChange = (item: boolean) => {
     setSwith3DState(item);
   };
+  /**
+   * 删除当前显示社区
+   */
+  const removeCommunity = (e: any) => {
+    // const id = e.nativeEvent.
+  }
   /**
    * 监听searchParams,搜索框变化，查询对应数据
    * 调用setData,setCurrentGraph
@@ -649,8 +654,13 @@ const Network: React.FC<NetworkProps> = (props) => {
       />
       {
         currentGragh.communities.map((item:any, i: number)=>{
-          return <div key={i} style={{position: 'absolute', width:'50px',height:'30px',
-          top:`${i*30+20}px`}}>{item}</div>
+          return (
+          <div className='communityID' key={i} style={{position: 'absolute', width:'100px', display:'flex',flexDirection:'row',
+          top:`${i*30+50}px`,left:'20px'}}>
+            <div style={{width:'10px',height:'22px', background:'#2196F3', borderRadius:'4px'}}></div>
+            <span onClick={removeCommunity} style={{margin:'0 0 0 5px'}}>{item}</span>
+          </div>
+          )
         })
         
       }

@@ -453,57 +453,58 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 
 	useEffect(() => {
 		if (didMountState) {
-			console.log(currentCommunities)
-			getData(getAllCommunitiesInfo, [currentCommunities]).then((dataset: any) => {
-				console.log(dataset);
-				//数据初始化
-				var communityFinal = {
-					'name': "Community",
-					'children': []
-				};
-				var typeCrim = [];
-				//数据填充
-				for (let i: number = 0; i < currentCommunities.length; i++) {
-					//旭日图数据生成
-					var communityState = {
-						'name': String(currentCommunities[i]),
-						'children': [
-							{
-								'name': "Domain",
-								'weight': dataset.count_res.count_res[i][0],
-								'children': dataset.result[i].children[0].children
-							},
-							{
-								'name': "Cert",
-								'weight': dataset.count_res.count_res[i][1],
-								'children': dataset.result[i].children[1].children
-							},
-							{
-								'name': "Ip",
-								'weight': dataset.count_res.count_res[i][2],
-								'children': dataset.result[i].children[2].children
-							}
-						]
-					}
-					communityFinal.children.push(communityState)
-
-					//柱状图数据生成
-					var temp = []
-					let l = 0;
-					for (let key in dataset.count_res.industry_res[i]) {
-						//console.log((dataset.count_res.industry_res[0] as any)[key]);
-						temp[l] = (dataset.count_res.industry_res[i] as any)[key];
-						l++;
-					}
-					typeCrim[i] = temp
-				}
-
-				//更新初始数据
-				sunData = communityFinal;
-				typeNum = typeCrim;
-				console.log(typeNum);
-				drawSun();
-			})
+			// if(currentCommunities.length!= 0){
+			// 	getData(getAllCommunitiesInfo, [currentCommunities]).then((dataset: any) => {
+			// 		console.log(dataset);
+			// 		//数据初始化
+			// 		var communityFinal = {
+			// 			'name': "Community",
+			// 			'children': []
+			// 		};
+			// 		var typeCrim = [];
+			// 		//数据填充
+			// 		for (let i: number = 0; i < currentCommunities.length; i++) {
+			// 			//旭日图数据生成
+			// 			var communityState = {
+			// 				'name': String(currentCommunities[i]),
+			// 				'children': [
+			// 					{
+			// 						'name': "Domain",
+			// 						'weight': dataset.count_res.count_res[i][0],
+			// 						'children': dataset.result[i].children[0].children
+			// 					},
+			// 					{
+			// 						'name': "Cert",
+			// 						'weight': dataset.count_res.count_res[i][1],
+			// 						'children': dataset.result[i].children[1].children
+			// 					},
+			// 					{
+			// 						'name': "Ip",
+			// 						'weight': dataset.count_res.count_res[i][2],
+			// 						'children': dataset.result[i].children[2].children
+			// 					}
+			// 				]
+			// 			}
+			// 			communityFinal.children.push(communityState)
+	
+			// 			//柱状图数据生成
+			// 			var temp = []
+			// 			let l = 0;
+			// 			for (let key in dataset.count_res.industry_res[i]) {
+			// 				//console.log((dataset.count_res.industry_res[0] as any)[key]);
+			// 				temp[l] = (dataset.count_res.industry_res[i] as any)[key];
+			// 				l++;
+			// 			}
+			// 			typeCrim[i] = temp
+			// 		}
+	
+			// 		//更新初始数据
+			// 		sunData = communityFinal;
+			// 		typeNum = typeCrim;
+			// 		console.log(typeNum);
+			// 		drawSun();
+			// 	})
+			// }
 
 		}
 	}, [currentCommunities]);
