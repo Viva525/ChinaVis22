@@ -53,6 +53,8 @@ export type NetworkProps = {
   selectKeyNode: Set<any>;
   range: RangeState;
   selectPaths: Set<any>;
+  currentCommunitiesInfo: currentNode[];
+  setCurrentCommunitiesInfo: SetState<currentNode[]>;
 };
 
 export type DataState = {
@@ -67,3 +69,14 @@ export type RangeState = {
   currMin: number;
   currMax: number;
 };
+
+export type nodeType = {
+  type: string;
+  num: number;
+  color?: string;
+};
+
+export type currentNode = {
+  community: number;
+  wrongList: nodeType[];
+}

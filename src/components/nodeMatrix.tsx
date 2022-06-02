@@ -3,28 +3,21 @@ import * as d3 from 'd3';
 import { getData } from '../utils/utils';
 import { getCurrNeighbours } from '../api/networkApi';
 import { type } from 'os';
-import { CurrentNetworkState, SetState } from './types';
+import { CurrentNetworkState, currentNode, nodeType, SetState } from './types';
 
-type nodeType = {
-  type: string;
-  num: number;
-  color?: string;
-};
 
-type currentNode = {
-  community: number;
-  wrongList: nodeType[];
-}
 
 type NodeMatrixProps = {
-  currentCommunities: CurrentNetworkState;
-  setCurrenttCommunities: SetState<CurrentNetworkState>;
+  currentCommunitiesID: CurrentNetworkState;
+  setCurrentCommunitiesID: SetState<CurrentNetworkState>;
+  currenCommunities: currentNode[];
+  setCurrentCommunities: SetState<currentNode[]>;
 }
 
 const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
   const [currentNodeState, setCurrentNodeState] = useState<currentNode>({community:0,wrongList:[]});
-  const {currentCommunities, setCurrenttCommunities} = props;
-  // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other, none"
+  const {currentCommunitiesID, currenCommunities, setCurrentCommunitiesID, setCurrentCommunities} = props;
+  // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other", "none"
   const color = [
     '#f49c84',
     '#f9c05d',
@@ -72,7 +65,7 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
     const margin: number = 4;
     const rectHeight: number = 40;
     const rectWidth: number = 20;
-    const borderWidth: number = 3;
+    // const borderWidth: number = 3;
     const nums = 16;
     const height: number =
       (communitiesDataState.length / nums) * (rectHeight + margin) + 20;
@@ -107,17 +100,24 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
 
     nodes
       .on('click', function (e:any, d:any) {
-        const index = communitiesDataState.indexOf(d);
-        let newSet = new Set(currentCommunities.communities);
+        console.log(d);
+        let newSet = new Set(currentCommunitiesID.communities);
         if(newSet.has(d.id)){
           newSet.delete(d.id);
         }else{
           newSet.add(d.id);
         }
-        setCurrenttCommunities({
+        let communitiesSet = new Set(currenCommunities);
+        if(communitiesSet.has(d)){
+          communitiesSet.delete(d);
+        }else{
+          communitiesSet.add(d);
+        }
+        setCurrentCommunitiesID({
           current: 'communities',
           communities: Array.from(newSet)
         });
+        setCurrentCommunities(Array.from(communitiesSet));
         // svg
         //   .append('rect')
         //   .attr('id', 'border-rect')
@@ -194,13 +194,13 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
 
   useEffect(()=>{
     if(didMountState){
-      if(currentCommunities.communities!= undefined){
-        getData(getCurrNeighbours,[currentCommunities.communities]).then((dataset: any)=>{
+      if(currentCommunitiesID.communities!= undefined){
+        getData(getCurrNeighbours,[currentCommunitiesID.communities]).then((dataset: any)=>{
           setCommunitiesDataState(dataset);
         });
       }
     }
-  }, [currentCommunities]);
+  }, [currentCommunitiesID]);
 
 
   //监听数据变化 绘制邻居矩阵图

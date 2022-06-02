@@ -8,10 +8,12 @@ import ForceGraph, { ForceGraphInstance, GraphData } from 'force-graph';
 import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
 import type { NetworkProps } from './types';
 import * as THREE from 'three';
-import { Descriptions, Switch } from 'antd';
+import { Button, Descriptions, Switch } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 import { getData } from '../utils/utils';
-import { isArray, keys } from 'lodash';
+import { isArray, keys, size } from 'lodash';
 import * as d3 from 'd3';
+import { group } from 'console';
 
 window.d3 = d3;
 /**
@@ -39,17 +41,28 @@ const Network: React.FC<NetworkProps> = (props) => {
     setSelectKeyNode,
     selectKeyNode,
     selectPaths,
+    currentCommunitiesInfo,
+    setCurrentCommunitiesInfo,
   } = props;
 
   const setSelectKeyState = (node: any) => {
     setSelectKeyNode((prevState: Set<any>) => {
       const newSet = new Set(Array.from(prevState));
+
+      // 取消选择
       if (newSet.has(node)) {
         newSet.delete(node);
-      } else if (newSet.size < 2) {
-        newSet.add(node);
+        return newSet;
       }
-      return newSet;
+      // set size < 2
+      if (newSet.size < 2) {
+        newSet.add(node);
+        return newSet;
+      }
+      // set size = 2
+      const _ = Array.from(prevState).slice(1);
+      _.push(node);
+      return new Set(_);
     });
   };
   /**
@@ -186,7 +199,6 @@ const Network: React.FC<NetworkProps> = (props) => {
   /**
    * 高亮节点
    */
-
   type numberNodes = {
     type: 'number';
     nodes: number[];
@@ -292,11 +304,110 @@ const Network: React.FC<NetworkProps> = (props) => {
     setSwith3DState(item);
   };
   /**
-   * 删除当前显示社区
+   * 导出子图到csv文件
    */
-  const removeCommunity = (e: any) => {
-    // const id = e.nativeEvent.
-  }
+  const toCSV = () => {
+    const industryScale = d3
+      .scaleOrdinal()
+      .domain([
+        'porn',
+        'gambling',
+        'fraud',
+        'drug',
+        'gun',
+        'hacker',
+        'trading',
+        'pay',
+        'other',
+      ])
+      .range(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']);
+    console.log(data);
+    const nodes = data.nodes;
+    const links = data.links;
+    
+    const nodeHead = 'id,name,type,industry\n';
+    const linkHead = 'relation,source,target\n';
+    //提取边
+    let linkRow = '';
+    for(let i = 0; i < links.length; i++){
+      const source = links[i].source.properties.id;
+      const target = links[i].target.properties.id;
+      const type = links[i].type;
+      linkRow += `${type},${source},${target}\n`;
+    }
+    //提取节点
+    let nodeRow = '';
+    for (let i = 0; i < nodes.length; i++) {
+      //Cert
+      const id = nodes[i].properties.id;
+      const name = nodes[i].properties.name;
+      const type = nodes[i].group;
+      const industry = [];
+      if (nodes[i].group === 'IP') {
+        //IP
+        if (nodes[i].properties.ipc_id != undefined) {
+          //IPC
+          const ipc_id = nodes[i].properties.ipc_id;
+          const ipc_name = nodes[i].properties.ipc;
+          const ipc_type = 'IP_C';
+          nodeRow += `${ipc_id},${ipc_name},${ipc_type},"[${industry}]"\n`;
+        }
+        if (nodes[i].properties.asn_id != undefined) {
+          //ASN
+          const asn_id = nodes[i].properties.asn_id;
+          const asn_name = nodes[i].properties.asn;
+          const asn_type = 'ASN';
+          nodeRow += `${asn_id},${asn_name},${asn_type},"[${industry}]"\n`;
+        }
+      } else if (nodes[i].group === 'Domain') {
+        //Domain
+        //获取industry
+        const industryType = Object.entries(nodes[i].properties)
+          .filter(([, flag]) => flag === 'True')
+          .map(([key]) => key);
+        industryType.forEach((type: string) => {
+          industry.push(industryScale(type));
+        });
+        if (nodes[i].properties.email_id != undefined) {
+          //Email
+          const email_id = nodes[i].properties.email_id;
+          const email_name = nodes[i].properties.email;
+          const email_type = 'Whois_Email';
+          nodeRow += `${email_id},${email_name},${email_type},"[${industry}]"\n`;
+        }
+        if (nodes[i].properties.phone_id != undefined) {
+          //Phone
+          const phone_id = nodes[i].properties.phone_id;
+          const phone_name = nodes[i].properties.phone;
+          const phone_type = 'Whois_Phone';
+          nodeRow += `${phone_id},${phone_name},${phone_type},"[${industry}]"\n`;
+        }
+        if (nodes[i].properties.register_id != undefined) {
+          //Register
+          const register_id = nodes[i].properties.register_id;
+          const register_name = nodes[i].properties.register;
+          const register_type = 'Whois_Name';
+          nodeRow += `${register_id},${register_name},${register_type},"[${industry}]"\n`;
+        }
+      }
+      nodeRow += `${id},${name},${type},"[${industry}]"\n`;
+    }
+    const nodeCSV = nodeHead + nodeRow;
+    const linkCSV = linkHead + linkRow;
+    const nodeElement = document.createElement('a');
+    nodeElement.href = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(nodeCSV);
+    //provide the name for the CSV file to be downloaded
+    nodeElement.download = `nodes-${currentGragh.communities.join('-')}.csv`;
+    nodeElement.click();
+    nodeElement.remove();
+
+    const linkElement = document.createElement('a');
+    linkElement.href = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(linkCSV);
+    //provide the name for the CSV file to be downloaded
+    linkElement.download = `links-${currentGragh.communities.join('-')}.csv`;
+    linkElement.click();
+    linkElement.remove();
+  };
   /**
    * 监听searchParams,搜索框变化，查询对应数据
    * 调用setData,setCurrentGraph
@@ -551,7 +662,7 @@ const Network: React.FC<NetworkProps> = (props) => {
    */
   useEffect(() => {
     if (didMountState) {
-      if(!switch3DState){
+      if (!switch3DState) {
         graph.nodeThreeObject((node: any) => {
           let shape = null;
           let geometry: any = null;
@@ -582,11 +693,11 @@ const Network: React.FC<NetworkProps> = (props) => {
           shape = new THREE.Mesh(geometry, material);
           return shape;
         });
-      }else{
-        graph.nodeColor((node:any)=>{
-          if(new Set(selectKeyNode).has(node)){
+      } else {
+        graph.nodeColor((node: any) => {
+          if (new Set(selectKeyNode).has(node)) {
             return '#ff0000';
-          }else{
+          } else {
             switch (node.group) {
               case 'Domain':
                 return '#dcd6c5';
@@ -596,10 +707,133 @@ const Network: React.FC<NetworkProps> = (props) => {
                 return '#335a71';
             }
           }
-        })
+        });
       }
     }
   }, [selectKeyNode]);
+  /**
+   * 监听currentCommunitiesState
+   */
+  useEffect(() => {
+    if (didMountState) {
+      if (currentCommunitiesInfo.length != 0) {
+        const width = 100;
+        const rectHeight = 30;
+        const rectWidth = 15;
+        const margin = 5;
+        const height = currentCommunitiesInfo.length * (rectHeight + margin);
+        d3.select('#svg-communitiesInfo').remove();
+        const svg = d3
+          .select('#communitiesInfo')
+          .append('svg')
+          .attr('width', width)
+          .attr('height', height)
+          .attr('id', 'svg-communitiesInfo');
+        const g = svg
+          .selectAll('g')
+          .data(currentCommunitiesInfo)
+          .enter()
+          .append('g')
+          .attr('transform', (_: any, i: number) => {
+            return `translate(0,${i * (rectHeight + margin)})`;
+          });
+
+        g.each(function (d: any) {
+          const heightScale = d3
+            .scaleLinear()
+            .domain([0, d.wrong_sum])
+            .range([0, rectHeight]);
+          const colorScale = d3
+            .scaleOrdinal()
+            .domain([
+              'porn',
+              'gambling',
+              'fraud',
+              'drug',
+              'gun',
+              'hacker',
+              'trading',
+              'pay',
+              'other',
+              'none',
+            ])
+            .range([
+              '#f49c84',
+              '#f9c05d',
+              '#41a7d6',
+              '#673AB7',
+              '#ec6352',
+              '#2196F3',
+              '#03A9F4',
+              '#00BCD4',
+              '#009688',
+              '#68bb8c',
+            ]);
+          const wrongList = d.wrong_list;
+          if (wrongList.length != 0) {
+            d3.select(this)
+              .selectAll('rect')
+              .data(d.wrong_list)
+              .enter()
+              .append('rect')
+              .attr('width', rectWidth)
+              .attr('height', (d: any) => {
+                return heightScale(d.num);
+              })
+              .attr('fill', (d: any): string => {
+                return colorScale(d.type) as string;
+              })
+              .attr('transform', (d: any) => {
+                let i = wrongList.indexOf(d);
+                let lastRectHeight = 0;
+                while (i > 0) {
+                  lastRectHeight += heightScale(wrongList[i - 1].num);
+                  i--;
+                }
+                return `translate(0,${lastRectHeight})`;
+              });
+          } else {
+            d3.select(this)
+              .append('rect')
+              .attr('height', rectHeight)
+              .attr('width', rectWidth)
+              .attr('fill', '#68bb8c');
+          }
+          d3.select(this)
+            .append('text')
+            .text((d: any) => {
+              return d.id;
+            })
+            .attr('transform', (_: any, i: number) => {
+              return `translate(${rectWidth + margin},${
+                i * (rectHeight + margin) + rectHeight / 2 + 5
+              })`;
+            });
+        });
+        g.on('click', function (e: any, d: any) {
+          //删除communitiesID
+          if (currentGragh.communities.length != 0) {
+            let arr = [...currentGragh.communities];
+            arr.splice(arr.indexOf(d.id), 1);
+            setCurrentGraph((prevState: any) => {
+              return {
+                ...prevState,
+                communities: arr,
+              };
+            });
+          }
+          //删除currentCommunities
+          if (currentCommunitiesInfo.length != 0) {
+            let arr = [...currentCommunitiesInfo];
+            arr.splice(arr.indexOf(d), 1);
+            setCurrentCommunitiesInfo(arr);
+          }
+        }).on('mouseover', function () {
+          d3.select(this).style('cursor', 'pointer');
+        });
+      }
+    }
+  }, [currentCommunitiesInfo]);
   /**
    * 初始化，绑定元素
    */
@@ -652,18 +886,19 @@ const Network: React.FC<NetworkProps> = (props) => {
         checkedChildren='2D'
         unCheckedChildren='3D'
       />
-      {
-        currentGragh.communities.map((item:any, i: number)=>{
-          return (
-          <div className='communityID' key={i} style={{position: 'absolute', width:'100px', display:'flex',flexDirection:'row',
-          top:`${i*30+50}px`,left:'20px'}}>
-            <div style={{width:'10px',height:'22px', background:'#2196F3', borderRadius:'4px'}}></div>
-            <span onClick={removeCommunity} style={{margin:'0 0 0 5px'}}>{item}</span>
-          </div>
-          )
-        })
-        
-      }
+      <Button
+        style={{ position: 'absolute', right: 150, top: 50 }}
+        shape='round'
+        icon={<DownloadOutlined />}
+        size={'small'}
+        onClick={toCSV}
+      >
+        Download
+      </Button>
+      <div
+        id='communitiesInfo'
+        style={{ position: 'absolute', left: 15, top: 40 }}
+      ></div>
     </>
   );
 };

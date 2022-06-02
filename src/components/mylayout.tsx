@@ -7,9 +7,10 @@ import Network from './network';
 import ControlBar from './controlBar';
 import CommunityAndNodeList from './communityAndNodeList';
 
-import type {
+import {
   ControlState,
   CurrentNetworkState,
+  currentNode,
   DataState,
   RangeState,
   TagFilterState,
@@ -65,6 +66,9 @@ const MyLayout: React.FC<{}> = () => {
     currMax: 1443,
   });
 
+  const [currentCommunitiesState, setCurrentCommunitiesState] =
+    useState<currentNode[]>([]);
+
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <Layout>
@@ -93,7 +97,17 @@ const MyLayout: React.FC<{}> = () => {
               <Box title='Neighbour Heatmap' />
             </Row>
             <Row style={{ height: '45%' }}>
-              <Box title='NODE MATRIX' component={<NodeMatrix currentCommunities={currentGraphState} setCurrenttCommunities={setCurrentGraphState}/>}/>
+              <Box
+                title='NODE MATRIX'
+                component={
+                  <NodeMatrix
+                    currentCommunitiesID={currentGraphState}
+                    setCurrentCommunitiesID={setCurrentGraphState}
+                    currenCommunities={currentCommunitiesState}
+                    setCurrentCommunities={setCurrentCommunitiesState}
+                  />
+                }
+              />
             </Row>
           </Col>
           <Col span={12} style={{ height: '100%' }}>
@@ -113,6 +127,8 @@ const MyLayout: React.FC<{}> = () => {
                   setSelectKeyNode={setSelectKeyNodeState}
                   selectKeyNode={selectKeyNodeState}
                   selectPaths={selectPathsState}
+                  currentCommunitiesInfo={currentCommunitiesState}
+                  setCurrentCommunitiesInfo={setCurrentCommunitiesState}
                 />
               }
             />
@@ -146,7 +162,11 @@ const MyLayout: React.FC<{}> = () => {
           <Col span={6}>
             <Box
               title='COMMUNITY INFORMATION'
-              component={<CommunitiesInfo currentCommunities={currentGraphState.communities}/>}
+              component={
+                <CommunitiesInfo
+                  currentCommunities={currentGraphState.communities}
+                />
+              }
             />
           </Col>
           <Col span={6} style={{ height: '100%' }}>

@@ -132,7 +132,6 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
       .deriveColors()
       .buildTaggle(container.current as HTMLElement);
     lineUp.on('selectionChanged', (idArray: number[]) => {
-      console.log(lineUp);
       let arr = [];
       for (let i = 0; i < idArray.length; i++) {
         arr.push(lineUp._data._data[idArray[i]].id);
