@@ -138,7 +138,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 			.style("margin", "0 -14px")
 			//.style("background", color(0))
 			.style("cursor", "pointer")
-			.on("click", (event) => zoom(root, event));
+			.on("click", (event) => zoom(event, root));
 
 		const node = svg.append("g")
 			.selectAll("circle")
@@ -178,7 +178,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 
 		function zoom(event, d) {
 			const focus0 = focus;
-			focus = event;
+			focus = d;
 			//console.log(focus)
 			const transition = svg.transition()
 				//.duration(event.altKey ? 7500 : 750)
