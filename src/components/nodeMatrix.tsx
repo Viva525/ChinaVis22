@@ -10,13 +10,11 @@ import { CurrentNetworkState, currentNode, nodeType, SetState } from './types';
 type NodeMatrixProps = {
   currentCommunitiesID: CurrentNetworkState;
   setCurrentCommunitiesID: SetState<CurrentNetworkState>;
-  currenCommunities: currentNode[];
-  setCurrentCommunities: SetState<currentNode[]>;
 }
 
 const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
   const [currentNodeState, setCurrentNodeState] = useState<currentNode>({community:0,wrongList:[]});
-  const {currentCommunitiesID, currenCommunities, setCurrentCommunitiesID, setCurrentCommunities} = props;
+  const {currentCommunitiesID, setCurrentCommunitiesID} = props;
   // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other", "none"
   const color = [
     '#f49c84',
@@ -107,17 +105,10 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
         }else{
           newSet.add(d.id);
         }
-        let communitiesSet = new Set(currenCommunities);
-        if(communitiesSet.has(d)){
-          communitiesSet.delete(d);
-        }else{
-          communitiesSet.add(d);
-        }
         setCurrentCommunitiesID({
           current: 'communities',
           communities: Array.from(newSet)
         });
-        setCurrentCommunities(Array.from(communitiesSet));
         // svg
         //   .append('rect')
         //   .attr('id', 'border-rect')

@@ -88,6 +88,7 @@ const CorePath: React.FC<CorePathProps> = (props) => {
         return `path-${i}`;
       })
       .on('click', function (e: any,d: any) {
+        console.log(e);
         let pathData: any = d3.select(this).data()[0];
         setPathList((prevState: Set<any>) => {
           const newSet = new Set(Array.from(prevState));

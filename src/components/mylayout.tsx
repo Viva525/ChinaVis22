@@ -66,9 +66,6 @@ const MyLayout: React.FC<{}> = () => {
     currMax: 1443,
   });
 
-  const [currentCommunitiesState, setCurrentCommunitiesState] =
-    useState<currentNode[]>([]);
-
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <Layout>
@@ -103,8 +100,6 @@ const MyLayout: React.FC<{}> = () => {
                   <NodeMatrix
                     currentCommunitiesID={currentGraphState}
                     setCurrentCommunitiesID={setCurrentGraphState}
-                    currenCommunities={currentCommunitiesState}
-                    setCurrentCommunities={setCurrentCommunitiesState}
                   />
                 }
               />
@@ -127,8 +122,6 @@ const MyLayout: React.FC<{}> = () => {
                   setSelectKeyNode={setSelectKeyNodeState}
                   selectKeyNode={selectKeyNodeState}
                   selectPaths={selectPathsState}
-                  currentCommunitiesInfo={currentCommunitiesState}
-                  setCurrentCommunitiesInfo={setCurrentCommunitiesState}
                 />
               }
             />

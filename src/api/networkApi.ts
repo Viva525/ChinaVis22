@@ -60,3 +60,14 @@ export const getCurrNeighbours = (communities: number[]) => {
     communities,
   });
 }
+
+/**
+ * 获取当前社区的rects
+ * @param communities 
+ * @returns 
+ */
+export const getCurrentCommunitiesRects = (communities: number[]) => {
+  return post('getCurrRects', {
+    communities,
+  });
+}
