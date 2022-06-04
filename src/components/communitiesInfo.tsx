@@ -3,118 +3,119 @@ import { stringify } from 'querystring';
 import React, { LegacyRef, useEffect, useState } from 'react';
 import { getAllCommunitiesInfo } from '../api/networkApi';
 import { getData } from '../utils/utils';
+import { CurrentNetworkState } from './types';
 
 type communitiesInfoProps = {
-	currentCommunities: number[];
+	currentGraph: CurrentNetworkState
 };
 
 const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
-	// const [didMountState, setDidMountState] = useState(false);
-	// const { currentCommunities } = props;
-	// const [dataInit, setDataInit] = useState<any>([
-	// 	{ name: 'Community', children: [] },
-	// ]);
-	// //假数据
-	// let circleData = {
-	// 	name: 'Community',
-	// 	children: [
-	// 		{
-	// 			name: '123456',
-	// 			children: [
-	// 				{
-	// 					name: 'domain',
-	// 					value: 4,
-	// 					children: [
-	// 						{
-	// 							name: 'gun',
-	// 							value: 4,
-	// 						},
-	// 						{
-	// 							name: 'porn',
-	// 							value: 5,
-	// 						},
-	// 						{
-	// 							name: 'illegal',
-	// 							value: 9,
-	// 							children: [
-	// 								{
-	// 									name: 'bet',
-	// 									value: 10,
-	// 								},
-	// 								{
-	// 									name: 'xxx',
-	// 									value: 5,
-	// 								}
-	// 							]
-	// 						}
+	const [didMountState, setDidMountState] = useState(false);
+	const { currentGraph } = props;
+	const [dataInit, setDataInit] = useState<any>([
+		{ name: 'Community', children: [] },
+	]);
+	//假数据
+	let circleData = {
+		name: 'Community',
+		children: [
+			{
+				name: '123456',
+				children: [
+					{
+						name: 'domain',
+						value: 4,
+						children: [
+							{
+								name: 'gun',
+								value: 4,
+							},
+							{
+								name: 'porn',
+								value: 5,
+							},
+							{
+								name: 'illegal',
+								value: 9,
+								children: [
+									{
+										name: 'bet',
+										value: 10,
+									},
+									{
+										name: 'xxx',
+										value: 5,
+									}
+								]
+							}
 
-	// 					],
-	// 				},
-	// 				{
-	// 					name: 'cert',
-	// 					value: 4,
-	// 				},
-	// 				{
-	// 					name: 'ip',
-	// 					value: 6,
-	// 				},
-	// 			],
-	// 		},
-	// 		{
-	// 			name: '2536',
-	// 			children: [
-	// 				{
-	// 					name: 'domain',
-	// 					value: 4,
-	// 				},
-	// 				{
-	// 					name: 'cert',
-	// 					value: 9,
-	// 				},
-	// 				{
-	// 					name: 'ip',
-	// 					value: 6,
-	// 				},
-	// 			],
-	// 		},
-	// 		{
-	// 			name: '25847',
-	// 			children: [
-	// 				{
-	// 					name: 'domain',
-	// 					value: 9,
-	// 				},
-	// 				{
-	// 					name: 'cert',
-	// 					value: 1,
-	// 				},
-	// 				{
-	// 					name: 'ip',
-	// 					value: 2,
-	// 				},
-	// 			],
-	// 		},
-	// 		{
-	// 			name: '85476',
-	// 			children: [
-	// 				{
-	// 					name: 'domain',
-	// 					value: 25,
-	// 				},
-	// 				{
-	// 					name: 'cert',
-	// 					value: 4,
-	// 				},
-	// 				{
-	// 					name: 'ip',
-	// 					value: 6,
-	// 				},
-	// 			],
-	// 		},
-	// 	],
-	// };
+						],
+					},
+					{
+						name: 'cert',
+						value: 4,
+					},
+					{
+						name: 'ip',
+						value: 6,
+					},
+				],
+			},
+			{
+				name: '2536',
+				children: [
+					{
+						name: 'domain',
+						value: 4,
+					},
+					{
+						name: 'cert',
+						value: 9,
+					},
+					{
+						name: 'ip',
+						value: 6,
+					},
+				],
+			},
+			{
+				name: '25847',
+				children: [
+					{
+						name: 'domain',
+						value: 9,
+					},
+					{
+						name: 'cert',
+						value: 1,
+					},
+					{
+						name: 'ip',
+						value: 2,
+					},
+				],
+			},
+			{
+				name: '85476',
+				children: [
+					{
+						name: 'domain',
+						value: 25,
+					},
+					{
+						name: 'cert',
+						value: 4,
+					},
+					{
+						name: 'ip',
+						value: 6,
+					},
+				],
+			},
+		],
+	};
 
-	// //监听currentCommunities，绘制图表
+	//监听currentGraph，绘制图表
 
 	// const drawCircle = () => {
 	// 	//数据初始化
@@ -302,73 +303,74 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 	// 	svg.node();
 	// };
 
-	// useEffect(() => {
-	// 	if (didMountState) {
-	// 		if (currentCommunities.length != 0) {
-	// 			getData(getAllCommunitiesInfo, [currentCommunities]).then((dataset: any) => {
-	// 				console.log(dataset);
-	// 				//数据初始化
-	// 				var communityFinal = {
-	// 					'name': "Community",
-	// 					'children': []
-	// 				};
-	// 				var typeCrim = Object.getOwnPropertyNames((dataset.count_res.industry_res[0] as any));
-	// 				function isEmpty(value, vect) {
-	// 					if (value.weight !== 0) {
-	// 						var numObj = {
-	// 							'name': value.name,
-	// 							'value': value.weight,
-	// 						}
-	// 						vect.children.push(numObj)
-	// 					}
-	// 				}
-	// 				//数据填充
-	// 				for (let i: number = 0; i < currentCommunities.length; i++) {
-	// 					//主数据生成
-	// 					var communityState = {
-	// 						'name': String(currentCommunities[i]),
-	// 						'children': []
-	// 					}
-	// 					//数据判断 对应domain,ip,cert数量层生成
-	// 					if (dataset.count_res.count_res[i][0] !== 0) {
-	// 						var domainNum = {
-	// 							'name': "Domain",
-	// 							'value': dataset.count_res.count_res[i][0],
-	// 							'children': [
-	// 								{
-	// 									'name': "Crime Type",
-	// 									children: []
-	// 								},
-	// 							]
-	// 						}
-	// 						isEmpty(dataset.result[i].children[0].children[0], domainNum)
-	// 						isEmpty(dataset.result[i].children[0].children[1], domainNum)
-	// 						isEmpty(dataset.result[i].children[0].children[2], domainNum)
-	// 						communityState.children.push(domainNum)
-	// 					}
-	// 					if (dataset.count_res.count_res[i][1]) {
-	// 						var certNum = {
-	// 							'name': "Cert",
-	// 							'value': dataset.count_res.count_res[i][1],
-	// 							// 'children': [
-	// 							// 	isEmpty(dataset.result[i].children[1].children[0]),
-	// 							// 	isEmpty(dataset.result[i].children[1].children[1]),
-	// 							// 	isEmpty(dataset.result[i].children[1].children[2]),
-	// 							// ]
-	// 						}
-	// 						communityState.children.push(certNum)
-	// 					}
-	// 					if (dataset.count_res.count_res[i][2]) {
-	// 						var ipNum = {
-	// 							'name': "Ip",
-	// 							'value': dataset.count_res.count_res[i][2],
-	// 							// 'children': [
-	// 							// 	isEmpty(dataset.result[i].children[2].children[0]),
-	// 							// 	isEmpty(dataset.result[i].children[2].children[1]),
-	// 							// 	isEmpty(dataset.result[i].children[2].children[2]),
-	// 							// ]
-	// 						}
-	// 						communityState.children.push(ipNum)
+	useEffect(() => {
+		if (didMountState && currentGraph.current==='communities') {
+			const currentCommunities = currentGraph.communities;
+			if (currentCommunities.length != 0) {
+				getData(getAllCommunitiesInfo, [currentCommunities]).then((dataset: any) => {
+					console.log(dataset);
+					//数据初始化
+					var communityFinal = {
+						'name': "Community",
+						'children': []
+					};
+					var typeCrim = Object.getOwnPropertyNames((dataset.count_res.industry_res[0] as any));
+					function isEmpty(value, vect) {
+						if (value.weight !== 0) {
+							var numObj = {
+								'name': value.name,
+								'value': value.weight,
+							}
+							vect.children.push(numObj)
+						}
+					}
+					//数据填充
+					for (let i: number = 0; i < currentCommunities.length; i++) {
+						//主数据生成
+						var communityState = {
+							'name': String(currentCommunities[i]),
+							'children': []
+						}
+						//数据判断 对应domain,ip,cert数量层生成
+						if (dataset.count_res.count_res[i][0] !== 0) {
+							var domainNum = {
+								'name': "Domain",
+								'value': dataset.count_res.count_res[i][0],
+								'children': [
+									{
+										'name': "Crime Type",
+										children: []
+									},
+								]
+							}
+							isEmpty(dataset.result[i].children[0].children[0], domainNum)
+							isEmpty(dataset.result[i].children[0].children[1], domainNum)
+							isEmpty(dataset.result[i].children[0].children[2], domainNum)
+							communityState.children.push(domainNum)
+						}
+						if (dataset.count_res.count_res[i][1]) {
+							var certNum = {
+								'name': "Cert",
+								'value': dataset.count_res.count_res[i][1],
+								// 'children': [
+								// 	isEmpty(dataset.result[i].children[1].children[0]),
+								// 	isEmpty(dataset.result[i].children[1].children[1]),
+								// 	isEmpty(dataset.result[i].children[1].children[2]),
+								// ]
+							}
+							communityState.children.push(certNum)
+						}
+						if (dataset.count_res.count_res[i][2]) {
+							var ipNum = {
+								'name': "Ip",
+								'value': dataset.count_res.count_res[i][2],
+								// 'children': [
+								// 	isEmpty(dataset.result[i].children[2].children[0]),
+								// 	isEmpty(dataset.result[i].children[2].children[1]),
+								// 	isEmpty(dataset.result[i].children[2].children[2]),
+								// ]
+							}
+							communityState.children.push(ipNum)
 
 	// 					}
 
@@ -386,18 +388,18 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 	// 						num++;
 	// 					}
 
-	// 					communityFinal.children.push(communityState)
-	// 				}
-	// 				//更新初始数据
-	// 				console.log(communityFinal)
-	// 				circleData = communityFinal;
-	// 				//typeNum = typeCrim;
-	// 				//console.log(typeNum);
-	// 				drawCircle();
-	// 			})
-	// 		}
-	// 	}
-	// }, [currentCommunities]);
+						communityFinal.children.push(communityState)
+					}
+					//更新初始数据
+					console.log(communityFinal)
+					circleData = communityFinal;
+					//typeNum = typeCrim;
+					//console.log(typeNum);
+					drawCircle();
+				})
+			}
+		}
+	}, [currentGraph.communities]);
 
 	// //初始化
 	// useEffect(() => {
