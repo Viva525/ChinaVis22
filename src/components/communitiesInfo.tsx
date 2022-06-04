@@ -116,7 +116,6 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 	};
 
 	//监听currentGraph，绘制图表
-
 	const drawCircle = () => {
 		//数据初始化
 		const width = 476;
