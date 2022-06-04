@@ -11,7 +11,7 @@ import type { NetworkProps, NodeType } from './types';
 import * as THREE from 'three';
 import { Button, Descriptions, Switch } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-import { getData } from '../utils/utils';
+import { addHiddenNodeAndLink, getData } from '../utils/utils';
 import { isArray, keys, size } from 'lodash';
 import * as d3 from 'd3';
 import { group } from 'console';
@@ -74,7 +74,7 @@ const Network: React.FC<NetworkProps> = (props) => {
 
       .onNodeClick((node: any) => {
         console.log(node);
-        
+
         setSelectKeyState(node);
       })
       .nodeLabel((node: any) => {
@@ -86,6 +86,14 @@ const Network: React.FC<NetworkProps> = (props) => {
             return node.properties[Cert];
           case 'Domain':
             return node.properties[Domain];
+          case 'Email':
+            return node.properties.name;
+          case 'Phone':
+            return node.properties.name;
+          case 'Register':
+            return node.properties.name;
+          default:
+            break;
         }
       })
       .linkVisibility(true)
@@ -117,7 +125,20 @@ const Network: React.FC<NetworkProps> = (props) => {
               color = '#335a71';
               geometry = new THREE.SphereGeometry(10);
               break;
+            case 'Email':
+              color = '#00FF00';
+              geometry = new THREE.SphereGeometry(15);
+              break;
+            case 'Phone':
+              color = '#00FF00';
+              geometry = new THREE.SphereGeometry(15);
+              break;
+            case 'Register':
+              color = '#00FF00';
+              geometry = new THREE.SphereGeometry(15);
+              break;
             default:
+              break;
           }
 
           let material = new THREE.MeshToonMaterial({
@@ -138,6 +159,14 @@ const Network: React.FC<NetworkProps> = (props) => {
             return '#e87e5c';
           case 'IP':
             return '#335a71';
+          case 'Email':
+            return '#00FF00';
+          case 'Phone':
+            return '#00FF00';
+          case 'Register':
+            return '#00FF00';
+          default:
+            break;
         }
       });
     }
@@ -232,7 +261,20 @@ const Network: React.FC<NetworkProps> = (props) => {
             color = '#335a71';
             geometry = new THREE.SphereGeometry(10);
             break;
+          case 'Email':
+            color = '#00FF00';
+            geometry = new THREE.SphereGeometry(15);
+            break;
+          case 'Phone':
+            color = '#00FF00';
+            geometry = new THREE.SphereGeometry(15);
+            break;
+          case 'Register':
+            color = '#00FF00';
+            geometry = new THREE.SphereGeometry(15);
+            break;
           default:
+            break;
         }
         let res = undefined;
         if (type === 'string') {
@@ -269,6 +311,14 @@ const Network: React.FC<NetworkProps> = (props) => {
               return '#e87e5c';
             case 'IP':
               return '#335a71';
+            case 'Email':
+              return '#00FF00';
+            case 'Phone':
+              return '#00FF00';
+            case 'Register':
+              return '#00FF00';
+            default:
+              break;
           }
         }
       });
@@ -278,25 +328,28 @@ const Network: React.FC<NetworkProps> = (props) => {
    * 高亮边
    */
   const highLightLinks = (links: number[]) => {
-    graph.linkColor((link: any) => {
-      if (links.includes(link.identity)) {
-        return '#ff0000';
-      } else {
-        return linkColor[0];
-      }
-    }).linkWidth((link: any)=>{
-      if (links.includes(link.identity)) {
-        return 4;
-      } else {
-        return 1;
-      }
-    }).linkDirectionalParticleWidth((link:any)=>{
-      if (links.includes(link.identity)) {
-        return 4;
-      } else {
-        return 2;
-      }
-    })
+    graph
+      .linkColor((link: any) => {
+        if (links.includes(link.identity)) {
+          return '#ff0000';
+        } else {
+          return linkColor[0];
+        }
+      })
+      .linkWidth((link: any) => {
+        if (links.includes(link.identity)) {
+          return 4;
+        } else {
+          return 1;
+        }
+      })
+      .linkDirectionalParticleWidth((link: any) => {
+        if (links.includes(link.identity)) {
+          return 4;
+        } else {
+          return 2;
+        }
+      });
   };
   /**
    * 切换视图显示
@@ -320,7 +373,7 @@ const Network: React.FC<NetworkProps> = (props) => {
    * 画当前社区矩阵图
    */
   const drawCurrentCommunitiesRects = (currentCommunitiesInfo: NodeType[]) => {
-    if (currentCommunitiesInfo.length != 0) {
+    if (currentCommunitiesInfo.length !== 0) {
       const width = 100;
       const rectHeight = 30;
       const rectWidth = 15;
@@ -499,30 +552,30 @@ const Network: React.FC<NetworkProps> = (props) => {
         industryType.forEach((type: string) => {
           industry.push(industryScale(type));
         });
-        if (nodes[i].properties.email_id != undefined) {
-          //Email
-          const email_id = nodes[i].properties.email_id;
-          const email_name = nodes[i].properties.email;
-          const email_type = 'Whois_Email';
-          nodeRow += `${email_id},${email_name},${email_type},"[${industry}]"\n`;
-          linkRow += `r_whois_email,${nodes[i].properties.id},${email_id}\n`;
-        }
-        if (nodes[i].properties.phone_id != undefined) {
-          //Phone
-          const phone_id = nodes[i].properties.phone_id;
-          const phone_name = nodes[i].properties.phone;
-          const phone_type = 'Whois_Phone';
-          nodeRow += `${phone_id},${phone_name},${phone_type},"[${industry}]"\n`;
-          linkRow += `r_whois_phone,${nodes[i].properties.id},${phone_id}\n`;
-        }
-        if (nodes[i].properties.register_id != undefined) {
-          //Register
-          const register_id = nodes[i].properties.register_id;
-          const register_name = nodes[i].properties.register;
-          const register_type = 'Whois_Name';
-          nodeRow += `${register_id},${register_name},${register_type},"[${industry}]"\n`;
-          linkRow += `r_whois_name,${nodes[i].properties.id},${register_id}\n`;
-        }
+        // if (nodes[i].properties.email_id != undefined) {
+        //   //Email
+        //   const email_id = nodes[i].properties.email_id;
+        //   const email_name = nodes[i].properties.email;
+        //   const email_type = 'Whois_Email';
+        //   nodeRow += `${email_id},${email_name},${email_type},"[${industry}]"\n`;
+        //   linkRow += `r_whois_email,${nodes[i].properties.id},${email_id}\n`;
+        // }
+        // if (nodes[i].properties.phone_id != undefined) {
+        //   //Phone
+        //   const phone_id = nodes[i].properties.phone_id;
+        //   const phone_name = nodes[i].properties.phone;
+        //   const phone_type = 'Whois_Phone';
+        //   nodeRow += `${phone_id},${phone_name},${phone_type},"[${industry}]"\n`;
+        //   linkRow += `r_whois_phone,${nodes[i].properties.id},${phone_id}\n`;
+        // }
+        // if (nodes[i].properties.register_id != undefined) {
+        //   //Register
+        //   const register_id = nodes[i].properties.register_id;
+        //   const register_name = nodes[i].properties.register;
+        //   const register_type = 'Whois_Name';
+        //   nodeRow += `${register_id},${register_name},${register_type},"[${industry}]"\n`;
+        //   linkRow += `r_whois_name,${nodes[i].properties.id},${register_id}\n`;
+        // }
       }
       nodeRow += `${id},${name},${type},"[${industry}]"\n`;
     }
@@ -566,7 +619,7 @@ const Network: React.FC<NetworkProps> = (props) => {
               current: 'searchStr',
             });
           }
-          setData(dataset.data);
+          
         } else {
           console.log(dataset);
         }
@@ -621,14 +674,22 @@ const Network: React.FC<NetworkProps> = (props) => {
       };
       const dataset: any = { nodes: [], links: [] };
       dataset.nodes = data.nodes.filter((item: any) => {
-        return filterNode.includes(item.group);
+        return (
+          item.group === 'Email' ||
+          item.group === 'Phone' ||
+          item.group === 'Register' ||
+          filterNode.includes(item.group)
+        );
       });
       dataset.links = data.links.filter((item: any) => {
         return (
+          item.group === 'Email' ||
+          item.group === 'Phone' ||
+          item.group === 'Register' ||
           //@ts-ignore
-          filterNode.includes(dist[item.type][0]) &&
-          //@ts-ignore
-          filterNode.includes(dist[item.type][1])
+          (filterNode.includes(dist[item.type][0]) &&
+            //@ts-ignore
+            filterNode.includes(dist[item.type][1]))
         );
       });
       graph?.graphData(dataset);
@@ -650,6 +711,8 @@ const Network: React.FC<NetworkProps> = (props) => {
             return node.properties[Cert];
           case 'Domain':
             return node.properties[Domain];
+          default:
+            return node.properties.name;
         }
       });
     }
@@ -667,9 +730,9 @@ const Network: React.FC<NetworkProps> = (props) => {
       } else if (currentGragh.current === 'communities') {
         getData(getFilterNetworkByCommunities, [currentGragh.communities]).then(
           (dataset: any) => {
-            console.log(dataset);
-            setData(dataset);
+            const addedData = addHiddenNodeAndLink(dataset);
             drawGraph();
+            setData(addedData);
           }
         );
         getData(getCurrentCommunitiesRects, [currentGragh.communities]).then(
@@ -790,7 +853,7 @@ const Network: React.FC<NetworkProps> = (props) => {
       // 3D模式
       graph = ForceGraph3D()(context);
     }
-    if (currentGragh.current == 'allCommunity') {
+    if (currentGragh.current === 'allCommunity') {
       initGraph();
     } else {
       drawGraph();
@@ -822,7 +885,20 @@ const Network: React.FC<NetworkProps> = (props) => {
               color = '#335a71';
               geometry = new THREE.SphereGeometry(10);
               break;
+            case 'Email':
+              color = '#00FF00';
+              geometry = new THREE.SphereGeometry(15);
+              break;
+            case 'Phone':
+              color = '#00FF00';
+              geometry = new THREE.SphereGeometry(15);
+              break;
+            case 'Register':
+              color = '#00FF00';
+              geometry = new THREE.SphereGeometry(15);
+              break;
             default:
+              break;
           }
           if (new Set(selectKeyNode).has(node)) {
             color = '#ff0000';
@@ -847,6 +923,14 @@ const Network: React.FC<NetworkProps> = (props) => {
                 return '#e87e5c';
               case 'IP':
                 return '#335a71';
+              case 'Email':
+                return '#00FF00';
+              case 'Phone':
+                return '#00FF00';
+              case 'Register':
+                return '#00FF00';
+              default:
+                break;
             }
           }
         });
@@ -879,8 +963,7 @@ const Network: React.FC<NetworkProps> = (props) => {
         //@ts-ignore
         ref={container}
         id='network'
-        style={{ width: '100%', height: '100%' }}
-      ></div>
+        style={{ width: '100%', height: '100%' }}></div>
       <Switch
         style={{
           position: 'absolute',
@@ -911,14 +994,12 @@ const Network: React.FC<NetworkProps> = (props) => {
         shape='round'
         icon={<DownloadOutlined />}
         size={'small'}
-        onClick={toCSV}
-      >
+        onClick={toCSV}>
         Download
       </Button>
       <div
         id='communitiesInfo'
-        style={{ position: 'absolute', left: 15, top: 40 }}
-      ></div>
+        style={{ position: 'absolute', left: 15, top: 40 }}></div>
     </>
   );
 };
