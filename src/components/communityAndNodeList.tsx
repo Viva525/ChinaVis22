@@ -8,6 +8,8 @@ type CommunityAndNodeListProps = {
   currentGragh: CurrentNetworkState;
   setCurrentGraph: SetState<CurrentNetworkState>;
   setSelectNode: SetState<string[]>;
+  selectCommunities: number[];
+  setSelectCommunities: SetState<number[]>;
 };
 let lineUp: any = null;
 
@@ -24,7 +26,7 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
     'pay',
     'other',
   ];
-  const { data, currentGragh, setCurrentGraph, setSelectNode } = props;
+  const { data, currentGragh, setCurrentGraph, setSelectNode, selectCommunities, setSelectCommunities } = props;
   const [didMountState, setDidMountState] = useState(false);
 
   document.oncontextmenu = function (e: any) {
@@ -132,11 +134,16 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
       .deriveColors()
       .buildTaggle(container.current as HTMLElement);
     lineUp.on('selectionChanged', (idArray: number[]) => {
-      let arr = [];
+      let nodeArr = [];
+      let communitiesArr = [];
       for (let i = 0; i < idArray.length; i++) {
-        arr.push(lineUp._data._data[idArray[i]].id);
+        nodeArr.push(lineUp._data._data[idArray[i]].id);
+        if(!communitiesArr.includes(lineUp._data._data[idArray[i]].community)){
+          communitiesArr.push(lineUp._data._data[idArray[i]].community);
+        }
       }
-      setSelectNode(arr);
+      setSelectNode(nodeArr);
+      setSelectCommunities(communitiesArr);
     });
   };
 

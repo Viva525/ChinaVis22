@@ -42,6 +42,7 @@ const Network: React.FC<NetworkProps> = (props) => {
     setSelectKeyNode,
     selectKeyNode,
     selectPaths,
+    selectCommunities
   } = props;
 
   const setSelectKeyState = (node: any) => {
@@ -545,6 +546,19 @@ const Network: React.FC<NetworkProps> = (props) => {
     linkElement.remove();
   };
   /**
+   * 添加社区
+   */
+  const addCommunities = () =>{
+    if(currentGragh.current === 'searchStr'){
+      let currentCommunities = currentGragh.communities;
+      setCurrentGraph({
+        current:'searchStr',
+        communities: [...currentCommunities, ...selectCommunities]
+      });
+    }
+  }
+
+  /**
    * 监听searchParams,搜索框变化，查询对应数据
    * 调用setData,setCurrentGraph
    */
@@ -915,9 +929,25 @@ const Network: React.FC<NetworkProps> = (props) => {
       >
         Download
       </Button>
+      <Button
+        style={{ position: 'absolute', right: 280, top: 50 }}
+        shape='round'
+        size={'small'}
+        
+      >
+        Remove Nodes
+      </Button>
+      <Button
+        style={{ position: 'absolute', right: 420, top: 50 }}
+        shape='round'
+        size={'small'}
+        onClick={addCommunities}
+      >
+        Add Communities
+      </Button>
       <div
         id='communitiesInfo'
-        style={{ position: 'absolute', left: 15, top: 40 }}
+        style={{ position: 'absolute', left: 20, top: 40 }}
       ></div>
     </>
   );
