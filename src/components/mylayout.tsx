@@ -161,7 +161,7 @@ const MyLayout: React.FC<{}> = () => {
               title='COMMUNITY INFORMATION'
               component={
                 <CommunitiesInfo
-                  currentCommunities={currentGraphState.communities}
+                currentGraph={currentGraphState}
                 />
               }
             />

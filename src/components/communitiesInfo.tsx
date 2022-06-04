@@ -3,14 +3,15 @@ import { stringify } from 'querystring';
 import React, { LegacyRef, useEffect, useState } from 'react';
 import { getAllCommunitiesInfo } from '../api/networkApi';
 import { getData } from '../utils/utils';
+import { CurrentNetworkState } from './types';
 
 type communitiesInfoProps = {
-	currentCommunities: number[];
+	currentGraph: CurrentNetworkState
 };
 
 const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 	const [didMountState, setDidMountState] = useState(false);
-	const { currentCommunities } = props;
+	const { currentGraph } = props;
 	const [dataInit, setDataInit] = useState<any>([
 		{ name: 'Community', children: [] },
 	]);
@@ -114,7 +115,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 		],
 	};
 
-	//监听currentCommunities，绘制图表
+	//监听currentGraph，绘制图表
 
 	const drawCircle = () => {
 		//数据初始化
@@ -303,7 +304,8 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (didMountState) {
+		if (didMountState && currentGraph.current==='communities') {
+			const currentCommunities = currentGraph.communities;
 			if (currentCommunities.length != 0) {
 				getData(getAllCommunitiesInfo, [currentCommunities]).then((dataset: any) => {
 					console.log(dataset);
@@ -397,7 +399,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 				})
 			}
 		}
-	}, [currentCommunities]);
+	}, [currentGraph.communities]);
 
 	//初始化
 	useEffect(() => {
