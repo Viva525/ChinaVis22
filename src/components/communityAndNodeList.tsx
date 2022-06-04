@@ -89,15 +89,15 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
               ? data.nodes[i].properties.register_id
               : undefined;
           temp.wrong_list = [
-            data.nodes[i].properties.porn === 'True' ? 1 : 0,
-            data.nodes[i].properties.gambling === 'True' ? 1 : 0,
-            data.nodes[i].properties.fraud === 'True' ? 1 : 0,
-            data.nodes[i].properties.drug === 'True' ? 1 : 0,
-            data.nodes[i].properties.gun === 'True' ? 1 : 0,
-            data.nodes[i].properties.hacker === 'True' ? 1 : 0,
-            data.nodes[i].properties.trading === 'True' ? 1 : 0,
-            data.nodes[i].properties.pay === 'True' ? 1 : 0,
-            data.nodes[i].properties.other === 'True' ? 1 : 0,
+            data.nodes[i].properties.porn === 'True' ? 1 : undefined,
+            data.nodes[i].properties.gambling === 'True' ? 1 : undefined,
+            data.nodes[i].properties.fraud === 'True' ? 1 : undefined,
+            data.nodes[i].properties.drug === 'True' ? 1 : undefined,
+            data.nodes[i].properties.gun === 'True' ? 1 : undefined,
+            data.nodes[i].properties.hacker === 'True' ? 1 : undefined,
+            data.nodes[i].properties.trading === 'True' ? 1 : undefined,
+            data.nodes[i].properties.pay === 'True' ? 1 : undefined,
+            data.nodes[i].properties.other === 'True' ? 1 : undefined,
           ];
           break;
         case 'IP':
@@ -116,7 +116,7 @@ const CommunityAndNodeList: React.FC<CommunityAndNodeListProps> = (props) => {
     let nodeDataBuilder = builder(array);
     category.forEach((item) => {
       nodeDataBuilder = nodeDataBuilder.column(
-        buildNumberColumn('wrong_list', [-1, 4]).asArray(category)
+        buildNumberColumn('wrong_list', [0, 2]).asArray(category)
       );
     });
     nodeDataBuilder
