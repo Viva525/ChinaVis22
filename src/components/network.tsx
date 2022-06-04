@@ -42,7 +42,7 @@ const Network: React.FC<NetworkProps> = (props) => {
     setSelectKeyNode,
     selectKeyNode,
     selectPaths,
-    selectCommunities
+    selectCommunities,
   } = props;
 
   const setSelectKeyState = (node: any) => {
@@ -602,30 +602,34 @@ const Network: React.FC<NetworkProps> = (props) => {
    * 添加社区
    */
   const addCommunities = () => {
-    if(currentGragh.current === 'searchStr'){
+    if(currentGragh.current!=="allCommunity"){
       let currentCommunities = [];
-      if(currentGragh.communities != undefined){
+      if (currentGragh.communities !== undefined) {
         currentCommunities = [...currentGragh.communities];
       }
       setCurrentGraph({
         current: 'communities',
-        communities: [...currentCommunities, ...selectCommunities]
+        communities: Array.from(new Set([...currentCommunities, ...selectCommunities])),
       });
     }
-  }
+    
+  };
   /**
    * 删除节点
    */
   const removeNodes = () => {
     let data = graph.graphData();
-    let nodes = data.nodes.filter((item: any)=>{
-      return !(selectNode.includes(item.properties.id))
-    })
-    let links = data.links.filter((item: any)=>{
-      return !(selectNode.includes(item.source.properties.id) || selectNode.includes(item.target.properties.id))
-    })
-    setData({nodes:nodes,links:links});
-  }
+    let nodes = data.nodes.filter((item: any) => {
+      return !selectNode.includes(item.properties.id);
+    });
+    let links = data.links.filter((item: any) => {
+      return !(
+        selectNode.includes(item.source.properties.id) ||
+        selectNode.includes(item.target.properties.id)
+      );
+    });
+    setData({ nodes: nodes, links: links });
+  };
   /**
    * 监听searchParams,搜索框变化，查询对应数据
    * 调用setData,setCurrentGraph
@@ -647,8 +651,9 @@ const Network: React.FC<NetworkProps> = (props) => {
             setCurrentGraph({
               current: 'searchStr',
             });
+            const addedData = addHiddenNodeAndLink(dataset.data);
+            setData(addedData);
           }
-          
         } else {
           console.log(dataset);
         }
@@ -1030,22 +1035,19 @@ const Network: React.FC<NetworkProps> = (props) => {
         style={{ position: 'absolute', right: 280, top: 50 }}
         shape='round'
         size={'small'}
-        onClick={removeNodes}
-      >
+        onClick={removeNodes}>
         Remove Nodes
       </Button>
       <Button
         style={{ position: 'absolute', right: 420, top: 50 }}
         shape='round'
         size={'small'}
-        onClick={addCommunities}
-      >
+        onClick={addCommunities}>
         Add Communities
       </Button>
       <div
         id='communitiesInfo'
-        style={{ position: 'absolute', left: 20, top: 40 }}
-      ></div>
+        style={{ position: 'absolute', left: 20, top: 40 }}></div>
     </>
   );
 };

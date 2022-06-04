@@ -305,7 +305,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 	useEffect(() => {
 		if (didMountState && currentGraph.current==='communities') {
 			const currentCommunities = currentGraph.communities;
-			if (currentCommunities.length != 0) {
+			if (currentCommunities.length !== 0) {
 				getData(getAllCommunitiesInfo, [currentCommunities]).then((dataset: any) => {
 					console.log(dataset);
 					//数据初始化
