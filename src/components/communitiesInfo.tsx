@@ -36,11 +36,18 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 							{
 								name: 'illegal',
 								value: 9,
-							},
-							{
-								name: 'bet',
-								value: 10,
-							},
+								children: [
+									{
+										name: 'bet',
+										value: 10,
+									},
+									{
+										name: 'xxx',
+										value: 5,
+									}
+								]
+							}
+
 						],
 					},
 					{
@@ -113,12 +120,11 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 		//数据初始化
 		const width = 476;
 		const height = 476;
-		let color = d3
-			.scaleOrdinal()
-			.domain(['0', '5'])
-			.range(['hsl(152,80%,80%)', 'hsl(228,30%,40%)']);
-		//.interpolate(d3.interpolateHcl)
-		//debugger
+		let multicolor = true;
+		let bold = true;
+		let black = false;
+		let shadow = true;
+		let hexcolor = "#0099cc";
 		let root = d3.pack().size([width, height]).padding(3)(
 			d3
 				.hierarchy(circleData)
@@ -128,6 +134,44 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 		let focus = root;
 		let view;
 		//console.log(root)
+
+		let fontsize = d3.scaleOrdinal()
+			.domain(['1', '3'])
+			.range([24, 16])
+
+
+		//新增颜色函数
+		function setColorScheme(multi) {
+			if (multi) {
+				let color = d3.scaleOrdinal()
+					.range(d3.schemeCategory10)
+				return color;
+			}
+		}
+
+		let color = setColorScheme(multicolor);
+
+		function setCircleColor(obj) {
+			let depth = obj.depth;
+			while (obj.depth > 1) {
+				obj = obj.parent;
+			}
+			//@ts-ignore
+			let newcolor = multicolor ? d3.hsl(color(obj.data.name)) : d3.hsl(hexcolor);
+			newcolor.l += depth == 1 ? 0 : depth * .1;
+			return newcolor;
+		}
+
+		function setStrokeColor(obj) {
+			//let depth = obj.depth;
+			while (obj.depth > 1) {
+				obj = obj.parent;
+			}
+			//@ts-ignore
+			let strokecolor = multicolor ? d3.hsl(color(obj.data.name)) : d3.hsl(hexcolor);
+			return strokecolor;
+		}
+		//新增颜色函数
 
 		//初始化画布
 		d3.select('#mainsvg').remove();
@@ -139,11 +183,8 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 			.attr('id', 'mainsvg');
 		const svg = d3
 			.select('#mainsvg')
-			// .attr("viewBox", `-${width / 2} -${height / 2} ${width} ${height}`)
 			.attr('viewBox', [0, 0, width, height])
 			.style('display', 'block')
-			// .style("margin", "0 -14px")
-			//.style("background", color(0))
 			.style('cursor', 'pointer')
 			.on('click', (event) => zoom(event, root));
 
@@ -153,9 +194,10 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 			.selectAll('circle')
 			.data(root.descendants().slice(1))
 			.join('circle')
-			.attr('fill', (d: any) =>
-				d.children ? (color(d.depth.toString()) as string) : 'white'
-			)
+			//@ts-ignore
+			.attr("fill", setCircleColor)
+			//@ts-ignore
+			.attr("stroke", setStrokeColor)
 			.attr('pointer-events', (d) => (!d.children ? 'none' : null))
 			.on('mouseover', function () {
 				d3.select(this).attr('stroke', '#000');
@@ -171,17 +213,42 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 			});
 		//.on("click", (event, d) => { focus !== d && zoom(event, d) });
 
-		const label = svg
-			.append('g')
+		// const label = svg
+		// 	.append('g')
+		// 	.attr('transform', `translate(${width / 2},${height / 2})`)
+		// 	.style('font', '10px sans-serif')
+		// 	.attr('pointer-events', 'none')
+		// 	.attr('text-anchor', 'middle')
+		// 	.selectAll('text')
+		// 	.data(root.descendants())
+		// 	.join('text')
+		// 	.style('fill-opacity', (d) => (d.parent === root ? 1 : 0))
+		// 	.style('display', (d) => (d.parent === root ? 'inline' : 'none'))
+		// 	.text((d: any) => d.data.name);
+
+		const label = svg.append("g")
 			.attr('transform', `translate(${width / 2},${height / 2})`)
-			.style('font', '10px sans-serif')
-			.attr('pointer-events', 'none')
-			.attr('text-anchor', 'middle')
-			.selectAll('text')
+			.style("fill", function () {
+				return black ? "black" : "white";
+			})
+			.style("text-shadow", function () {
+				if (shadow) {
+					return black ? "2px 2px 0px white" : "2px 2px 0px black";
+				} else {
+					return "none";
+				}
+			})
+			.attr("pointer-events", "none")
+			.attr("text-anchor", "middle")
+			.selectAll("text")
 			.data(root.descendants())
-			.join('text')
-			.style('fill-opacity', (d) => (d.parent === root ? 1 : 0))
-			.style('display', (d) => (d.parent === root ? 'inline' : 'none'))
+			.enter().append("text")
+			.style("fill-opacity", d => d.parent === root ? 1 : 0)
+			.style("display", d => d.parent === root ? "inline" : "none")
+			.style("font", (d: any) => fontsize(d.depth) + "px sans-serif")
+			.style("font-weight", function () {
+				return bold ? "bold" : "normal";
+			})
 			.text((d: any) => d.data.name);
 
 		zoomTo([root.x, root.y, root.r * 2]);
@@ -237,56 +304,98 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 
 	useEffect(() => {
 		if (didMountState) {
-			// if(currentCommunities.length!= 0){
-			// 	getData(getAllCommunitiesInfo, [currentCommunities]).then((dataset: any) => {
-			// 		console.log(dataset);
-			// 		//数据初始化
-			// 		var communityFinal = {
-			// 			'name': "Community",
-			// 			'children': []
-			// 		};
-			// 		var typeCrim = [];
-			// 		//数据填充
-			// 		for (let i: number = 0; i < currentCommunities.length; i++) {
-			// 			//旭日图数据生成
-			// 			var communityState = {
-			// 				'name': String(currentCommunities[i]),
-			// 				'children': [
-			// 					{
-			// 						'name': "Domain",
-			// 						'weight': dataset.count_res.count_res[i][0],
-			// 						'children': dataset.result[i].children[0].children
-			// 					},
-			// 					{
-			// 						'name': "Cert",
-			// 						'weight': dataset.count_res.count_res[i][1],
-			// 						'children': dataset.result[i].children[1].children
-			// 					},
-			// 					{
-			// 						'name': "Ip",
-			// 						'weight': dataset.count_res.count_res[i][2],
-			// 						'children': dataset.result[i].children[2].children
-			// 					}
-			// 				]
-			// 			}
-			// 			communityFinal.children.push(communityState)
-			// 			//柱状图数据生成
-			// 			var temp = []
-			// 			let l = 0;
-			// 			for (let key in dataset.count_res.industry_res[i]) {
-			// 				//console.log((dataset.count_res.industry_res[0] as any)[key]);
-			// 				temp[l] = (dataset.count_res.industry_res[i] as any)[key];
-			// 				l++;
-			// 			}
-			// 			typeCrim[i] = temp
-			// 		}
-			// 		//更新初始数据
-			// 		sunData = communityFinal;
-			// 		typeNum = typeCrim;
-			// 		console.log(typeNum);
-			// 		drawSun();
-			// 	})
-			// }
+			if (currentCommunities.length != 0) {
+				getData(getAllCommunitiesInfo, [currentCommunities]).then((dataset: any) => {
+					console.log(dataset);
+					//数据初始化
+					var communityFinal = {
+						'name': "Community",
+						'children': []
+					};
+					var typeCrim = Object.getOwnPropertyNames((dataset.count_res.industry_res[0] as any));
+					function isEmpty(value, vect) {
+						if (value.weight !== 0) {
+							var numObj = {
+								'name': value.name,
+								'value': value.weight,
+							}
+							vect.children.push(numObj)
+						}
+					}
+					//数据填充
+					for (let i: number = 0; i < currentCommunities.length; i++) {
+						//主数据生成
+						var communityState = {
+							'name': String(currentCommunities[i]),
+							'children': []
+						}
+						//数据判断 对应domain,ip,cert数量层生成
+						if (dataset.count_res.count_res[i][0] !== 0) {
+							var domainNum = {
+								'name': "Domain",
+								'value': dataset.count_res.count_res[i][0],
+								'children': [
+									{
+										'name': "Crime Type",
+										children: []
+									},
+								]
+							}
+							isEmpty(dataset.result[i].children[0].children[0], domainNum)
+							isEmpty(dataset.result[i].children[0].children[1], domainNum)
+							isEmpty(dataset.result[i].children[0].children[2], domainNum)
+							communityState.children.push(domainNum)
+						}
+						if (dataset.count_res.count_res[i][1]) {
+							var certNum = {
+								'name': "Cert",
+								'value': dataset.count_res.count_res[i][1],
+								// 'children': [
+								// 	isEmpty(dataset.result[i].children[1].children[0]),
+								// 	isEmpty(dataset.result[i].children[1].children[1]),
+								// 	isEmpty(dataset.result[i].children[1].children[2]),
+								// ]
+							}
+							communityState.children.push(certNum)
+						}
+						if (dataset.count_res.count_res[i][2]) {
+							var ipNum = {
+								'name': "Ip",
+								'value': dataset.count_res.count_res[i][2],
+								// 'children': [
+								// 	isEmpty(dataset.result[i].children[2].children[0]),
+								// 	isEmpty(dataset.result[i].children[2].children[1]),
+								// 	isEmpty(dataset.result[i].children[2].children[2]),
+								// ]
+							}
+							communityState.children.push(ipNum)
+
+						}
+
+						//犯罪数据生成	
+						var num = 0;
+						for (let key in dataset.count_res.industry_res[i]) {
+							let v = (dataset.count_res.industry_res[i] as any)[key];
+							if (v !== 0) {
+								var temp = {
+									'name': typeCrim[num],
+									'value': v
+								}
+								communityState.children[0].children[0].children.push(temp)
+							}
+							num++;
+						}
+
+						communityFinal.children.push(communityState)
+					}
+					//更新初始数据
+					console.log(communityFinal)
+					circleData = communityFinal;
+					//typeNum = typeCrim;
+					//console.log(typeNum);
+					drawCircle();
+				})
+			}
 		}
 	}, [currentCommunities]);
 
