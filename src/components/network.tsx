@@ -73,6 +73,8 @@ const Network: React.FC<NetworkProps> = (props) => {
       .backgroundColor('#CFD8DC')
 
       .onNodeClick((node: any) => {
+        console.log(node);
+        
         setSelectKeyState(node);
       })
       .nodeLabel((node: any) => {
@@ -661,6 +663,7 @@ const Network: React.FC<NetworkProps> = (props) => {
       if (currentGragh.current === 'searchStr') {
         // do nothing wait data change
         drawGraph();
+        setCurrentListState(true);
       } else if (currentGragh.current === 'communities') {
         getData(getFilterNetworkByCommunities, [currentGragh.communities]).then(
           (dataset: any) => {
