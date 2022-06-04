@@ -15,7 +15,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 	const [dataInit, setDataInit] = useState<any>([
 		{ name: 'Community', children: [] },
 	]);
-	//假数据
+	// 假数据
 	let circleData = {
 		name: 'Community',
 		children: [
