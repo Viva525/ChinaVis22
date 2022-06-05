@@ -8,8 +8,6 @@ export const getData = (func: Function, params: any) => {
 };
 
 export const addHiddenNodeAndLink = (dataset: any) => {
-  
-
   const nodes = dataset.nodes;
   const links = dataset.links;
 
@@ -24,7 +22,7 @@ export const addHiddenNodeAndLink = (dataset: any) => {
         addSet.add(nodes[n].properties.email_id);
         const newEmail = {
           group: 'Email',
-          id: parseInt((i++) + new Date().valueOf().toString().slice(6)),
+          id: parseInt(i++ + new Date().valueOf().toString().slice(6)),
           properties: {
             id: nodes[n].properties.email_id,
             name: nodes[n].properties.email,
@@ -35,19 +33,18 @@ export const addHiddenNodeAndLink = (dataset: any) => {
         newNodesId[nodes[n].properties.email_id] = newEmail.id;
       }
       const newEmailLink = {
-        type: "r_whois_email",
+        type: 'r_whois_email',
         source: nodes[n].id,
         target: newNodesId[nodes[n].properties.email_id],
       };
       newLinks.push(newEmailLink);
     }
     if (nodes[n].properties.phone_id !== undefined) {
-      
       if (!addSet.has(nodes[n].properties.phone_id)) {
         addSet.add(nodes[n].properties.phone_id);
         const newPhone = {
           group: 'Phone',
-          id: parseInt((i++) + new Date().valueOf().toString().slice(6)),
+          id: parseInt(i++ + new Date().valueOf().toString().slice(6)),
           properties: {
             id: nodes[n].properties.phone_id,
             name: nodes[n].properties.phone,
@@ -58,19 +55,18 @@ export const addHiddenNodeAndLink = (dataset: any) => {
         newNodesId[nodes[n].properties.phone_id] = newPhone.id;
       }
       const newPhoneLink = {
-        type: "r_whois_phone",
+        type: 'r_whois_phone',
         source: nodes[n].id,
         target: newNodesId[nodes[n].properties.phone_id],
       };
       newLinks.push(newPhoneLink);
     }
     if (nodes[n].properties.register_id !== undefined) {
-      
       if (!addSet.has(nodes[n].properties.register_id)) {
         addSet.add(nodes[n].properties.register_id);
         const newRegister = {
           group: 'Register',
-          id: parseInt((i++) + new Date().valueOf().toString().slice(6)),
+          id: parseInt(i++ + new Date().valueOf().toString().slice(6)),
           properties: {
             id: nodes[n].properties.register_id,
             name: nodes[n].properties.register,
@@ -81,7 +77,7 @@ export const addHiddenNodeAndLink = (dataset: any) => {
         newNodesId[nodes[n].properties.register_id] = newRegister.id;
       }
       const newRegisterLink = {
-        type: "r_whois_name",
+        type: 'r_whois_name',
         source: nodes[n].id,
         target: newNodesId[nodes[n].properties.register_id],
       };
@@ -89,6 +85,6 @@ export const addHiddenNodeAndLink = (dataset: any) => {
     }
   }
   console.log(newNodesId);
-  
-  return { nodes: [...nodes,...newNodes], links: [...links, ...newLinks] };
+
+  return { nodes: [...nodes, ...newNodes], links: [...links, ...newLinks] };
 };

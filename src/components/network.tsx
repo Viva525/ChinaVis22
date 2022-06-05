@@ -602,17 +602,18 @@ const Network: React.FC<NetworkProps> = (props) => {
    * 添加社区
    */
   const addCommunities = () => {
-    if(currentGragh.current!=="allCommunity"){
+    if (currentGragh.current !== 'allCommunity') {
       let currentCommunities = [];
       if (currentGragh.communities !== undefined) {
         currentCommunities = [...currentGragh.communities];
       }
       setCurrentGraph({
         current: 'communities',
-        communities: Array.from(new Set([...currentCommunities, ...selectCommunities])),
+        communities: Array.from(
+          new Set([...currentCommunities, ...selectCommunities])
+        ),
       });
     }
-    
   };
   /**
    * 删除节点
