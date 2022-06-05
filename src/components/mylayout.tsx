@@ -43,6 +43,7 @@ const MyLayout: React.FC<{}> = () => {
     new Set()
   );
   const [selectCurrentNodeState, setCurrentNodeState] = useState<string>("");
+  const [selectCommunitiesState, setSelectCommunitiesState] = useState<number[]>([]);
   const [pathListState, setPathListState] = useState<Set<any>>(new Set());
   const [selectPathsState, setSelectPathState] = useState<Set<any>>(new Set());
 
@@ -134,6 +135,7 @@ const MyLayout: React.FC<{}> = () => {
                   selectKeyNode={selectKeyNodeState}
                   selectPaths={selectPathsState}
                   setCurrentNode={setCurrentNodeState}
+                  selectCommunities={selectCommunitiesState}
                 />
               }
             />
@@ -147,6 +149,8 @@ const MyLayout: React.FC<{}> = () => {
                   setCurrentGraph={setCurrentGraphState}
                   data={dataState}
                   setSelectNode={setSelectNodeState}
+                  selectCommunities={selectCommunitiesState}
+                  setSelectCommunities={setSelectCommunitiesState}
                 />
               }
             />
@@ -169,7 +173,7 @@ const MyLayout: React.FC<{}> = () => {
               title='COMMUNITY INFORMATION'
               component={
                 <CommunitiesInfo
-                  currentCommunities={currentGraphState.communities}
+                currentGraph={currentGraphState}
                 />
               }
             />

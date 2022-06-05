@@ -66,7 +66,7 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
     // const borderWidth: number = 3;
     const nums = 16;
     const height: number =
-      (communitiesDataState.length / nums) * (rectHeight + margin) + 20;
+      (communitiesDataState.length / nums) * (rectHeight + margin) + 40;
     d3.select('#svg-nodeMatrix').remove();
 
     // 元素索引映射至位置

@@ -54,6 +54,7 @@ export type NetworkProps = {
   range: RangeState;
   selectPaths: Set<any>;
   setCurrentNode: SetState<string>;
+  selectCommunities: number[];
 };
 
 export type DataState = {
