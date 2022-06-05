@@ -67,12 +67,12 @@ const Network: React.FC<NetworkProps> = (props) => {
     });
   };
   /**
-   * 绘制社区3D网络图
+   * 绘制社区3D网络图 '#CFD8DC'
    */
   const drawGraph = () => {
     graph
       ?.graphData({ nodes: [], links: [] })
-      .backgroundColor('#CFD8DC')
+      .backgroundColor('#fff')
 
       .onNodeClick((node: any) => {
         console.log(node);
@@ -116,15 +116,15 @@ const Network: React.FC<NetworkProps> = (props) => {
           let color;
           switch (node.group) {
             case 'Domain':
-              color = '#dcd6c5';
+              color = '#78a58c';
               geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
               break;
             case 'Cert':
-              color = '#e87e5c';
+              color = '#a0a87a';
               geometry = new THREE.SphereGeometry(10);
               break;
             case 'IP':
-              color = '#335a71';
+              color = '#a57878';
               geometry = new THREE.SphereGeometry(10);
               break;
             case 'Email':
