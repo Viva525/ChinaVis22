@@ -90,7 +90,7 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
       .enter()
       .append('g')
       .attr('id', (d: any) => {
-        return `community-${d.id}`;
+        return `selfCommunity-${d.id}`;
       })
       .attr('transform', (_, i) => {
         return `translate(${indexToPosition(i).join(',')})`;
@@ -98,7 +98,6 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
 
     nodes
       .on('click', function (e:any, d:any) {
-        console.log(d);
         let newSet = new Set(currentCommunitiesID.communities);
         if(newSet.has(d.id)){
           newSet.delete(d.id);
@@ -144,7 +143,7 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
       });
 
     communitiesDataState.forEach((community: any, index: number) => {
-      const communityGroup = d3.select(`#community-${community.id}`);
+      const communityGroup = d3.select(`#selfCommunity-${community.id}`);
       // 绘制矩形
       if (community.wrong_list.length === 0) {
         communityGroup
