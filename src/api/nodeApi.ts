@@ -15,3 +15,11 @@ export const getLinksBT2Nodes = (source: string, target: string) => {
     node2: target,
   });
 };
+
+
+
+ export const recommand = (id:string) => {
+  return post('recommand', {
+    id,
+  });
+}

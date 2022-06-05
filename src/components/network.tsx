@@ -42,6 +42,7 @@ const Network: React.FC<NetworkProps> = (props) => {
     setSelectKeyNode,
     selectKeyNode,
     selectPaths,
+    setCurrentNode
   } = props;
 
   const setSelectKeyState = (node: any) => {
@@ -74,7 +75,7 @@ const Network: React.FC<NetworkProps> = (props) => {
 
       .onNodeClick((node: any) => {
         console.log(node);
-        
+        setCurrentNode(node.properties.id);
         setSelectKeyState(node);
       })
       .nodeLabel((node: any) => {

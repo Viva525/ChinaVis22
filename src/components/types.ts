@@ -53,6 +53,7 @@ export type NetworkProps = {
   selectKeyNode: Set<any>;
   range: RangeState;
   selectPaths: Set<any>;
+  setCurrentNode: SetState<string>;
 };
 
 export type DataState = {
@@ -77,4 +78,10 @@ export type nodeType = {
 export type currentNode = {
   community: number;
   wrongList: nodeType[];
+}
+
+export type currentNodeself = {
+  community:number;
+  step:number;
+  wrongList:nodeType[];
 }

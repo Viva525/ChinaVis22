@@ -20,6 +20,7 @@ import DimReduct from './dimReduct';
 import CorePath from './corePath';
 import PathList from './pathList';
 import NodeMatrix from './nodeMatrix';
+import NodeMatrixself from './nodeMatrixself';
 
 /**
  * 装所有box组件的布局
@@ -41,6 +42,7 @@ const MyLayout: React.FC<{}> = () => {
   const [selectKeyNodeState, setSelectKeyNodeState] = useState<Set<any>>(
     new Set()
   );
+  const [selectCurrentNodeState, setCurrentNodeState] = useState<string>("");
   const [pathListState, setPathListState] = useState<Set<any>>(new Set());
   const [selectPathsState, setSelectPathState] = useState<Set<any>>(new Set());
 
@@ -91,7 +93,16 @@ const MyLayout: React.FC<{}> = () => {
               />
             </Row>
             <Row style={{ height: '25%' }}>
-              <Box title='Neighbour Heatmap' />
+              <Box
+                title='Neighbour Heatmap'
+                component={
+                  <NodeMatrixself
+                    currentNodeself={selectCurrentNodeState}
+                    currentCommunitiesID={currentGraphState}
+                    setCurrentCommunitiesID={setCurrentGraphState}
+                  />
+                }
+              />
             </Row>
             <Row style={{ height: '45%' }}>
               <Box
@@ -122,6 +133,7 @@ const MyLayout: React.FC<{}> = () => {
                   setSelectKeyNode={setSelectKeyNodeState}
                   selectKeyNode={selectKeyNodeState}
                   selectPaths={selectPathsState}
+                  setCurrentNode={setCurrentNodeState}
                 />
               }
             />
