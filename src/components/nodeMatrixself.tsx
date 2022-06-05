@@ -58,6 +58,18 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
     }
   };
 
+  const onClick =(d:any)=>{
+    setCurrentCommunities({
+      current: 'communities',
+      communities: [...currentCommunities.communities,d.id]
+    });
+    setCommunitiesDataState((prev)=>{
+      return prev.filter((item: any)=>{
+        return item.id!==d.id;
+      });
+    })
+  }
+
   const drawMatrix = () => {
     const width: number = 390;
     const margin: number = 4;
@@ -98,15 +110,7 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
 
     nodes
       .on('click', function (e:any, d:any) {
-        setCurrentCommunities({
-          current: 'communities',
-          communities: [...currentCommunities.communities,d.id]
-        });
-        setCommunitiesDataState((prev)=>{
-          return prev.filter((item: any)=>{
-            return item.id!=d.id;
-          });
-        })
+        onClick(d);
       })
       .on('mouseenter', function (event: any, d: any) {
         d3.select(this).attr('cursor', 'pointer');
