@@ -98,15 +98,18 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
 
     nodes
       .on('click', function (e:any, d:any) {
+        debugger;
         let newSet = new Set(currentCommunitiesID.communities);
         if(newSet.has(d.id)){
           newSet.delete(d.id);
         }else{
           newSet.add(d.id);
         }
-        setCurrentCommunitiesID({
-          current: 'communities',
-          communities: Array.from(newSet)
+        setCurrentCommunitiesID((prevstate)=>{
+          return {
+            ...prevstate,
+            communities: Array.from(newSet)
+          }
         });
         // svg
         //   .append('rect')
@@ -178,7 +181,7 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
             }
           });
       }
-      communityGroup.append('rect');
+      // communityGroup.append('rect');
     });
   };
 
