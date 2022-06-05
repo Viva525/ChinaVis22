@@ -8,13 +8,13 @@ import { CurrentNetworkState, currentNodeself, nodeType, SetState } from './type
 
 type NodeMatrixselfProps = {
   currentNodeself: string
-  currentCommunitiesID: CurrentNetworkState;
-  setCurrentCommunitiesID: SetState<CurrentNetworkState>;
+  currentCommunities: CurrentNetworkState;
+  setCurrentCommunities: SetState<CurrentNetworkState>;
 }
 
 const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
   const [currentNodeState, setCurrentNodeState] = useState<currentNodeself>({community:0,step:0,wrongList:[]});
-  const {currentNodeself, currentCommunitiesID, setCurrentCommunitiesID} = props;
+  const {currentNodeself, currentCommunities, setCurrentCommunities} = props;
   // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other", "none"
   const color = [
     '#f49c84',
@@ -98,33 +98,15 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
 
     nodes
       .on('click', function (e:any, d:any) {
-        let newSet = new Set(currentCommunitiesID.communities);
-        if(newSet.has(d.id)){
-          newSet.delete(d.id);
-        }else{
-          newSet.add(d.id);
-        }
-        setCurrentCommunitiesID({
+        setCurrentCommunities({
           current: 'communities',
-          communities: Array.from(newSet)
+          communities: [...currentCommunities.communities,d.id]
         });
-        // svg
-        //   .append('rect')
-        //   .attr('id', 'border-rect')
-        //   .attr('fill', 'rgba(0,0,0,0)')
-        //   .attr('opacity', 0)
-        //   .attr('stroke', 'red')
-        //   .attr('stroke-width', borderWidth)
-        //   .attr('width', rectWidth)
-        //   .attr('height', rectHeight)
-        //   .on('mouseover', function () {
-        //     d3.select(this).attr('cursor', 'pointer');
-        //   })
-        //   .attr('transform', `translate(${indexToPosition(index).join(',')})`)
-        //   .attr('opacity', 1)
-        //   .on('click', function () {
-        //     d3.select(this).remove();
-        //   });
+        setCommunitiesDataState((prev)=>{
+          return prev.filter((item: any)=>{
+            return item.id!=d.id;
+          });
+        })
       })
       .on('mouseenter', function (event: any, d: any) {
         d3.select(this).attr('cursor', 'pointer');

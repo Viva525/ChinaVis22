@@ -19,14 +19,14 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
   // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other", "none"
   const color = [
     '#f49c84',
-    '#f9c05d',
-    '#41a7d6',
-    '#673AB7',
-    '#ec6352',
-    '#2196F3',
-    '#03A9F4',
-    '#00BCD4',
-    '#009688',
+    '#099EDA',
+    '#FEE301',
+    '#ABB7BD',
+    '#F4801F',
+    '#D6C223',
+    '#D75D73',
+    '#E0592B',
+    '#58B7B3',
     '#68bb8c',
   ];
 
@@ -98,16 +98,12 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
 
     nodes
       .on('click', function (e: any, d: any) {
-        let newSet = new Set(currentCommunitiesID.communities);
-        if (newSet.has(d.id)) {
-          newSet.delete(d.id);
-        } else {
-          newSet.add(d.id);
+        if(!currentCommunitiesID.communities.includes(d.id)){
+          setCurrentCommunitiesID({
+            current: 'communities',
+            communities: [...currentCommunitiesID.communities,d.id]
+          });
         }
-        setCurrentCommunitiesID({
-          current: 'communities',
-          communities: Array.from(newSet),
-        });
         // svg
         //   .append('rect')
         //   .attr('id', 'border-rect')

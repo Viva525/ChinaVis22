@@ -27,7 +27,7 @@ const CorePath: React.FC<CorePathProps> = (props) => {
     const group = [
       {
         name: 'Domain',
-        color: '#5d85cf',
+        color: '#36B5B0',
       },
       {
         name: 'IP',
@@ -46,7 +46,7 @@ const CorePath: React.FC<CorePathProps> = (props) => {
         color: '#795548',
       },
     ];
-    let startNodeColor = '#5d85cf';
+    let startNodeColor = '#36B5B0';
     if (keyNode.length === 2) {
       switch (keyNode[0].group) {
         case 'Domain':

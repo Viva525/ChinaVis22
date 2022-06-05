@@ -99,8 +99,8 @@ const MyLayout: React.FC<{}> = () => {
                 component={
                   <NodeMatrixself
                     currentNodeself={selectCurrentNodeState}
-                    currentCommunitiesID={currentGraphState}
-                    setCurrentCommunitiesID={setCurrentGraphState}
+                    currentCommunities={currentGraphState}
+                    setCurrentCommunities={setCurrentGraphState}
                   />
                 }
               />
