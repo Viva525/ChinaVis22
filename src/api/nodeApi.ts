@@ -18,8 +18,9 @@ export const getLinksBT2Nodes = (source: string, target: string) => {
 
 
 
- export const recommand = (id:string) => {
+ export const recommand = (id:string, communities:number[]) => {
   return post('recommand', {
     id,
+    communities
   });
 }

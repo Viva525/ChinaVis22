@@ -99,7 +99,18 @@ const Network: React.FC<NetworkProps> = (props) => {
         }
       })
       .linkVisibility(true)
-      .linkColor(() => linkColor[0])
+      .linkColor((line: any) => {
+        switch (line.type) {
+          case 'r_cname':
+            return '#ff0';
+          case 'r_subdomain':
+            return '#0f0';
+          case 'r_request_jump':
+            return '#00f';
+          default:
+            return linkColor[0];
+        }
+      })
       .linkDirectionalParticles(1)
       .linkDirectionalParticleWidth(2)
 
@@ -418,14 +429,14 @@ const Network: React.FC<NetworkProps> = (props) => {
           ])
           .range([
             '#f49c84',
-            '#f9c05d',
-            '#41a7d6',
-            '#673AB7',
-            '#ec6352',
-            '#2196F3',
-            '#03A9F4',
-            '#00BCD4',
-            '#009688',
+            '#099EDA',
+            '#FEE301',
+            '#ABB7BD',
+            '#F4801F',
+            '#D6C223',
+            '#D75D73',
+            '#E0592B',
+            '#58B7B3',
             '#68bb8c',
           ]);
         const wrongList = d.wrong_list;
@@ -652,6 +663,7 @@ const Network: React.FC<NetworkProps> = (props) => {
           } else {
             setCurrentGraph({
               current: 'searchStr',
+              communities: [],
             });
             const addedData = addHiddenNodeAndLink(dataset.data);
             setData(addedData);
