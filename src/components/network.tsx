@@ -42,6 +42,7 @@ const Network: React.FC<NetworkProps> = (props) => {
     setSelectKeyNode,
     selectKeyNode,
     selectPaths,
+    setCurrentNode,
     selectCommunities,
   } = props;
 
@@ -75,8 +76,8 @@ const Network: React.FC<NetworkProps> = (props) => {
 
       .onNodeClick((node: any) => {
         console.log(node);
-
         setSelectKeyState(node);
+        setCurrentNode(node.properties.id);
       })
       .nodeLabel((node: any) => {
         const { IP, Cert, Domain } = tagFilter;

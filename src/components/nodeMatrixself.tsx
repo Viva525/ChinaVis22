@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import { getData } from '../utils/utils';
-import { getCurrNeighbours } from '../api/networkApi';
-import { type } from 'os';
-import { CurrentNetworkState, currentNode, nodeType, SetState } from './types';
+import { recommand } from '../api/nodeApi';
+import { CurrentNetworkState, currentNodeself, nodeType, SetState } from './types';
 
-type NodeMatrixProps = {
+
+
+type NodeMatrixselfProps = {
+  currentNodeself: string
   currentCommunitiesID: CurrentNetworkState;
   setCurrentCommunitiesID: SetState<CurrentNetworkState>;
-};
+}
 
-const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
-  const [currentNodeState, setCurrentNodeState] = useState<currentNode>({
-    community: 0,
-    wrongList: [],
-  });
-  const { currentCommunitiesID, setCurrentCommunitiesID } = props;
+const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
+  const [currentNodeState, setCurrentNodeState] = useState<currentNodeself>({community:0,step:0,wrongList:[]});
+  const {currentNodeself, currentCommunitiesID, setCurrentCommunitiesID} = props;
   // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other", "none"
   const color = [
     '#f49c84',
@@ -67,8 +66,9 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
     // const borderWidth: number = 3;
     const nums = 16;
     const height: number =
-      (communitiesDataState.length / nums) * (rectHeight + margin) + 40;
-    d3.select('#svg-nodeMatrix').remove();
+      (communitiesDataState.length / nums) * (rectHeight + margin) + 20;
+    d3.select('#svg-nodeMatrixself').remove();
+
     // 元素索引映射至位置
     const indexToPosition = (
       i: number,
@@ -78,11 +78,11 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
       Math.floor(i / nums) * (rectHeight + margin) + y,
     ];
     const svg = d3
-      .select('#nodeMatrix')
+      .select('#nodeMatrixself')
       .append('svg')
       .attr('width', width)
       .attr('height', height)
-      .attr('id', 'svg-nodeMatrix');
+      .attr('id', 'svg-nodeMatrixself');
 
     const nodes = svg
       .selectAll('g')
@@ -90,23 +90,23 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
       .enter()
       .append('g')
       .attr('id', (d: any) => {
-        return `community-${d.id}`;
+        return `selfCommunity-${d.id}`;
       })
       .attr('transform', (_, i) => {
         return `translate(${indexToPosition(i).join(',')})`;
       });
 
     nodes
-      .on('click', function (e: any, d: any) {
+      .on('click', function (e:any, d:any) {
         let newSet = new Set(currentCommunitiesID.communities);
-        if (newSet.has(d.id)) {
+        if(newSet.has(d.id)){
           newSet.delete(d.id);
-        } else {
+        }else{
           newSet.add(d.id);
         }
         setCurrentCommunitiesID({
           current: 'communities',
-          communities: Array.from(newSet),
+          communities: Array.from(newSet)
         });
         // svg
         //   .append('rect')
@@ -128,21 +128,22 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
       })
       .on('mouseenter', function (event: any, d: any) {
         d3.select(this).attr('cursor', 'pointer');
-        setCurrentNodeState({ community: d.id, wrongList: d.wrong_list });
-        d3.select('#toolTip')
+        setCurrentNodeState({community:d.id,step:d.step,wrongList:d.wrong_list});
+        d3.select('#toolTipSelf')
           .style('display', 'block')
-          .style('left', event.clientX - 20 + 'px')
-          .style('top', event.clientY + 30 + 'px');
+          .style('left',event.clientX-20+"px")
+          .style('top', event.clientY+30+"px")
       })
-      .on('mouseleave', function () {
+      .on('mouseleave',function(){
         console.log('leave');
-        d3.select('#toolTip').style('display', 'none');
-        // .style('left','-100px')
-        // .style('top','-100px')
+        d3.select('#toolTipSelf')
+          .style('display','none')
+          // .style('left','-100px')
+          // .style('top','-100px')
       });
 
     communitiesDataState.forEach((community: any, index: number) => {
-      const communityGroup = d3.select(`#community-${community.id}`);
+      const communityGroup = d3.select(`#selfCommunity-${community.id}`);
       // 绘制矩形
       if (community.wrong_list.length === 0) {
         communityGroup
@@ -177,21 +178,18 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
             }
           });
       }
-      // communityGroup.append('rect');
+      communityGroup.append('rect');
     });
   };
 
-  useEffect(() => {
-    if (didMountState) {
-      if (currentCommunitiesID.communities != undefined) {
-        getData(getCurrNeighbours, [currentCommunitiesID.communities]).then(
-          (dataset: any) => {
+  useEffect(()=>{
+    if(didMountState){
+        getData(recommand,[currentNodeself]).then((dataset: any)=>{
             setCommunitiesDataState(dataset);
-          }
-        );
-      }
+        });
     }
-  }, [currentCommunitiesID]);
+  }, [currentNodeself]);
+
 
   //监听数据变化 绘制邻居矩阵图
   useEffect(() => {
@@ -201,56 +199,51 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
   }, [communitiesDataState]);
 
   useEffect(() => {
-    getData(getCurrNeighbours, [[1834615]]).then((dataset: any) => {
+    getData(recommand, ["Domain_5596b89a2184f2ef5870afaccf4eecede432175ab1da8621b2718fbc03783e6a"]).then((dataset: any) => {
       setDidMountState(true);
+      console.log(dataset);
+      
       setCommunitiesDataState(dataset);
     });
   }, []);
 
   return (
     <div
-      id='nodeMatrix'
+      id='nodeMatrixself'
       style={{ width: '100%', height: '100%', overflowY: 'scroll' }}
     >
       <div
-        id='toolTip'
+        id='toolTipSelf'
         style={{
           width: '180px',
-          height: `${(currentNodeState.wrongList.length + 1) * 30}px`,
+          height: `${(currentNodeState.wrongList.length+2) * 30 }px`,
           background: '#fff',
           borderRadius: '4px',
           position: 'absolute',
           display: 'none',
-          zIndex: 999,
-          boxShadow: 'rgba(0,0,0,0.4) 1px 2px 5px',
+          zIndex:999,
+          boxShadow:'rgba(0,0,0,0.4) 1px 2px 5px',
         }}
       >
-        <p style={{ color: '#333', margin: `0 0 0 12px` }}>
-          community : {currentNodeState.community}
-        </p>
+        <p style={{color:'#333', margin:`0 0 0 12px`}}>community : {currentNodeState.community}</p>
+        <p style={{color:'#333', margin:`0 0 0 12px`}}>step : {currentNodeState.step}</p>
         {currentNodeState.wrongList.map((node: nodeType, i: number) => {
           return (
-            <div
-              key={i}
-              style={{
-                width: '100%',
-                height: '30px',
-                display: 'flex',
-                flexDirection: 'row',
-                paddingLeft: '10px',
-              }}
-            >
+            <div key={i} style={{width:'100%', height:'30px',
+            display: 'flex',
+            flexDirection: 'row',
+            paddingLeft:'10px'}}>
               <div
                 style={{
                   width: '8px',
                   height: '8px',
                   borderRadius: '50%',
                   display: 'inline-block',
-                  marginTop: '10px',
+                  marginTop:'10px',
                   background: `${colorMapping(node.type)}`,
                 }}
               ></div>
-              <p style={{ color: '#333', margin: `0 0 0 10px` }}>
+              <p style={{color:'#333', margin:`0 0 0 10px`}}>
                 &nbsp;{node.type} : {node.num}
               </p>
             </div>
@@ -261,4 +254,4 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
   );
 };
 
-export default NodeMatrix;
+export default NodeMatrixself;

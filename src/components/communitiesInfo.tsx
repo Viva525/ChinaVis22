@@ -21,6 +21,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 		children: [
 			{
 				name: '123456',
+				value: 5,
 				children: [
 					{
 						name: 'domain',
@@ -63,6 +64,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 			},
 			{
 				name: '2536',
+				value: 85,
 				children: [
 					{
 						name: 'domain',
@@ -80,6 +82,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 			},
 			{
 				name: '25847',
+				value: 96,
 				children: [
 					{
 						name: 'domain',
@@ -97,6 +100,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 			},
 			{
 				name: '85476',
+				value: 48,
 				children: [
 					{
 						name: 'domain',
@@ -211,20 +215,6 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 					zoom(event, d);
 				}
 			});
-		//.on("click", (event, d) => { focus !== d && zoom(event, d) });
-
-		// const label = svg
-		// 	.append('g')
-		// 	.attr('transform', `translate(${width / 2},${height / 2})`)
-		// 	.style('font', '10px sans-serif')
-		// 	.attr('pointer-events', 'none')
-		// 	.attr('text-anchor', 'middle')
-		// 	.selectAll('text')
-		// 	.data(root.descendants())
-		// 	.join('text')
-		// 	.style('fill-opacity', (d) => (d.parent === root ? 1 : 0))
-		// 	.style('display', (d) => (d.parent === root ? 'inline' : 'none'))
-		// 	.text((d: any) => d.data.name);
 
 		const label = svg.append("g")
 			.attr('transform', `translate(${width / 2},${height / 2})`)
@@ -245,11 +235,11 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 			.enter().append("text")
 			.style("fill-opacity", d => d.parent === root ? 1 : 0)
 			.style("display", d => d.parent === root ? "inline" : "none")
-			.style("font", (d: any) => fontsize(d.depth) + "px sans-serif")
+			.style("font", (d: any) => fontsize(String(Number(d.depth) / 2)) + "px sans-serif")
 			.style("font-weight", function () {
 				return bold ? "bold" : "normal";
 			})
-			.text((d: any) => d.data.name);
+			.text((d: any) => d.data.name + " (" + d.data.value + ")");
 
 		zoomTo([root.x, root.y, root.r * 2]);
 
@@ -264,8 +254,6 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 				'transform',
 				(d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`
 			);
-			//label.attr("transform", d => `translate(${width / 2}, ${height / 2})`);
-			//node.attr("transform", d => `translate(${width / 2}, ${height / 2})`);
 			node.attr('r', (d) => d.r * k);
 		}
 
@@ -303,7 +291,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (didMountState && currentGraph.current==='communities') {
+		if (didMountState && currentGraph.current === 'communities') {
 			const currentCommunities = currentGraph.communities;
 			if (currentCommunities.length !== 0) {
 				getData(getAllCommunitiesInfo, [currentCommunities]).then((dataset: any) => {
@@ -328,6 +316,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 						//主数据生成
 						var communityState = {
 							'name': String(currentCommunities[i]),
+							'value': dataset.count_res.count_res[i][0] + dataset.count_res.count_res[i][1] + dataset.count_res.count_res[i][2],
 							'children': []
 						}
 						//数据判断 对应domain,ip,cert数量层生成
@@ -338,6 +327,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 								'children': [
 									{
 										'name': "Crime Type",
+										value: 0,
 										children: []
 									},
 								]
@@ -375,6 +365,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 
 						//犯罪数据生成	
 						var num = 0;
+						var numTotal = 0;
 						for (let key in dataset.count_res.industry_res[i]) {
 							let v = (dataset.count_res.industry_res[i] as any)[key];
 							if (v !== 0) {
@@ -383,14 +374,17 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 									'value': v
 								}
 								communityState.children[0].children[0].children.push(temp)
+								console.log(temp)
 							}
 							num++;
+							numTotal += v
 						}
-
+						communityState.children[0].children[0].value = numTotal
+						//最终数据生成
 						communityFinal.children.push(communityState)
 					}
 					//更新初始数据
-					console.log(communityFinal)
+
 					circleData = communityFinal;
 					//typeNum = typeCrim;
 					//console.log(typeNum);
