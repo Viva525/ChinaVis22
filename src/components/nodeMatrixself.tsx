@@ -18,14 +18,14 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
   // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other", "none"
   const color = [
     '#f49c84',
-    '#f9c05d',
-    '#41a7d6',
-    '#673AB7',
-    '#ec6352',
-    '#2196F3',
-    '#03A9F4',
-    '#00BCD4',
-    '#009688',
+    '#099EDA',
+    '#FEE301',
+    '#ABB7BD',
+    '#F4801F',
+    '#D6C223',
+    '#D75D73',
+    '#E0592B',
+    '#58B7B3',
     '#68bb8c',
   ];
 
@@ -58,6 +58,19 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
     }
   };
 
+  const onClick =(d:any)=>{
+    setCurrentCommunities({
+      current: 'communities',
+      communities: [...currentCommunities.communities,d.id]
+    });
+    
+    setCommunitiesDataState((prev)=>{
+      return prev.filter((item: any)=>{
+        return item.id!==d.id;
+      });
+    })
+  }
+
   const drawMatrix = () => {
     const width: number = 390;
     const margin: number = 4;
@@ -66,7 +79,7 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
     // const borderWidth: number = 3;
     const nums = 16;
     const height: number =
-      (communitiesDataState.length / nums) * (rectHeight + margin) + 20;
+      (communitiesDataState.length / nums) * (rectHeight + margin) + 40;
     d3.select('#svg-nodeMatrixself').remove();
 
     // 元素索引映射至位置
@@ -98,15 +111,7 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
 
     nodes
       .on('click', function (e:any, d:any) {
-        setCurrentCommunities({
-          current: 'communities',
-          communities: [...currentCommunities.communities,d.id]
-        });
-        setCommunitiesDataState((prev)=>{
-          return prev.filter((item: any)=>{
-            return item.id!=d.id;
-          });
-        })
+        onClick(d);
       })
       .on('mouseenter', function (event: any, d: any) {
         d3.select(this).attr('cursor', 'pointer');
@@ -160,13 +165,13 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
             }
           });
       }
-      communityGroup.append('rect');
+      // communityGroup.append('rect');
     });
   };
 
   useEffect(()=>{
     if(didMountState){
-        getData(recommand,[currentNodeself]).then((dataset: any)=>{
+        getData(recommand,[currentNodeself, currentCommunities.communities]).then((dataset: any)=>{
             setCommunitiesDataState(dataset);
         });
     }
