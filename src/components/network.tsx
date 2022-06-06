@@ -42,6 +42,7 @@ const Network: React.FC<NetworkProps> = (props) => {
     setSelectKeyNode,
     selectKeyNode,
     selectPaths,
+    currentNode,
     setCurrentNode,
     selectCommunities,
   } = props;
@@ -108,7 +109,7 @@ const Network: React.FC<NetworkProps> = (props) => {
           case 'r_request_jump':
             return '#00f';
           default:
-            return linkColor[0];
+            return linkColor[1];
         }
       })
       .linkDirectionalParticles(1)
@@ -125,33 +126,38 @@ const Network: React.FC<NetworkProps> = (props) => {
           let shape = null;
           let geometry: any = null;
           let color;
-          switch (node.group) {
-            case 'Domain':
-              color = '#78a58c';
-              geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
-              break;
-            case 'Cert':
-              color = '#a0a87a';
-              geometry = new THREE.SphereGeometry(10);
-              break;
-            case 'IP':
-              color = '#a57878';
-              geometry = new THREE.SphereGeometry(10);
-              break;
-            case 'Email':
-              color = '#00FF00';
-              geometry = new THREE.SphereGeometry(15);
-              break;
-            case 'Phone':
-              color = '#00FF00';
-              geometry = new THREE.SphereGeometry(15);
-              break;
-            case 'Register':
-              color = '#00FF00';
-              geometry = new THREE.SphereGeometry(15);
-              break;
-            default:
-              break;
+          if (node.properties.id !== currentNode) {
+            switch (node.group) {
+              case 'Domain':
+                color = '#78a58c';
+                geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
+                break;
+              case 'Cert':
+                color = '#a0a87a';
+                geometry = new THREE.SphereGeometry(10);
+                break;
+              case 'IP':
+                color = '#a57878';
+                geometry = new THREE.SphereGeometry(10);
+                break;
+              case 'Email':
+                color = '#B7E778';
+                geometry = new THREE.SphereGeometry(10);
+                break;
+              case 'Phone':
+                color = '#B7E778';
+                geometry = new THREE.SphereGeometry(10);
+                break;
+              case 'Register':
+                color = '#B7E778';
+                geometry = new THREE.SphereGeometry(10);
+                break;
+              default:
+                break;
+            }
+          } else {
+            color = '#ff0000';
+            geometry = new THREE.SphereGeometry(10);
           }
 
           let material = new THREE.MeshToonMaterial({
@@ -167,11 +173,11 @@ const Network: React.FC<NetworkProps> = (props) => {
       graph.nodeColor((node: any) => {
         switch (node.group) {
           case 'Domain':
-            return '#dcd6c5';
+            return '#78a58c';
           case 'Cert':
-            return '#e87e5c';
+            return '#a0a87a';
           case 'IP':
-            return '#335a71';
+            return '#a57878';
           case 'Email':
             return '#00FF00';
           case 'Phone':
@@ -263,28 +269,28 @@ const Network: React.FC<NetworkProps> = (props) => {
         let color;
         switch (node.group) {
           case 'Domain':
-            color = '#dcd6c5';
+            color = '#78a58c';
             geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
             break;
           case 'Cert':
-            color = '#e87e5c';
+            color = '#a0a87a';
             geometry = new THREE.SphereGeometry(10);
             break;
           case 'IP':
-            color = '#335a71';
+            color = '#a57878';
             geometry = new THREE.SphereGeometry(10);
             break;
           case 'Email':
-            color = '#00FF00';
-            geometry = new THREE.SphereGeometry(15);
+            color = '#B7E778';
+            geometry = new THREE.SphereGeometry(10);
             break;
           case 'Phone':
-            color = '#00FF00';
-            geometry = new THREE.SphereGeometry(15);
+            color = '#B7E778';
+            geometry = new THREE.SphereGeometry(10);
             break;
           case 'Register':
-            color = '#00FF00';
-            geometry = new THREE.SphereGeometry(15);
+            color = '#B7E778';
+            geometry = new THREE.SphereGeometry(10);
             break;
           default:
             break;
@@ -319,17 +325,17 @@ const Network: React.FC<NetworkProps> = (props) => {
         } else {
           switch (node.group) {
             case 'Domain':
-              return '#dcd6c5';
+              return '#78a58c';
             case 'Cert':
-              return '#e87e5c';
+              return '#a0a87a';
             case 'IP':
-              return '#335a71';
+              return '#a57878';
             case 'Email':
-              return '#00FF00';
+              return '#B7E778';
             case 'Phone':
-              return '#00FF00';
+              return '#B7E778';
             case 'Register':
-              return '#00FF00';
+              return '#B7E778';
             default:
               break;
           }
@@ -478,7 +484,8 @@ const Network: React.FC<NetworkProps> = (props) => {
             return `translate(${rectWidth + margin},${
               i * (rectHeight + margin) + rectHeight / 2 + 5
             })`;
-          });
+          })
+          .style('fill', '#eee');
       });
       g.on('click', function (e: any, d: any) {
         //删除communitiesID
@@ -643,6 +650,13 @@ const Network: React.FC<NetworkProps> = (props) => {
     });
     setData({ nodes: nodes, links: links });
   };
+  /**
+   * 清楚选择
+   */
+  const clearSelected = () => {
+    setCurrentNode("");
+    setSelectKeyNode(new Set());
+  }
   /**
    * 监听searchParams,搜索框变化，查询对应数据
    * 调用setData,setCurrentGraph
@@ -922,28 +936,28 @@ const Network: React.FC<NetworkProps> = (props) => {
           let color;
           switch (node.group) {
             case 'Domain':
-              color = '#dcd6c5';
+              color = '#78a58c';
               geometry = new THREE.SphereGeometry((node.weight + 1) * 3);
               break;
             case 'Cert':
-              color = '#e87e5c';
+              color = '#a0a87a';
               geometry = new THREE.SphereGeometry(10);
               break;
             case 'IP':
-              color = '#335a71';
+              color = '#a57878';
               geometry = new THREE.SphereGeometry(10);
               break;
             case 'Email':
-              color = '#00FF00';
-              geometry = new THREE.SphereGeometry(15);
+              color = '#B7E778';
+              geometry = new THREE.SphereGeometry(10);
               break;
             case 'Phone':
-              color = '#00FF00';
-              geometry = new THREE.SphereGeometry(15);
+              color = '#B7E778';
+              geometry = new THREE.SphereGeometry(10);
               break;
             case 'Register':
-              color = '#00FF00';
-              geometry = new THREE.SphereGeometry(15);
+              color = '#B7E778';
+              geometry = new THREE.SphereGeometry(10);
               break;
             default:
               break;
@@ -966,17 +980,17 @@ const Network: React.FC<NetworkProps> = (props) => {
           } else {
             switch (node.group) {
               case 'Domain':
-                return '#dcd6c5';
+                return '#78a58c';
               case 'Cert':
-                return '#e87e5c';
+                return '#a0a87a';
               case 'IP':
-                return '#335a71';
+                return '#a57878';
               case 'Email':
-                return '#00FF00';
+                return '#B7E778';
               case 'Phone':
-                return '#00FF00';
+                return '#B7E778';
               case 'Register':
-                return '#00FF00';
+                return '#B7E778';
               default:
                 break;
             }
@@ -1019,7 +1033,7 @@ const Network: React.FC<NetworkProps> = (props) => {
           right: 18,
           top: 50,
           zIndex: 999,
-          border: '1px solid #646464'
+          border: '1px solid #646464',
         }}
         disabled={currentGragh.current === 'allCommunity'}
         checked={currentListState as boolean}
@@ -1033,7 +1047,7 @@ const Network: React.FC<NetworkProps> = (props) => {
           right: 90,
           top: 50,
           zIndex: 999,
-          border: '1px solid #646464'
+          border: '1px solid #646464',
         }}
         checked={switch3DState as boolean}
         onChange={switch3DViewChange}
@@ -1064,13 +1078,29 @@ const Network: React.FC<NetworkProps> = (props) => {
         style={{ position: 'absolute', right: 420, top: 50 }}
         shape='round'
         size={'small'}
+        onClick={clearSelected}
+      >
+        Clear Selected
+      </Button>
+      <Button
+        type='primary'
+        style={{ position: 'absolute', right: 550, top: 50 }}
+        shape='round'
+        size={'small'}
         onClick={addCommunities}
       >
         Add Communities
       </Button>
       <div
         id='communitiesInfo'
-        style={{ position: 'absolute', left: 20, top: 40 }}
+        style={{
+          position: 'absolute',
+          left: 20,
+          top: 40,
+          height: '100%',
+          width: '8%',
+          overflowY: 'scroll',
+        }}
       ></div>
     </>
   );

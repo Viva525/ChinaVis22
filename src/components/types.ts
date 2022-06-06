@@ -1,3 +1,4 @@
+import { StringColumn } from 'lineupjs';
 import type { Dispatch, SetStateAction } from 'react';
 
 export type SetState<T> = Dispatch<SetStateAction<T>>;
@@ -53,6 +54,7 @@ export type NetworkProps = {
   selectKeyNode: Set<any>;
   range: RangeState;
   selectPaths: Set<any>;
+  currentNode: string;
   setCurrentNode: SetState<string>;
   selectCommunities: number[];
 };

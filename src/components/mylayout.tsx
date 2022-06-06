@@ -134,6 +134,7 @@ const MyLayout: React.FC<{}> = () => {
                   setSelectKeyNode={setSelectKeyNodeState}
                   selectKeyNode={selectKeyNodeState}
                   selectPaths={selectPathsState}
+                  currentNode={selectCurrentNodeState}
                   setCurrentNode={setCurrentNodeState}
                   selectCommunities={selectCommunitiesState}
                 />
