@@ -171,6 +171,10 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
   useEffect(()=>{
     if(didMountState){
         getData(recommand,[currentNodeself, currentCommunities.communities]).then((dataset: any)=>{
+          dataset.sort((a: any,b:any)=>{
+            return (a.step-b.step);
+          })
+          console.log(dataset);
             setCommunitiesDataState(dataset);
         });
     }

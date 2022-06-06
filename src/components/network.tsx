@@ -29,6 +29,7 @@ const Network: React.FC<NetworkProps> = (props) => {
   const [didMountState, setDidMountState] = useState(false);
   const [currentListState, setCurrentListState] = useState<Boolean>(false);
   const [switch3DState, setSwith3DState] = useState<boolean>(false);
+  
   const {
     currentGragh,
     setCurrentGraph,
@@ -126,7 +127,7 @@ const Network: React.FC<NetworkProps> = (props) => {
           let shape = null;
           let geometry: any = null;
           let color;
-          if (node.properties.id !== currentNode) {
+          if (node.properties.id !== currentNode && !(selectNode.includes(node.properties.id))) {
             switch (node.group) {
               case 'Domain':
                 color = '#78a58c';
@@ -171,22 +172,27 @@ const Network: React.FC<NetworkProps> = (props) => {
         .showNavInfo(false);
     } else {
       graph.nodeColor((node: any) => {
-        switch (node.group) {
-          case 'Domain':
-            return '#78a58c';
-          case 'Cert':
-            return '#a0a87a';
-          case 'IP':
-            return '#a57878';
-          case 'Email':
-            return '#00FF00';
-          case 'Phone':
-            return '#00FF00';
-          case 'Register':
-            return '#00FF00';
-          default:
-            break;
+        if (node.properties.id !== currentNode && !(selectNode.includes(node.properties.id))) {
+          switch (node.group) {
+            case 'Domain':
+              return '#78a58c';
+            case 'Cert':
+              return '#a0a87a';
+            case 'IP':
+              return '#a57878';
+            case 'Email':
+              return '#00FF00';
+            case 'Phone':
+              return '#00FF00';
+            case 'Register':
+              return '#00FF00';
+            default:
+              break;
+          }
+        }else{
+          return '#ff0000'
         }
+        
       });
     }
     //@ts-ignore
@@ -506,6 +512,19 @@ const Network: React.FC<NetworkProps> = (props) => {
   };
 
   /**
+   * 导出currentCommunities到剪贴板
+   */
+  const exportCommunities = () =>{
+    const str = currentGragh.communities.join(',');
+    var aux = document.createElement("input"); 
+    aux.setAttribute("value", str); 
+    document.body.appendChild(aux); 
+    aux.select();
+    document.execCommand("copy"); 
+    document.body.removeChild(aux);
+  }
+
+  /**
    * 导出子图到csv文件
    */
   const toCSV = () => {
@@ -677,7 +696,7 @@ const Network: React.FC<NetworkProps> = (props) => {
           } else {
             setCurrentGraph({
               current: 'searchStr',
-              communities: [],
+              communities: [...currentGragh.communities],
             });
             const addedData = addHiddenNodeAndLink(dataset.data);
             drawGraph();
@@ -930,6 +949,7 @@ const Network: React.FC<NetworkProps> = (props) => {
    */
   useEffect(() => {
     if (didMountState) {
+      console.log(selectKeyNode);
       if (!switch3DState) {
         graph.nodeThreeObject((node: any) => {
           let shape = null;
@@ -1091,12 +1111,21 @@ const Network: React.FC<NetworkProps> = (props) => {
       >
         Add Communities
       </Button>
+      <Button
+        type='primary'
+        style={{ position: 'absolute', left: 90, top: 50 }}
+        shape='round'
+        size={'small'}
+        onClick={exportCommunities}
+      >
+        Copy Communities
+      </Button>
       <div
         id='communitiesInfo'
         style={{
           position: 'absolute',
-          left: 20,
-          top: 40,
+          left: 10,
+          top: 50,
           height: '100%',
           width: '8%',
           overflowY: 'scroll',

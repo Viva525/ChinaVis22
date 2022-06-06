@@ -128,8 +128,8 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
         setCurrentNodeState({ community: d.id, node_num: d.node_num ,wrongList: d.wrong_list });
         d3.select('#toolTip')
           .style('display', 'block')
-          .style('left', event.clientX - 20 + 'px')
-          .style('top', event.clientY + 30 + 'px');
+          .style('left', event.clientX + 10 + 'px')
+          .style('top', event.clientY - 90 + 'px');
       })
       .on('mouseleave', function () {
         d3.select('#toolTip').style('display', 'none');
@@ -182,6 +182,9 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
       if (currentCommunitiesID.communities != undefined) {
         getData(getCurrNeighbours, [currentCommunitiesID.communities]).then(
           (dataset: any) => {
+            dataset.sort((a: any,b:any)=>{
+              return (a.node_num-b.node_num);
+            })
             setCommunitiesDataState(dataset);
           }
         );
