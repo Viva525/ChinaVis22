@@ -680,6 +680,7 @@ const Network: React.FC<NetworkProps> = (props) => {
               communities: [],
             });
             const addedData = addHiddenNodeAndLink(dataset.data);
+            drawGraph();
             setData(addedData);
           }
         } else {
@@ -787,7 +788,7 @@ const Network: React.FC<NetworkProps> = (props) => {
     if (didMountState) {
       if (currentGragh.current === 'searchStr') {
         // do nothing wait data change
-        drawGraph();
+        // drawGraph();
         setCurrentListState(true);
       } else if (currentGragh.current === 'communities') {
         getData(getFilterNetworkByCommunities, [currentGragh.communities]).then(
