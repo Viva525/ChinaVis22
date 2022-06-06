@@ -130,7 +130,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
 
       <Row align='middle'>
         <Col span={8}>
-          <Select
+          <Select id='filterNode'
             style={{ width: '100%', marginLeft: '2px', marginTop: '10px' }}
             labelInValue
             defaultValue={{ value: 'Wrong_num', label: 'Wrong_num' }}

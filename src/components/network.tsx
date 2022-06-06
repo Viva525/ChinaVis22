@@ -25,7 +25,7 @@ let context: HTMLElement | null = null;
 //React FC 写法 推荐写这种
 const Network: React.FC<NetworkProps> = (props) => {
   const container = React.useRef();
-  const linkColor = ['rgba(0,0,0,0.2)', 'rgba(255,255,255,0.1)'];
+  const linkColor = ['rgba(0,0,0,0.2)', 'rgba(255,255,255,0.3)'];
   const [didMountState, setDidMountState] = useState(false);
   const [currentListState, setCurrentListState] = useState<Boolean>(false);
   const [switch3DState, setSwith3DState] = useState<boolean>(false);
@@ -72,7 +72,7 @@ const Network: React.FC<NetworkProps> = (props) => {
   const drawGraph = () => {
     graph
       ?.graphData({ nodes: [], links: [] })
-      .backgroundColor('#fff')
+      .backgroundColor('rgba(51,51,51,1)')
 
       .onNodeClick((node: any) => {
         console.log(node);
@@ -192,12 +192,12 @@ const Network: React.FC<NetworkProps> = (props) => {
   const initGraph = () => {
     graph
       ?.graphData({ nodes: [], links: [] })
-      .backgroundColor('#CFD8DC')
+      .backgroundColor('rgba(51,51,51,1)')
 
       .nodeLabel((node: any) => {
         return node.id;
       })
-      .linkColor(() => linkColor[0])
+      .linkColor(() => linkColor[1])
       .linkDirectionalParticles(0)
       .onNodeDragEnd((node: any) => {
         node.fx = node.x;
@@ -216,7 +216,7 @@ const Network: React.FC<NetworkProps> = (props) => {
         .nodeThreeObject((node: any) => {
           let shape = null;
           let geometry: any = new THREE.SphereGeometry(node.wrong_num / 20);
-          let color = '#335a71';
+          let color = '#CFD8DC';
 
           let material = new THREE.MeshToonMaterial({
             color: color,
@@ -230,7 +230,7 @@ const Network: React.FC<NetworkProps> = (props) => {
     } else {
       graph
         .nodeColor(() => {
-          return '#335a71';
+          return '#CFD8DC';
         })
         .nodeVal((node: any) => {
           return node.wrong_num / 10;
@@ -346,7 +346,7 @@ const Network: React.FC<NetworkProps> = (props) => {
         if (links.includes(link.identity)) {
           return '#ff0000';
         } else {
-          return linkColor[0];
+          return linkColor[1];
         }
       })
       .linkWidth((link: any) => {
@@ -731,9 +731,9 @@ const Network: React.FC<NetworkProps> = (props) => {
       });
       dataset.links = data.links.filter((item: any) => {
         return (
-          item.group === 'Email' ||
-          item.group === 'Phone' ||
-          item.group === 'Register' ||
+          item.type === 'r_whois_email' ||
+          item.type === 'r_whois_phone' ||
+          item.type === 'r_whois_name' ||
           //@ts-ignore
           (filterNode.includes(dist[item.type][0]) &&
             //@ts-ignore
@@ -1011,13 +1011,15 @@ const Network: React.FC<NetworkProps> = (props) => {
         //@ts-ignore
         ref={container}
         id='network'
-        style={{ width: '100%', height: '100%' }}></div>
+        style={{ width: '100%', height: '100%' }}
+      ></div>
       <Switch
         style={{
           position: 'absolute',
           right: 18,
           top: 50,
           zIndex: 999,
+          border: '1px solid #646464'
         }}
         disabled={currentGragh.current === 'allCommunity'}
         checked={currentListState as boolean}
@@ -1031,6 +1033,7 @@ const Network: React.FC<NetworkProps> = (props) => {
           right: 90,
           top: 50,
           zIndex: 999,
+          border: '1px solid #646464'
         }}
         checked={switch3DState as boolean}
         onChange={switch3DViewChange}
@@ -1038,30 +1041,37 @@ const Network: React.FC<NetworkProps> = (props) => {
         unCheckedChildren='3D'
       />
       <Button
+        type='primary'
         style={{ position: 'absolute', right: 150, top: 50 }}
         shape='round'
         icon={<DownloadOutlined />}
         size={'small'}
-        onClick={toCSV}>
+        onClick={toCSV}
+      >
         Download
       </Button>
       <Button
+        type='primary'
         style={{ position: 'absolute', right: 280, top: 50 }}
         shape='round'
         size={'small'}
-        onClick={removeNodes}>
+        onClick={removeNodes}
+      >
         Remove Nodes
       </Button>
       <Button
+        type='primary'
         style={{ position: 'absolute', right: 420, top: 50 }}
         shape='round'
         size={'small'}
-        onClick={addCommunities}>
+        onClick={addCommunities}
+      >
         Add Communities
       </Button>
       <div
         id='communitiesInfo'
-        style={{ position: 'absolute', left: 20, top: 40 }}></div>
+        style={{ position: 'absolute', left: 20, top: 40 }}
+      ></div>
     </>
   );
 };
