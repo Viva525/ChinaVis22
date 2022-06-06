@@ -122,7 +122,6 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
           .style('top', event.clientY+30+"px")
       })
       .on('mouseleave',function(){
-        console.log('leave');
         d3.select('#toolTipSelf')
           .style('display','none')
           // .style('left','-100px')
@@ -188,8 +187,6 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
   useEffect(() => {
     getData(recommand, ["Domain_5596b89a2184f2ef5870afaccf4eecede432175ab1da8621b2718fbc03783e6a"]).then((dataset: any) => {
       setDidMountState(true);
-      console.log(dataset);
-      
       setCommunitiesDataState(dataset);
     });
   }, []);

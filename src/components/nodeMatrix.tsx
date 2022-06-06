@@ -132,7 +132,6 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
           .style('top', event.clientY + 30 + 'px');
       })
       .on('mouseleave', function () {
-        console.log('leave');
         d3.select('#toolTip').style('display', 'none');
         // .style('left','-100px')
         // .style('top','-100px')
@@ -200,7 +199,6 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
   useEffect(() => {
     getData(getCurrNeighbours, [[1834615]]).then((dataset: any) => {
       setDidMountState(true);
-      console.log(dataset);
       setCommunitiesDataState(dataset);
     });
   }, []);
