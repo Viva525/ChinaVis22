@@ -13,7 +13,7 @@ type NodeMatrixselfProps = {
 }
 
 const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
-  const [currentNodeState, setCurrentNodeState] = useState<currentNodeself>({community:0,step:0,wrongList:[]});
+  const [currentNodeState, setCurrentNodeState] = useState<currentNodeself>({community:0, node_num: 0,step:0,wrongList:[]});
   const {currentNodeself, currentCommunities, setCurrentCommunities} = props;
   // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other", "none"
   const color = [
@@ -115,7 +115,7 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
       })
       .on('mouseenter', function (event: any, d: any) {
         d3.select(this).attr('cursor', 'pointer');
-        setCurrentNodeState({community:d.id,step:d.step,wrongList:d.wrong_list});
+        setCurrentNodeState({community:d.id, node_num:d.node_num, step:d.step,wrongList:d.wrong_list});
         d3.select('#toolTipSelf')
           .style('display', 'block')
           .style('left',event.clientX-20+"px")
@@ -203,7 +203,7 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
         id='toolTipSelf'
         style={{
           width: '180px',
-          height: `${(currentNodeState.wrongList.length+2) * 30 }px`,
+          height: `${(currentNodeState.wrongList.length+3) * 30 }px`,
           background: '#fff',
           borderRadius: '4px',
           position: 'absolute',
@@ -213,6 +213,7 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
         }}
       >
         <p style={{color:'#333', margin:`0 0 0 12px`}}>community : {currentNodeState.community}</p>
+        <p style={{color:'#333', margin:`0 0 0 12px`}}>nodeNum : {currentNodeState.node_num}</p>
         <p style={{color:'#333', margin:`0 0 0 12px`}}>step : {currentNodeState.step}</p>
         {currentNodeState.wrongList.map((node: nodeType, i: number) => {
           return (

@@ -13,6 +13,7 @@ type NodeMatrixProps = {
 const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
   const [currentNodeState, setCurrentNodeState] = useState<currentNode>({
     community: 0,
+    node_num: 0,
     wrongList: [],
   });
   const { currentCommunitiesID, setCurrentCommunitiesID } = props;
@@ -124,7 +125,7 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
       })
       .on('mouseenter', function (event: any, d: any) {
         d3.select(this).attr('cursor', 'pointer');
-        setCurrentNodeState({ community: d.id, wrongList: d.wrong_list });
+        setCurrentNodeState({ community: d.id, node_num: d.node_num ,wrongList: d.wrong_list });
         d3.select('#toolTip')
           .style('display', 'block')
           .style('left', event.clientX - 20 + 'px')
@@ -199,6 +200,7 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
   useEffect(() => {
     getData(getCurrNeighbours, [[1834615]]).then((dataset: any) => {
       setDidMountState(true);
+      console.log(dataset);
       setCommunitiesDataState(dataset);
     });
   }, []);
@@ -212,7 +214,7 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
         id='toolTip'
         style={{
           width: '180px',
-          height: `${(currentNodeState.wrongList.length + 1) * 30}px`,
+          height: `${(currentNodeState.wrongList.length + 2) * 30}px`,
           background: '#fff',
           borderRadius: '4px',
           position: 'absolute',
@@ -224,6 +226,10 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
         <p style={{ color: '#333', margin: `0 0 0 12px` }}>
           community : {currentNodeState.community}
         </p>
+        <p style={{ color: '#333', margin: `0 0 0 12px` }}>
+          nodeNum : {currentNodeState.node_num}
+        </p>
+        
         {currentNodeState.wrongList.map((node: nodeType, i: number) => {
           return (
             <div

@@ -80,11 +80,13 @@ export type nodeType = {
 
 export type currentNode = {
   community: number;
+  node_num: number;
   wrongList: nodeType[];
 }
 
 export type currentNodeself = {
   community:number;
+  node_num: number;
   step:number;
   wrongList:nodeType[];
 }
