@@ -178,7 +178,8 @@ const CorePath: React.FC<CorePathProps> = (props) => {
         } else {
           return d.name;
         }
-      });
+      })
+      .style('fill','#eee');
 
     //  利用defs绘制箭头
     //  添加定义
@@ -195,7 +196,7 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       .attr('refY', '6')
       .attr('orient', 'auto');
     const arrow_path = 'M2,2 L10,6 L2,10 L6,6 L2,2';
-    marker.append('path').attr('d', arrow_path).attr('fill', 'rgb(0,0,0,1)');
+    marker.append('path').attr('d', arrow_path).attr('fill', '#eee');
     //为每个组添加箭头和节点
     //@ts-ignore
     dataState.forEach((path, index) => {
@@ -255,7 +256,7 @@ const CorePath: React.FC<CorePathProps> = (props) => {
           return d.direction == 0 ? arrowLength + nodeSize : nodeSize;
         })
         // .attr("tansform","translate(0,15)")
-        .attr('stroke', 'black')
+        .attr('stroke', '#eee')
         .attr('stroke-width', '1px')
         .attr('marker-end', 'url(#arrow)')
         .attr('transform', (_, i: any) => {
