@@ -25,6 +25,8 @@
     "echarts": "^5.3.2",
     "force-graph": "^1.42.9",
     "golden-layout": "^2.5.0",
+    "less": "^4.1.2",
+    "less-loader": "^11.0.0",
     "lineupjs": "^4.6.0",
     "lodash": "^4.17.21",
     "react": "^18.0.0",
