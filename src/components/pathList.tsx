@@ -16,15 +16,15 @@ const PathList: React.FC<PathListProps> = (props) => {
   const group = [
     {
       name: 'Domain',
-      color: '#5d85cf',
+      color: '#78a58c',
     },
     {
       name: 'IP',
-      color: '#da7847',
+      color: '#a57878',
     },
     {
       name: 'Cert',
-      color: '#6fb971',
+      color: '#a0a87a',
     },
   ];
 
@@ -130,7 +130,7 @@ const PathList: React.FC<PathListProps> = (props) => {
             return '0,5,10,0,10,10';
           }
         })
-        .style('fill', '#5d85cf')
+        .style('fill', '#78a58c')
         .attr('transform', (d: any, i: number) => {
           return `translate(${rectWidth + i * (rectWidth + margin)},${
             rectHeight / 2 - 6
