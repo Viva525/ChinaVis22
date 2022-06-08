@@ -7,12 +7,12 @@ import {
 } from '../api/networkApi';
 import ForceGraph, { ForceGraphInstance, GraphData } from 'force-graph';
 import ForceGraph3D, { ForceGraph3DInstance } from '3d-force-graph';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import type { NetworkProps, NodeType } from './types';
 import * as THREE from 'three';
-import { Button, Descriptions, Switch } from 'antd';
+import { Button, Switch } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { addHiddenNodeAndLink, getData } from '../utils/utils';
-import { isArray, keys, size } from 'lodash';
 import * as d3 from 'd3';
 import { group } from 'console';
 
@@ -26,10 +26,12 @@ let context: HTMLElement | null = null;
 const Network: React.FC<NetworkProps> = (props) => {
   const container = React.useRef();
   const linkColor = ['rgba(0,0,0,0.2)', 'rgba(255,255,255,0.3)'];
+  // UE光效
+  const bloomPass = new UnrealBloomPass(new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5,0.4,0.85);
   const [didMountState, setDidMountState] = useState(false);
   const [currentListState, setCurrentListState] = useState<Boolean>(false);
   const [switch3DState, setSwith3DState] = useState<boolean>(false);
-  
+
   const {
     currentGragh,
     setCurrentGraph,
@@ -77,7 +79,6 @@ const Network: React.FC<NetworkProps> = (props) => {
       .backgroundColor('rgba(51,51,51,1)')
 
       .onNodeClick((node: any) => {
-        console.log(node);
         setSelectKeyState(node);
         setCurrentNode(node.properties.id);
       })
@@ -104,11 +105,15 @@ const Network: React.FC<NetworkProps> = (props) => {
       .linkColor((line: any) => {
         switch (line.type) {
           case 'r_cname':
-            return '#ff0';
+            return '#FF5B00';
           case 'r_subdomain':
-            return '#0f0';
+            return '#00FFAB';
           case 'r_request_jump':
-            return '#00f';
+            return '#1363DF';
+          case 'r_cert':
+            return '#F73D93';
+          case 'r_dns_a':
+            return '#FFF56D'
           default:
             return linkColor[1];
         }
@@ -127,7 +132,10 @@ const Network: React.FC<NetworkProps> = (props) => {
           let shape = null;
           let geometry: any = null;
           let color;
-          if (node.properties.id !== currentNode && !(selectNode.includes(node.properties.id))) {
+          if (
+            node.properties.id !== currentNode &&
+            !selectNode.includes(node.properties.id)
+          ) {
             switch (node.group) {
               case 'Domain':
                 color = '#78a58c';
@@ -170,9 +178,13 @@ const Network: React.FC<NetworkProps> = (props) => {
           return shape;
         })
         .showNavInfo(false);
+        graph.postProcessingComposer().removePass(bloomPass);
     } else {
       graph.nodeColor((node: any) => {
-        if (node.properties.id !== currentNode && !(selectNode.includes(node.properties.id))) {
+        if (
+          node.properties.id !== currentNode &&
+          !selectNode.includes(node.properties.id)
+        ) {
           switch (node.group) {
             case 'Domain':
               return '#78a58c';
@@ -189,10 +201,9 @@ const Network: React.FC<NetworkProps> = (props) => {
             default:
               break;
           }
-        }else{
-          return '#ff0000'
+        } else {
+          return '#ff0000';
         }
-        
       });
     }
     //@ts-ignore
@@ -225,24 +236,26 @@ const Network: React.FC<NetworkProps> = (props) => {
     if (!switch3DState) {
       graph
         .nodeOpacity(0.95)
+        // .nodeColor('#CFD8DC')
         .nodeThreeObject((node: any) => {
           let shape = null;
           let geometry: any = new THREE.SphereGeometry(node.wrong_num / 20);
-          let color = '#CFD8DC';
+          let color = '#E2D784';
 
           let material = new THREE.MeshToonMaterial({
             color: color,
             transparent: true,
-            opacity: 0.8,
+            opacity: 0.9,
           });
           shape = new THREE.Mesh(geometry, material);
           return shape;
         })
         .showNavInfo(false);
+      graph.postProcessingComposer().addPass(bloomPass);
     } else {
       graph
         .nodeColor(() => {
-          return '#CFD8DC';
+          return '#E2D784';
         })
         .nodeVal((node: any) => {
           return node.wrong_num / 10;
@@ -381,9 +394,10 @@ const Network: React.FC<NetworkProps> = (props) => {
    */
   const switchViewChange = (item: boolean) => {
     if (!item) {
+      d3.select('#svg-communitiesInfo').remove();
       setCurrentGraph((prevState) => ({
-        ...prevState,
         current: 'allCommunity',
+        communities: [],
       }));
     }
     setCurrentListState(item);
@@ -514,15 +528,15 @@ const Network: React.FC<NetworkProps> = (props) => {
   /**
    * 导出currentCommunities到剪贴板
    */
-  const exportCommunities = () =>{
+  const exportCommunities = () => {
     const str = currentGragh.communities.join(',');
-    var aux = document.createElement("input"); 
-    aux.setAttribute("value", str); 
-    document.body.appendChild(aux); 
+    var aux = document.createElement('input');
+    aux.setAttribute('value', str);
+    document.body.appendChild(aux);
     aux.select();
-    document.execCommand("copy"); 
+    document.execCommand('copy');
     document.body.removeChild(aux);
-  }
+  };
 
   /**
    * 导出子图到csv文件
@@ -673,9 +687,9 @@ const Network: React.FC<NetworkProps> = (props) => {
    * 清楚选择
    */
   const clearSelected = () => {
-    setCurrentNode("");
+    setCurrentNode('');
     setSelectKeyNode(new Set());
-  }
+  };
   /**
    * 监听searchParams,搜索框变化，查询对应数据
    * 调用setData,setCurrentGraph

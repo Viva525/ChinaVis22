@@ -95,7 +95,7 @@ const MyLayout: React.FC<{}> = () => {
             </Row>
             <Row style={{ height: '25%' }}>
               <Box
-                title='Neighbour Heatmap'
+                title='NEIGHBOUR NODES MATRIX (STEP 1 ~ STEP 4)'
                 component={
                   <NodeMatrixself
                     currentNodeself={selectCurrentNodeState}
@@ -107,7 +107,7 @@ const MyLayout: React.FC<{}> = () => {
             </Row>
             <Row style={{ height: '45%' }}>
               <Box
-                title='NODE MATRIX'
+                title='NEIGHBOUR COMMUNITIES MATRIX (STEP 1)'
                 component={
                   <NodeMatrix
                     currentCommunitiesID={currentGraphState}
