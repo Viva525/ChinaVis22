@@ -20,12 +20,12 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 		name: 'Community',
 		children: [
 			{
-				name: '123456',
-				value: 5,
+				name: '2104449',
+				value: 21,
 				children: [
 					{
 						name: 'domain',
-						value: 4,
+						value: 20,
 						children: [
 							{
 								name: 'gun',
@@ -63,8 +63,8 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 				],
 			},
 			{
-				name: '2536',
-				value: 85,
+				name: '1756418',
+				value: 35,
 				children: [
 					{
 						name: 'domain',
@@ -81,8 +81,8 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 				],
 			},
 			{
-				name: '25847',
-				value: 96,
+				name: '1963999',
+				value: 56,
 				children: [
 					{
 						name: 'domain',
@@ -95,24 +95,6 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 					{
 						name: 'ip',
 						value: 2,
-					},
-				],
-			},
-			{
-				name: '85476',
-				value: 48,
-				children: [
-					{
-						name: 'domain',
-						value: 25,
-					},
-					{
-						name: 'cert',
-						value: 4,
-					},
-					{
-						name: 'ip',
-						value: 6,
 					},
 				],
 			},
@@ -301,93 +283,22 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 						'name': "Community",
 						'children': []
 					};
-					var typeCrim = Object.getOwnPropertyNames((dataset.count_res.industry_res[0] as any));
-					function isEmpty(value, vect) {
-						if (value.weight !== 0) {
-							var numObj = {
-								'name': value.name,
-								'value': value.weight,
-							}
-							vect.children.push(numObj)
-						}
-					}
 					//数据填充
 					for (let i: number = 0; i < currentCommunities.length; i++) {
 						//主数据生成
 						var communityState = {
 							'name': String(currentCommunities[i]),
 							'value': dataset.count_res.count_res[i][0] + dataset.count_res.count_res[i][1] + dataset.count_res.count_res[i][2],
-							'children': []
+							'children': dataset.result[i].childrenEnd[0]
 						}
-						//数据判断 对应domain,ip,cert数量层生成
-						if (dataset.count_res.count_res[i][0] !== 0) {
-							var domainNum = {
-								'name': "Domain",
-								'value': dataset.count_res.count_res[i][0],
-								'children': [
-									{
-										'name': "Crime Type",
-										value: 0,
-										children: []
-									},
-								]
-							}
-							isEmpty(dataset.result[i].children[0].children[0], domainNum)
-							isEmpty(dataset.result[i].children[0].children[1], domainNum)
-							isEmpty(dataset.result[i].children[0].children[2], domainNum)
-							communityState.children.push(domainNum)
-						}
-						if (dataset.count_res.count_res[i][1]) {
-							var certNum = {
-								'name': "Cert",
-								'value': dataset.count_res.count_res[i][1],
-								// 'children': [
-								// 	isEmpty(dataset.result[i].children[1].children[0]),
-								// 	isEmpty(dataset.result[i].children[1].children[1]),
-								// 	isEmpty(dataset.result[i].children[1].children[2]),
-								// ]
-							}
-							communityState.children.push(certNum)
-						}
-						if (dataset.count_res.count_res[i][2]) {
-							var ipNum = {
-								'name': "Ip",
-								'value': dataset.count_res.count_res[i][2],
-								// 'children': [
-								// 	isEmpty(dataset.result[i].children[2].children[0]),
-								// 	isEmpty(dataset.result[i].children[2].children[1]),
-								// 	isEmpty(dataset.result[i].children[2].children[2]),
-								// ]
-							}
-							communityState.children.push(ipNum)
+						communityState.children.push({ name: 'Crim Type', value: dataset.count_res.industry_res[i].value, children: dataset.count_res.industry_res[i].children })
 
-						}
-
-						//犯罪数据生成	
-						var num = 0;
-						var numTotal = 0;
-						for (let key in dataset.count_res.industry_res[i]) {
-							let v = (dataset.count_res.industry_res[i] as any)[key];
-							if (v !== 0) {
-								var temp = {
-									'name': typeCrim[num],
-									'value': v
-								}
-								communityState.children[0].children[0].children.push(temp)
-								console.log(temp)
-							}
-							num++;
-							numTotal += v
-						}
-						communityState.children[0].children[0].value = numTotal
-						//最终数据生成
+						// 	// 	//最终数据生成
 						communityFinal.children.push(communityState)
 					}
-					//更新初始数据
-
+					// // //更新初始数据
+					console.log(communityFinal)
 					circleData = communityFinal;
-					//typeNum = typeCrim;
-					//console.log(typeNum);
 					drawCircle();
 				})
 			}
