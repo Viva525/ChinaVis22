@@ -14,7 +14,6 @@ import { Button, Switch } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { addHiddenNodeAndLink, getData } from '../utils/utils';
 import * as d3 from 'd3';
-import { group } from 'console';
 
 window.d3 = d3;
 /**
@@ -29,8 +28,9 @@ const Network: React.FC<NetworkProps> = (props) => {
   // UE光效
   const bloomPass = new UnrealBloomPass(new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5,0.4,0.85);
   const [didMountState, setDidMountState] = useState(false);
+
   const [currentListState, setCurrentListState] = useState<Boolean>(false);
-  const [switch3DState, setSwith3DState] = useState<boolean>(false);
+  const [switch3DState, setSwith3DState] = useState<boolean>(true);
 
   const {
     currentGragh,
@@ -45,9 +45,12 @@ const Network: React.FC<NetworkProps> = (props) => {
     setSelectKeyNode,
     selectKeyNode,
     selectPaths,
+    setSelectPaths,
     currentNode,
     setCurrentNode,
     selectCommunities,
+    isFinish,
+    setIsFinish
   } = props;
 
   const setSelectKeyState = (node: any) => {
@@ -77,10 +80,12 @@ const Network: React.FC<NetworkProps> = (props) => {
     graph
       ?.graphData({ nodes: [], links: [] })
       .backgroundColor('rgba(51,51,51,1)')
-
       .onNodeClick((node: any) => {
         setSelectKeyState(node);
-        setCurrentNode(node.properties.id);
+        if(isFinish){
+          setCurrentNode(node.properties.id);
+          setIsFinish(false);
+        }
       })
       .nodeLabel((node: any) => {
         const { IP, Cert, Domain } = tagFilter;
@@ -371,7 +376,20 @@ const Network: React.FC<NetworkProps> = (props) => {
         if (links.includes(link.identity)) {
           return '#ff0000';
         } else {
-          return linkColor[1];
+          switch (link.type) {
+            case 'r_cname':
+              return '#FF5B00';
+            case 'r_subdomain':
+              return '#00FFAB';
+            case 'r_request_jump':
+              return '#1363DF';
+            case 'r_cert':
+              return '#F73D93';
+            case 'r_dns_a':
+              return '#FFF56D'
+            default:
+              return linkColor[1];
+          }
         }
       })
       .linkWidth((link: any) => {
@@ -689,6 +707,7 @@ const Network: React.FC<NetworkProps> = (props) => {
   const clearSelected = () => {
     setCurrentNode('');
     setSelectKeyNode(new Set());
+    setSelectPaths(new Set());
   };
   /**
    * 监听searchParams,搜索框变化，查询对应数据

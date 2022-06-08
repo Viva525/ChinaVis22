@@ -10,11 +10,12 @@ type NodeMatrixselfProps = {
   currentNodeself: string
   currentCommunities: CurrentNetworkState;
   setCurrentCommunities: SetState<CurrentNetworkState>;
+  setIsFinish: SetState<boolean>;
 }
 
 const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
   const [currentNodeState, setCurrentNodeState] = useState<currentNodeself>({community:0, node_num: 0,step:0,wrongList:[]});
-  const {currentNodeself, currentCommunities, setCurrentCommunities} = props;
+  const {currentNodeself, currentCommunities, setCurrentCommunities, setIsFinish} = props;
   // "porn","gambling","fraud","drug","gun","hacker","trading","pay","other", "none"
   const color = [
     '#f49c84',
@@ -185,6 +186,7 @@ const NodeMatrixself: React.FC<NodeMatrixselfProps> = (props) => {
   useEffect(() => {
     if (didMountState) {
       drawMatrix();
+      setIsFinish(true);
     }
   }, [communitiesDataState]);
 

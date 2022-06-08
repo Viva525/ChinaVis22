@@ -5,6 +5,7 @@ import { getData } from '../utils/utils';
 import { getLinksBT2Nodes } from '../api/nodeApi';
 import { Color } from 'three';
 import { SetState } from './types';
+import { Button } from 'antd';
 
 type CorePathProps = {
   selectKeyNode: Set<any>;
@@ -270,16 +271,8 @@ const CorePath: React.FC<CorePathProps> = (props) => {
     });
   };
 
-  /**
-   * 监听dataset，绘制图表
-   */
-  useEffect(() => {
-    if (didMountState) {
-      drawSunburst();
-    }
-  }, [dataState]);
-  useEffect(() => {
-    if (didMountState && selectKeyNode.size === 2) {
+  const searchPath = () => {
+    if(selectKeyNode.size === 2){
       const nodes = Array.from(selectKeyNode);
       getData(getLinksBT2Nodes, [
         nodes[0].properties.id,
@@ -288,7 +281,30 @@ const CorePath: React.FC<CorePathProps> = (props) => {
         setDataState(dataset);
       });
     }
-  }, [selectKeyNode]);
+  }
+
+  /**
+   * 监听dataset，绘制图表
+   */
+  useEffect(() => {
+    if (didMountState) {
+      drawSunburst();
+    }
+  }, [dataState]);
+
+  // useEffect(() => {
+  //   if (didMountState && selectKeyNode.size === 2) {
+  //     const nodes = Array.from(selectKeyNode);
+  //     getData(getLinksBT2Nodes, [
+  //       nodes[0].properties.id,
+  //       nodes[1].properties.id,
+  //     ]).then((dataset: any) => {
+  //       setDataState(dataset);
+  //     });
+  //   }
+  // }, [selectKeyNode]);
+
+
   /**
    * 初始化
    */
@@ -301,7 +317,16 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       setDataState(dataset);
     });
   }, []);
-  return <div id='corePath' style={{ width: '100%', height: '100%' }}></div>;
+  return (<><div id='corePath' style={{ width: '100%', height: '100%' }}></div>
+  <Button
+        type='primary'
+        style={{ position: 'absolute', right: 20, top: 50 }}
+        shape='round'
+        size={'small'}
+        onClick={searchPath}
+      >
+        Search Path
+  </Button></>);
 };
 
 export default CorePath;

@@ -46,6 +46,7 @@ const MyLayout: React.FC<{}> = () => {
   const [selectCommunitiesState, setSelectCommunitiesState] = useState<number[]>([]);
   const [pathListState, setPathListState] = useState<Set<any>>(new Set());
   const [selectPathsState, setSelectPathState] = useState<Set<any>>(new Set());
+  const [isFinishState, setIsFinishState] = useState<boolean>(true);
 
   const [searchParamsState, setSearchParamsState] =
     useState<ControlState['searchParams']>('');
@@ -101,6 +102,7 @@ const MyLayout: React.FC<{}> = () => {
                     currentNodeself={selectCurrentNodeState}
                     currentCommunities={currentGraphState}
                     setCurrentCommunities={setCurrentGraphState}
+                    setIsFinish={setIsFinishState}
                   />
                 }
               />
@@ -134,9 +136,12 @@ const MyLayout: React.FC<{}> = () => {
                   setSelectKeyNode={setSelectKeyNodeState}
                   selectKeyNode={selectKeyNodeState}
                   selectPaths={selectPathsState}
+                  setSelectPaths={setSelectPathState}
                   currentNode={selectCurrentNodeState}
                   setCurrentNode={setCurrentNodeState}
                   selectCommunities={selectCommunitiesState}
+                  isFinish={isFinishState}
+                  setIsFinish={setIsFinishState}
                 />
               }
             />
