@@ -26,6 +26,8 @@ let context: HTMLElement | null = null;
 const Network: React.FC<NetworkProps> = (props) => {
   const container = React.useRef();
   const linkColor = ['rgba(0,0,0,0.2)', 'rgba(255,255,255,0.3)'];
+  // UE光效
+  const bloomPass = new UnrealBloomPass(new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5,0.4,0.85);
   const [didMountState, setDidMountState] = useState(false);
   const [currentListState, setCurrentListState] = useState<Boolean>(false);
   const [switch3DState, setSwith3DState] = useState<boolean>(false);
@@ -77,7 +79,6 @@ const Network: React.FC<NetworkProps> = (props) => {
       .backgroundColor('rgba(51,51,51,1)')
 
       .onNodeClick((node: any) => {
-        console.log(node);
         setSelectKeyState(node);
         setCurrentNode(node.properties.id);
       })
@@ -104,11 +105,15 @@ const Network: React.FC<NetworkProps> = (props) => {
       .linkColor((line: any) => {
         switch (line.type) {
           case 'r_cname':
-            return '#ff0';
+            return '#FF5B00';
           case 'r_subdomain':
-            return '#0f0';
+            return '#00FFAB';
           case 'r_request_jump':
-            return '#00f';
+            return '#1363DF';
+          case 'r_cert':
+            return '#F73D93';
+          case 'r_dns_a':
+            return '#FFF56D'
           default:
             return linkColor[1];
         }
@@ -173,6 +178,7 @@ const Network: React.FC<NetworkProps> = (props) => {
           return shape;
         })
         .showNavInfo(false);
+        graph.postProcessingComposer().removePass(bloomPass);
     } else {
       graph.nodeColor((node: any) => {
         if (
@@ -245,12 +251,11 @@ const Network: React.FC<NetworkProps> = (props) => {
           return shape;
         })
         .showNavInfo(false);
-      const bloomPass = new UnrealBloomPass(new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5,0.4,0.85);
       graph.postProcessingComposer().addPass(bloomPass);
     } else {
       graph
         .nodeColor(() => {
-          return '#CFD8DC';
+          return '#E2D784';
         })
         .nodeVal((node: any) => {
           return node.wrong_num / 10;
