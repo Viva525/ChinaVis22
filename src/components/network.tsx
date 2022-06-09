@@ -30,7 +30,7 @@ const Network: React.FC<NetworkProps> = (props) => {
   const [didMountState, setDidMountState] = useState(false);
 
   const [currentListState, setCurrentListState] = useState<Boolean>(false);
-  const [switch3DState, setSwith3DState] = useState<boolean>(true);
+  const [switch3DState, setSwith3DState] = useState<boolean>(false);
 
   const {
     currentGragh,
@@ -430,6 +430,7 @@ const Network: React.FC<NetworkProps> = (props) => {
    * 画当前社区矩阵图
    */
   const drawCurrentCommunitiesRects = (currentCommunitiesInfo: NodeType[]) => {
+    console.log(currentCommunitiesInfo);
     if (currentCommunitiesInfo.length !== 0) {
       const width = 100;
       const rectHeight = 30;
