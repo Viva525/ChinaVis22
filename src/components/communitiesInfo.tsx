@@ -130,7 +130,7 @@ const CommunitiesInfo: React.FC<communitiesInfoProps> = (props) => {
 		function setColorScheme(multi) {
 			if (multi) {
 				let color = d3.scaleOrdinal()
-					.range(d3.schemeCategory10)
+					.range(d3.schemeTableau10)
 				return color;
 			}
 		}
