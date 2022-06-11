@@ -581,7 +581,6 @@ const Network: React.FC<NetworkProps> = (props) => {
         'other',
       ])
       .range(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']);
-    console.log(data);
     const nodes = data.nodes;
     const links = data.links;
 
