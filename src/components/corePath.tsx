@@ -295,17 +295,29 @@ const CorePath: React.FC<CorePathProps> = (props) => {
       const nodes = dataState[i].nodes;
       const links = dataState[i].links;
       let map = new Map();
+      let nodeSet = new Set();
+      let linkMap = new Map();
       nodes.forEach((node: any)=>{
         map.set(node.id,node.properties.id);
-        nodeRow+=`${node.properties.id},${node.properties.name},${node.group}\n`;
+        if(nodeSet.has(node)){
+          // do nothing
+        }else{
+          nodeRow+=`${node.properties.id},${node.properties.name},${node.group}\n`;
+          nodeSet.add(node);
+        }
       });
       links.forEach((link:any)=>{
         const source = map.get(link.source);
         const target = map.get(link.target);
         const type = link.type;
-        linkRow+=`${source},${target},${type}\n`;
+        debugger;
+        if(linkMap.get(source) != undefined){
+          // do nothing
+        }else{
+          linkMap.set(source,target);
+          linkRow+=`${source},${target},${type}\n`;
+        }
       });
-      
     }
     const nodeCSV = nodeHead + nodeRow;
     const linkCSV = linkHead + linkRow;
@@ -361,7 +373,7 @@ const CorePath: React.FC<CorePathProps> = (props) => {
   </Button>
   <Button
         type='primary'
-        style={{ position: 'absolute', right: 20, top: 80 }}
+        style={{ position: 'absolute', right: 20, top: 90 }}
         shape='round'
         size={'small'}
         onClick={exportPath}
