@@ -183,7 +183,9 @@ const Network: React.FC<NetworkProps> = (props) => {
           return shape;
         })
         .showNavInfo(false);
-        graph.postProcessingComposer().removePass(bloomPass);
+        if(graph.postProcessingComposer().passes[1] != undefined){
+          graph.postProcessingComposer().removePass(graph.postProcessingComposer().passes[1]);
+        }
     } else {
       graph.nodeColor((node: any) => {
         if (
@@ -256,6 +258,9 @@ const Network: React.FC<NetworkProps> = (props) => {
           return shape;
         })
         .showNavInfo(false);
+      if(graph.postProcessingComposer().passes[1] != undefined){
+        graph.postProcessingComposer().removePass(graph.postProcessingComposer().passes[1]);
+      }
       graph.postProcessingComposer().addPass(bloomPass);
     } else {
       graph

@@ -195,6 +195,9 @@ const NodeMatrix: React.FC<NodeMatrixProps> = (props) => {
   //监听数据变化 绘制邻居矩阵图
   useEffect(() => {
     if (didMountState) {
+      if(communitiesDataState.length === 0){
+        d3.select("#toolTip").style('display', 'none');
+      }
       drawMatrix();
     }
   }, [communitiesDataState]);
