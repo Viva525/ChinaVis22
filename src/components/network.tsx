@@ -436,6 +436,7 @@ const Network: React.FC<NetworkProps> = (props) => {
    */
   const drawCurrentCommunitiesRects = (currentCommunitiesInfo: NodeType[]) => {
     console.log(currentCommunitiesInfo);
+
     if (currentCommunitiesInfo.length !== 0) {
       const width = 100;
       const rectHeight = 30;
