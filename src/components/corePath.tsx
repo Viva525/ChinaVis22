@@ -278,9 +278,52 @@ const CorePath: React.FC<CorePathProps> = (props) => {
         nodes[0].properties.id,
         nodes[1].properties.id,
       ]).then((dataset: any) => {
+        
         setDataState(dataset);
       });
     }
+  }
+
+  const exportPath = () => {
+    console.log(dataState);
+    const nodeHead = 'id,name,type\n';
+    const linkHead = 'source,target,type\n';
+    //提取边
+    let linkRow = '';
+    let nodeRow = '';
+    for(let i = 0; i < dataState.length; i++){
+      const nodes = dataState[i].nodes;
+      const links = dataState[i].links;
+      let map = new Map();
+      nodes.forEach((node: any)=>{
+        map.set(node.id,node.properties.id);
+        nodeRow+=`${node.properties.id},${node.properties.name},${node.group}\n`;
+      });
+      links.forEach((link:any)=>{
+        const source = map.get(link.source);
+        const target = map.get(link.target);
+        const type = link.type;
+        linkRow+=`${source},${target},${type}\n`;
+      });
+      
+    }
+    const nodeCSV = nodeHead + nodeRow;
+    const linkCSV = linkHead + linkRow;
+    const nodeElement = document.createElement('a');
+    nodeElement.href =
+      'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(nodeCSV);
+    //provide the name for the CSV file to be downloaded
+    nodeElement.download = `Core Assets.csv`;
+    nodeElement.click();
+    nodeElement.remove();
+
+    const linkElement = document.createElement('a');
+    linkElement.href =
+      'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(linkCSV);
+    //provide the name for the CSV file to be downloaded
+    linkElement.download = `Key Paths.csv`;
+    linkElement.click();
+    linkElement.remove();
   }
 
   /**
@@ -292,17 +335,6 @@ const CorePath: React.FC<CorePathProps> = (props) => {
     }
   }, [dataState]);
 
-  // useEffect(() => {
-  //   if (didMountState && selectKeyNode.size === 2) {
-  //     const nodes = Array.from(selectKeyNode);
-  //     getData(getLinksBT2Nodes, [
-  //       nodes[0].properties.id,
-  //       nodes[1].properties.id,
-  //     ]).then((dataset: any) => {
-  //       setDataState(dataset);
-  //     });
-  //   }
-  // }, [selectKeyNode]);
 
 
   /**
@@ -326,6 +358,15 @@ const CorePath: React.FC<CorePathProps> = (props) => {
         onClick={searchPath}
       >
         Search Path
+  </Button>
+  <Button
+        type='primary'
+        style={{ position: 'absolute', right: 20, top: 80 }}
+        shape='round'
+        size={'small'}
+        onClick={exportPath}
+      >
+        Export Path
   </Button></>);
 };
 
