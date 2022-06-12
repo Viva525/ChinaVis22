@@ -291,26 +291,25 @@ const CorePath: React.FC<CorePathProps> = (props) => {
     //提取边
     let linkRow = '';
     let nodeRow = '';
+    let nodeSet = new Set();
+    let linkMap = new Map();
     for(let i = 0; i < dataState.length; i++){
       const nodes = dataState[i].nodes;
       const links = dataState[i].links;
       let map = new Map();
-      let nodeSet = new Set();
-      let linkMap = new Map();
       nodes.forEach((node: any)=>{
         map.set(node.id,node.properties.id);
-        if(nodeSet.has(node)){
+        if(nodeSet.has(node.properties.id)){
           // do nothing
         }else{
           nodeRow+=`${node.properties.id},${node.properties.name},${node.group}\n`;
-          nodeSet.add(node);
+          nodeSet.add(node.properties.id);
         }
       });
       links.forEach((link:any)=>{
         const source = map.get(link.source);
         const target = map.get(link.target);
         const type = link.type;
-        debugger;
         if(linkMap.get(source) != undefined){
           // do nothing
         }else{

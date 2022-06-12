@@ -97,14 +97,14 @@ const MyLayout: React.FC<{}> = () => {
             <Row style={{ height: '25%' }}>
               <Box
                 title='NEIGHBOUR NODES MATRIX (STEP 1 ~ STEP 4)'
-                component={
-                  <NodeMatrixself
-                    currentNodeself={selectCurrentNodeState}
-                    currentCommunities={currentGraphState}
-                    setCurrentCommunities={setCurrentGraphState}
-                    setIsFinish={setIsFinishState}
-                  />
-                }
+                // component={
+                //   <NodeMatrixself
+                //     currentNodeself={selectCurrentNodeState}
+                //     currentCommunities={currentGraphState}
+                //     setCurrentCommunities={setCurrentGraphState}
+                //     setIsFinish={setIsFinishState}
+                //   />
+                // }
               />
             </Row>
             <Row style={{ height: '45%' }}>
